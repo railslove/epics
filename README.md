@@ -1,6 +1,6 @@
 # Epics
 
-TODO: Write a gem description
+EPICS is a ruby implementation of the EBICS protocol
 
 ## Installation
 
@@ -20,7 +20,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### HPB
+
+```ruby
+
+hpb = Epics::HPB.new.to_xml
+user_key = Epics::Key(...)
+
+signer = Epics::Signer.new(hpb, user_key)
+
+signer.digest!.sign!.doc.to_xml
+
+```
+
 
 ## Contributing
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsKeyManagementResponse xmlns="http://www.ebics.org/H003" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H003" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_keymgmt_response.xsd">
+  <header authenticate="true">
+    <static/>
+    <mutable>
+      <ReturnCode>000000</ReturnCode>
+      <ReportText>[EBICS_OK] OK</ReportText>
+    </mutable>
+  </header>
+  <body>
+    <DataTransfer>
+      <DataEncryptionInfo authenticate="true">
+        <EncryptionPubKeyDigest Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" Version="E002">rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=</EncryptionPubKeyDigest>
+        <TransactionKey>CPdd6ODXrCxHWpYrwS/5a3NIZ1R2SDscHHJSONc2I7g8ara7qv5Ra7H03W+336DPQLZQxH+EBRWdE2FQ1vrVTcypK6fkFarmO1dEtQt6Ka89AozC7aQMyp4yGl+zlF+XvFkJXZbRXgoEOPsgcG0xM6nKLXnr1ThYRFOoAasigLDGwqxliyhoR94F9dL7YB8Le/uZeRj78mNp4smkE5ZKKyPhwVx+0IW78YuVCSC2c2qbsMmm4evAvycdpLfuuoG4KVlNMIlvkKeBfMZFELcmeKKm85D2zPYkZ7cqG2IfAAp5qdS6K8P7RY4gtjUhOtP5mi8bZt/ZcjioUmIR9dAMnA==</TransactionKey>
+      </DataEncryptionInfo>
+      <OrderData>lJ/v1HvOYAZKTPkxULH4mOcUy01+EaAsxLzCPhtieAo9m5AtU5URdyBVfmclHbtWe3ELb02lR37bChynq0Esqpljxx7CiB+kl/bVs7XkNQQmtGPlh08O7ApJ7AHdKPFFvE+SM2OWpSwUrqJGtmyaU6s+RM66o/3Q0wvKi4y3+Q2jm8nkiWZpPfNt52g4ReE9Ge86o+L+EBOBgZm634L5Z/i6pq908mXBAklPdk1ERdEgWONaOeYYmB70FToplR1gINJEF2CnfAtD/wV+DuQFPDth+EWHqhe3a4xO0d9eJ55ou2QCYOPUC2g/qz1sp7GR74W7P5IWJdmnUEuPFsKJ6OvM+1V8S06jZGDa/QhUGDK8F3G/TMP09W1MsrlQTRr3YQ5H43+pMY7I6Jysze+X9OKZZTTpv4GmYm1USjmraGyMuPF3j9hrlmpttK+1gg2WzytCJO44YsZp9ckls8JNK4bT5uwTuomKZoRgmiIOTcMh4VP7V28TWj2XdF+T6rBFILTvQyXMOzvbe1kLwg2O31JDBdJ8X1fHCYJxKsIrYCSDPz4sha8h7QmHrCSFmjoXb+LUElnbLXZVRkY5/Dc73EM6Es3wAgjwSJK2asRqdqU0PhbS5qpIlgYKsNcb+Wes</OrderData>
+    </DataTransfer>
+    <ReturnCode authenticate="true">000000</ReturnCode>
+    <TimestampBankParameter authenticate="true">2009-06-16T17:56:05.698+02:00</TimestampBankParameter>
+  </body>
+</ebicsKeyManagementResponse>

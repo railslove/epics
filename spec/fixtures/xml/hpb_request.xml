@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ebicsNoPubKeyDigestsRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:org:ebics:H004" Version="H004" Revision="1">
+  <header authenticate="true">
+    <static>
+      <HostID>HOST</HostID>
+      <Nonce>014a82626a51ee1cab547bbaf18a13a0</Nonce>
+      <Timestamp>2014-09-09T09:33:12Z</Timestamp>
+      <PartnerID>PARTNER</PartnerID>
+      <UserID>USER</UserID>
+      <Product Language="de">EPICS - a ruby ebics kernel</Product>
+      <OrderDetails>
+        <OrderType>HPB</OrderType>
+        <OrderAttribute>DZHNN</OrderAttribute>
+      </OrderDetails>
+      <SecurityMedium>0000</SecurityMedium>
+    </static>
+    <mutable/>
+  </header>
+  <AuthSignature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="#xpointer(//*[@authenticate='true'])">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>5PL08o8acS8kewViTEeVqSiWZshzNG3QgZehRk1EJgg=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>d+qgWNti7uCsB/CWreyw9AGQOJiqU+CPPrpgdcisauUvJhFszEJasBeky9TsJXgxVsT27fZaHGnV2pO1YwlBmSuJSGRg5ijHCxbG+XyisIwVAVXY7mlkaO5Ms4eznaW2GCPhiwmIJZOcvzYZwzxtrCbAQFoKA+QgBaAytBtWJiOe8nErnb5s7OEg2D0NvWG4hV+NdcXPlUEKiY5Rw4qCukGXnpZmwMw/L+TB1v47eOLpQa/Dl2oJCjZgV4og3Q2o88adpErnKtIdKic8mb5FLXa2gFK63fmpCcwvs8FPb3kR7/QLWSs4WYycKcXDmgDKnVwYYcBfANEq1yFgReRjzQ==</ds:SignatureValue>
+  </AuthSignature>
+  <body/>
+</ebicsNoPubKeyDigestsRequest>

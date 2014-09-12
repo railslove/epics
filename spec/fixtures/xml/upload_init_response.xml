@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsResponse Revision="1" Version="H003" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_response.xsd" xmlns="http://www.ebics.org/H003" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <header authenticate="true">
+    <static>
+      <TransactionID>ABF70F5E704E03CFE5B50692BEE55ABA</TransactionID>
+    </static>
+    <mutable>
+      <TransactionPhase>Initialisation</TransactionPhase>
+      <ReturnCode>000000</ReturnCode>
+      <ReportText>[EBICS_OK] OK</ReportText>
+    </mutable>
+  </header>
+  <AuthSignature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="#xpointer(//*[@authenticate='true'])">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>0/3J0Cne3ncZmTUNZuD8S8HOKI95bo9fP1AvVyVZDfc=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>J1vtnW2TX3sY9IWnWDcYA2SiZcPwSKq8ap7ESJEfHjDsqDhJV5A3dOo/R4v3LwoMe7CdbWc0AX+KMrcL4FSeQ+CnM776ncQV3OELS83ZkHZzbp15B0cJ9pf3lY9JiEDxKLMeoRjNJlc97Io2iJOW6dO2ZoSPXjF2G4ukQ81P7P8=</ds:SignatureValue>
+  </AuthSignature>
+  <body>
+    <ReturnCode authenticate="true">000000</ReturnCode>
+    <TimestampBankParameter authenticate="true">2009-06-16T17:56:05.698+02:00</TimestampBankParameter>
+  </body>
+</ebicsResponse>
