@@ -20,19 +20,39 @@ Or install it yourself as:
 
 ## Usage
 
-### HPB
+### Create a client
 
 ```ruby
-
-hpb = Epics::HPB.new.to_xml
-user_key = Epics::Key(...)
-
-signer = Epics::Signer.new(hpb, user_key)
-
-signer.digest!.sign!.doc.to_xml
+e = Epics::Client.new('/path/to/keyfile', 'passphrase', 'url', 'host', 'user', 'partner')
 
 ```
 
+### Downloads
+
+Currently this EPICS implementation supports the following order types:
+
+* STA (statements in MT940 format)
+* HAA (available order types)
+* HTD (user properties and settings)
+* HPD (the available bank parameters)
+* PKT (customer usage report in text format)
+
+Addionally you can use `HPB` to fetch your bank's public keys
+
+```ruby
+res = e.STA('2014-09-01', '2014-09-11')
+# res is a a MT940 feed
+
+```
+
+### Uploads
+
+coming soon...
+
+## Supported Banks
+
+* Sofortbank
+* Deutsche Bank
 
 ## Contributing
 
