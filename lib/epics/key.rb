@@ -1,8 +1,12 @@
 class Epics::Key
   attr_accessor :key
 
-  def initialize(file, passphrase = nil)
-    self.key = OpenSSL::PKey::RSA.new(File.read(file))
+  def initialize(encoded_key, passphrase = nil)
+    if encoded_key.kind_of?(OpenSSL::PKey::RSA)
+      self.key = encoded_key
+    else
+      self.key = OpenSSL::PKey::RSA.new(encoded_key)
+    end
   end
 
   ###

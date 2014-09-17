@@ -1,12 +1,14 @@
 class Epics::Response
   attr_accessor :doc
-  attr_accessor :bank_key
-  attr_accessor :user_key
+  attr_accessor :client
 
-  def initialize(xml, user_key, bank_key)
+  def initialize(client, xml)
     self.doc = Nokogiri::XML.parse(xml)
-    self.user_key = user_key
-    self.bank_key = bank_key
+    self.client = client
+  end
+
+  def return_code
+    doc.xpath("//xmlns:ReturnCode").first.content
   end
 
   def digest_valid?
@@ -22,13 +24,13 @@ class Epics::Response
     signature = doc.xpath("//ds:SignedInfo").first.canonicalize
     signature_value = doc.xpath("//ds:SignatureValue").first
 
-    bank_key.key.verify(digester, Base64.decode64(signature_value.content), signature)
+    client.bank_e.key.verify(digester, Base64.decode64(signature_value.content), signature)
   end
 
   def public_digest_valid?
     encryption_pub_key_digest = doc.xpath("//xmlns:EncryptionPubKeyDigest").first
 
-    user_key.public_digest == encryption_pub_key_digest.content
+    client.e.public_digest == encryption_pub_key_digest.content
   end
 
   def order_data
@@ -56,7 +58,7 @@ class Epics::Response
   def transaction_key
     transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey").first.content)
 
-    @transaction_key ||= user_key.key.private_decrypt(transaction_key_encrypted)
+    @transaction_key ||= client.e.key.private_decrypt(transaction_key_encrypted)
   end
 
   def digester

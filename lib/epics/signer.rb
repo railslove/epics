@@ -1,9 +1,9 @@
 class Epics::Signer
-  attr_accessor :doc, :user_key
+  attr_accessor :doc, :client
 
-  def initialize(doc, user_key)
-    self.doc = Nokogiri::XML.parse(doc)
-    self.user_key = user_key
+  def initialize(client, doc = nil)
+    self.doc = Nokogiri::XML.parse(doc) if doc
+    self.client = client
   end
 
   def digest!
@@ -20,7 +20,7 @@ class Epics::Signer
     signature_value_node = doc.xpath("//ds:SignatureValue").first
 
     if signature_node
-      signature_value_node.content = Base64.encode64(user_key.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
+      signature_value_node.content = Base64.encode64(client.x.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
     end
 
     doc

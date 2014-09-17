@@ -1,4 +1,11 @@
-class Epics::HPB < Epics::GenericRequest
+class Epics::PTK < Epics::GenericRequest
+  attr_accessor :from, :to
+
+  def initialize(client, from, to)
+    super(client)
+    self.from = from
+    self.to = to
+  end
 
   def to_xml
     Nokogiri::XML.parse(Gyoku.xml(
@@ -6,8 +13,10 @@ class Epics::HPB < Epics::GenericRequest
             :@version => "1.0",
             :@encoding => "utf-8"
           },
-          ebics_no_pub_key_digests_request: {
+          "ebicsRequest" => {
             :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
+            :"@xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+            :"@xsi:schemaLocation" => "urn:org:ebics:H004 http://www.ebics.org/H004/ebics_response_H004.xsd",
             :@xmlns => "urn:org:ebics:H004",
             :@Version => "H004",
             :@Revision => "1",
@@ -24,12 +33,32 @@ class Epics::HPB < Epics::GenericRequest
                   :content! => "EPICS - a ruby ebics kernel"
                 },
                 "OrderDetails" => {
-                  "OrderType" => "HPB",
-                  "OrderAttribute" => "DZHNN"
+                  "OrderType" => "PTK",
+                  "OrderAttribute" => "DZHNN",
+                  "StandardOrderParams" => {
+                    "DateRange" => {
+                      "Start" => from,
+                      "End" => to
+                    }
+                  }
+                },
+                "BankPubKeyDigests" => {
+                  "Authentication" => {
+                    :@Version => "X002",
+                    :@Algorithm => "http://www.w3.org/2001/04/xmlenc#sha256",
+                    :content! => client.bank_x.public_digest
+                  },
+                  "Encryption" => {
+                    :@Version => "E002",
+                    :@Algorithm => "http://www.w3.org/2001/04/xmlenc#sha256",
+                    :content! => client.bank_e.public_digest
+                  }
                 },
                 "SecurityMedium" => "0000"
-              },
-              "mutable/" => ""
+             },
+              "mutable" => {
+                "TransactionPhase" => "Initialisation"
+              }
             },
             "AuthSignature" => {
               "ds:SignedInfo" => {
