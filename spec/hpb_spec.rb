@@ -1,14 +1,14 @@
 RSpec.describe Epics::HPB do
   let(:client) { instance_double(Epics::Client, host_id: "HOST", user_id: "USER", partner_id: "PARTNER") }
-  subject { described_class.new(client) }
   describe '#to_xml' do
-    before do
-      allow(subject).to receive(:timestamp) { "" }
-      allow(subject).to receive(:nonce) { "" }
-    end
+    subject { Nokogiri::XML.parse(described_class.new(client).to_xml) }
 
     it 'foo' do
-      expect(Nokogiri::XML.parse(subject.to_xml).to_xml).to eq(Nokogiri::XML(File.open("spec/fixtures/xml/hpb.xml")).to_xml)
+      expect(subject.xpath("//xmlns:Timestamp").first.content).to_not be_nil
+      expect(subject.xpath("//xmlns:Nonce").first.content).to_not be_nil
+      expect(subject.xpath("//xmlns:HostID").first.content).to eq("HOST")
+      expect(subject.xpath("//xmlns:UserID").first.content).to eq("USER")
+      expect(subject.xpath("//xmlns:PartnerID").first.content).to eq("PARTNER")
     end
   end
 

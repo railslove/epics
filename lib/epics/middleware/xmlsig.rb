@@ -7,6 +7,7 @@ class Epics::XMLSIG < Faraday::Middleware
 
   def call(env)
     @signer = Epics::Signer.new(@client, env["body"])
+    require "pry"; binding.pry
     @signer.digest!
     @signer.sign!
 
