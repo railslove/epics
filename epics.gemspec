@@ -19,7 +19,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "nokogiri"
-  spec.add_dependency "iconv"
   spec.add_dependency "gyoku"
   spec.add_dependency "multi_json"
   spec.add_dependency "faraday"
