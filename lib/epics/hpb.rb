@@ -1,5 +1,9 @@
 class Epics::HPB < Epics::GenericRequest
 
+  def root
+    "ebicsNoPubKeyDigestsRequest"
+  end
+
   def header
     {
       :@authenticate => true,

@@ -16,9 +16,13 @@ class Epics::GenericRequest
 
   def_delegators :client, :host_id, :user_id, :partner_id
 
+  def root
+    "ebicsRequest"
+  end
+
   def ebics_hash
     {
-      ebics_no_pub_key_digests_request: {
+      root => {
         :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
         :@xmlns => "urn:org:ebics:H004",
         :@Version => "H004",
