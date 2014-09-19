@@ -20,6 +20,10 @@ class Epics::GenericRequest
     "ebicsRequest"
   end
 
+  def body
+    nil
+  end
+
   def ebics_hash
     {
       root => {
@@ -51,7 +55,7 @@ class Epics::GenericRequest
           },
           "ds:SignatureValue/" => ""
         },
-        "body/" => ""
+        "body" => body
       }}
   end
 

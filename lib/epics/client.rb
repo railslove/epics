@@ -34,6 +34,12 @@ class Epics::Client
     self.keys["#{host_id.upcase}.X002"]
   end
 
+  def FTB
+    document = Epics::FTB.new(self)
+
+    res = post(self.url, document.to_xml).body
+  end
+
   def HPB
     document = Epics::HPB.new(self)
 
