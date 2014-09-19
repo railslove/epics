@@ -10,7 +10,7 @@ class Epics::XMLSIG < Faraday::Middleware
     @signer.digest!
     @signer.sign!
 
-    env["body"] = @signer.doc.to_xml
+    env["body"] = @signer.doc.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
 
     @app.call(env)
   end
