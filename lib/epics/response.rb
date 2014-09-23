@@ -11,6 +11,10 @@ class Epics::Response
     doc.xpath("//xmlns:ReturnCode").first.content
   end
 
+  def transaction_id
+    doc.xpath("//xmlns:TransactionID").first.content
+  end
+
   def digest_valid?
     authenticated = doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join
     digest_value = doc.xpath("//ds:DigestValue").first

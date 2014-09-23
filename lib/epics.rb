@@ -20,7 +20,7 @@ require "epics/haa"
 require "epics/sta"
 require "epics/ptk"
 require "epics/hpd"
-require "epics/ftb"
+require "epics/cd1"
 require "epics/signer"
 require "epics/client"
 

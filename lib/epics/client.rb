@@ -34,12 +34,6 @@ class Epics::Client
     self.keys["#{host_id.upcase}.X002"]
   end
 
-  def FTB
-    document = Epics::FTB.new(self)
-
-    res = post(self.url, document.to_xml).body
-  end
-
   def HPB
     document = Epics::HPB.new(self)
 
@@ -64,6 +58,18 @@ class Epics::Client
     bank_k.e = OpenSSL::BN.new(encyption_key_exponent, 16)
 
     self.keys["#{host_id.upcase}.E002"] = Epics::Key.new(bank_k)
+  end
+
+  def CD1(document)
+    cd1 = Epics::CD1.new(self, document)
+
+    res = post(self.url, cd1.to_xml).body
+
+    cd1.transaction_id = res.transaction_id
+
+    res = post(self.url, cd1.to_transfer_xml).body
+
+    res.transaction_id
   end
 
   def STA(from, to)
