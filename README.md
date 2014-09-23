@@ -41,13 +41,20 @@ Addionally you can use `HPB` to fetch your bank's public keys
 
 ```ruby
 res = e.STA('2014-09-01', '2014-09-11')
-# res is a a MT940 feed
+# res is a MT940 feed
 
 ```
 
 ### Uploads
 
-coming soon...
+* CD1 (Uploads a SEPA Direct Debit document of type COR1)
+* ... more coming soon
+
+```ruby
+res = e.CD1("i-am-a-PAIN-xml-file")
+# res is a the transaction id of the order
+
+```
 
 ## Supported Banks
 
