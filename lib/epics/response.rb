@@ -28,7 +28,7 @@ class Epics::Response
     signature = doc.xpath("//ds:SignedInfo").first.canonicalize
     signature_value = doc.xpath("//ds:SignatureValue").first
 
-    client.bank_e.key.verify(digester, Base64.decode64(signature_value.content), signature)
+    client.bank_x.key.verify(digester, Base64.decode64(signature_value.content), signature)
   end
 
   def public_digest_valid?
