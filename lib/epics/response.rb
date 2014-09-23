@@ -11,6 +11,10 @@ class Epics::Response
     doc.xpath("//xmlns:ReturnCode").first.content
   end
 
+  def report_text
+    doc.xpath("//xmlns:ReportText").first.content
+  end
+
   def transaction_id
     doc.xpath("//xmlns:TransactionID").first.content
   end
