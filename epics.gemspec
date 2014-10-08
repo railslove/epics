@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["lars@railslove.com"]
   spec.summary       = %q{a ruby implementation of the EBICS protocol}
   spec.description   = %q{a ruby implementation of the EBICS protocol}
-  spec.homepage      = "http://github.com/railslove/epics"
+  spec.homepage      = "https://github.com/railslove/epics"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
