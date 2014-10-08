@@ -4,13 +4,17 @@ class Epics::CD1 < Epics::GenericRequest
   attr_accessor :transaction_id
 
   def initialize(client, document)
-    super
+    super(client)
     self.document = document
-    self.key ||= OpenSSL::Cipher::Cipher.new("aes-128-cbc").random_key
+    self.key ||= cipher.random_key
+  end
+
+  def cipher
+    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-128-cbc")
   end
 
   def digester
-    OpenSSL::Digest::SHA256.new
+    @digester ||= OpenSSL::Digest::SHA256.new
   end
 
   def body
@@ -27,7 +31,7 @@ class Epics::CD1 < Epics::GenericRequest
         },
         "SignatureData" => {
           :@authenticate => true,
-          :content! => Base64.encode64(x(zipped_and_padded_order_signature)).gsub(/\n/,'')
+          :content! => encrypted_order_signature
         }
       }
     }
@@ -40,19 +44,22 @@ class Epics::CD1 < Epics::GenericRequest
       :"@xsi:schemaLocation" => "http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd",
       "OrderSignatureData" => {
         "SignatureVersion" => "A006",
-        "SignatureValue" => Base64.encode64(client.a.key.sign(digester, document)),
+        "SignatureValue" => signature_value,
         "PartnerID" => partner_id,
         "UserID" => user_id
       }
     })
   end
 
-  def x(d)
-    @c_x ||= OpenSSL::Cipher::Cipher.new("aes-128-cbc")
-    @c_x.encrypt
-    @c_x.padding = 0
-    @c_x.key = self.key
-    (@c_x.update(d) + @c_x.final)
+  def signature_value
+    Base64.encode64(client.a.sign( digester.digest(document.gsub(/\n|\r/, "")) )).gsub(/\n/, "")
+  end
+
+  def encrypt(d)
+    cipher.encrypt
+    cipher.padding = 0
+    cipher.key = self.key
+    (cipher.update(pad(d)) + cipher.final)
   end
 
   def encrypted_order_data
@@ -60,28 +67,26 @@ class Epics::CD1 < Epics::GenericRequest
 
     dst = z.deflate(document, Zlib::FINISH)
     z.close
-    if dst.size % 32 == 0
-      padded = dst
-    else
-      len = 32*((dst.size / 32)+1)
-      padded = dst.ljust(len,"01".to_byte_string)
-      padded[-1] = "#{len - dst.size}".rjust(2,"0").to_byte_string
-    end
 
-    Base64.encode64(x(padded)).gsub(/\n/,'')
+    Base64.encode64(encrypt(dst)).gsub(/\n/,'')
   end
 
-  def zipped_and_padded_order_signature
+  def encrypted_order_signature
     z = Zlib::Deflate.new
 
     dst = z.deflate(order_signature, Zlib::FINISH)
     z.close
-    if dst.size % 32 == 0
-      return dst
+
+    Base64.encode64(encrypt(dst)).gsub(/\n/,'')
+  end
+
+  def pad(d)
+    if d.size % 32 == 0
+      return d
     else
-      len = 32*((dst.size / 32)+1)
-      padded = dst.ljust(len,"01".to_byte_string)
-      padded[-1] = "#{len - dst.size}".to_byte_string
+      len = 32*((d.size / 32)+1)
+      padded = d.ljust(len,"01".to_byte_string)
+      padded[-1] = "#{len - d.size}".rjust(2, "0").to_byte_string
       padded
     end
   end
