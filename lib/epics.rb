@@ -10,6 +10,7 @@ require "active_support/core_ext/class/attribute"
 
 require "epics/version"
 require "epics/key"
+require "epics/mgf"
 require "epics/response"
 require "epics/middleware/xmlsig"
 require "epics/middleware/parse_ebics"
