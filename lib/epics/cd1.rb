@@ -21,7 +21,7 @@ class Epics::CD1 < Epics::GenericRequest
           "EncryptionPubKeyDigest" => {
             :"@Version" => "E002",
             :"@Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256",
-            :content! => client.e.public_digest
+            :content! => client.bank_e.public_digest
           },
           "TransactionKey" => Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
         },
