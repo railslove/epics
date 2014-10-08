@@ -29,8 +29,51 @@ class Epics::Key
     self.key.e.to_s(16)
   end
 
+  def sign(msg, salt = OpenSSL::Random.random_bytes(32) )
+    Base64.encode64(mod_pow(OpenSSL::BN.new(emsa_pss(msg, salt).to_s, 2), self.key.d, self.key.n).to_s(2)).gsub("\n", "")
+  end
+
+  def recover(msg)
+    mod_pow(OpenSSL::BN.new(msg.to_s, 2), self.key.e, self.key.n).to_s(2)
+  end
+
   def digester
     @digester ||= OpenSSL::Digest::SHA256.new
+  end
+
+  private
+
+  ##
+  # http://de.wikipedia.org/wiki/Probabilistic_Signature_Scheme
+  ##
+  def emsa_pss(msg, salt)
+    m_tick_hash = digester.digest [("00".to_byte_string * 8), digester.digest(msg), salt].join
+
+    ps = "00".to_byte_string * 190
+    db = [ps, "01".to_byte_string, salt].join
+
+    db_mask   = MGF1.new.generate(m_tick_hash, db.size)
+    masked_db = MGF1.new.xor(db, db_mask)
+
+    masked_db_msb = OpenSSL::BN.new(masked_db[0], 2).to_i.to_s(2).rjust(8, "0")
+    masked_db_msb[0] = "0"
+
+    masked_db[0] = OpenSSL::BN.new(masked_db_msb.to_i(2).to_s).to_s(2)
+
+    [masked_db, m_tick_hash, 'BC'.to_byte_string].join
+  end
+
+  def mod_pow(base, power, mod)
+    base  = base.to_i
+    power = power.to_i
+    mod   = mod.to_i
+    result = 1
+    while power > 0
+      result = (result * base) % mod if power & 1 == 1
+      base = (base * base) % mod
+      power >>= 1
+    end
+    OpenSSL::BN.new(result.to_s)
   end
 
 end
