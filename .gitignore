@@ -16,3 +16,4 @@ mkmf.log
 .DS_Store
 sbk.key
 /mt940
+*.key
