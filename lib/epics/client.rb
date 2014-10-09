@@ -84,7 +84,7 @@ class Epics::Client
     document = Epics::HAA.new(self)
     res = post(self.url, document.to_xml).body
 
-    res.order_data
+    Nokogiri::XML(res.order_data).xpath("//xmlns:OrderTypes").first.content.split(/\s/)
   end
 
   def HTD
