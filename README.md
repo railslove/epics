@@ -36,6 +36,7 @@ Currently this EPICS implementation supports the following order types:
 * HTD (user properties and settings)
 * HPD (the available bank parameters)
 * PKT (customer usage report in text format)
+* ... more coming soon
 
 Addionally you can use `HPB` to fetch your bank's public keys
 
@@ -45,9 +46,16 @@ res = e.STA('2014-09-01', '2014-09-11')
 
 ```
 
+### Initialization (coming soon)
+
+* INI (Sends the public key of the electronic signature.)
+* HIA (Sends the public authentication (X002) and encryption (E002) keys.)
+
 ### Uploads
 
 * CD1 (Uploads a SEPA Direct Debit document of type COR1)
+* CDD (Uploads a SEPA Direct Debit document of type CORE)
+* CCT (Uploads a SEPA Credit document)
 * ... more coming soon
 
 ```ruby
