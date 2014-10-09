@@ -47,10 +47,10 @@ class Epics::Key
   # http://de.wikipedia.org/wiki/Probabilistic_Signature_Scheme
   ##
   def emsa_pss(msg, salt)
-    m_tick_hash = digester.digest [("00".to_byte_string * 8), digester.digest(msg), salt].join
+    m_tick_hash = digester.digest [("\x00" * 8), digester.digest(msg), salt].join
 
-    ps = "00".to_byte_string * 190
-    db = [ps, "01".to_byte_string, salt].join
+    ps = "\x00" * 190
+    db = [ps, "\x01", salt].join
 
     db_mask   = MGF1.new.generate(m_tick_hash, db.size)
     masked_db = MGF1.new.xor(db, db_mask)
@@ -60,7 +60,7 @@ class Epics::Key
 
     masked_db[0] = OpenSSL::BN.new(masked_db_msb.to_i(2).to_s).to_s(2)
 
-    [masked_db, m_tick_hash, 'BC'.to_byte_string].join
+    [masked_db, m_tick_hash, ["BC"].pack("H*") ].join
   end
 
   def mod_pow(base, power, mod)

@@ -5,7 +5,6 @@ require 'gyoku'
 require 'multi_json'
 require 'faraday'
 require 'faraday_middleware'
-require 'hex_string'
 require "active_support/core_ext/class/attribute"
 
 require "epics/version"

@@ -41,21 +41,21 @@ class Epics::Client
 
     hpb = Nokogiri::XML.parse(res.order_data)
 
-    auth_key_modulus  = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Modulus").first.content).to_hex_string(false)
-    auth_key_exponent = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Exponent").first.content).to_hex_string(false)
+    auth_key_modulus  = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Modulus").first.content)
+    auth_key_exponent = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Exponent").first.content)
 
     bank_k   = OpenSSL::PKey::RSA.new
-    bank_k.n = OpenSSL::BN.new(auth_key_modulus, 16)
-    bank_k.e = OpenSSL::BN.new(auth_key_exponent, 16)
+    bank_k.n = OpenSSL::BN.new(auth_key_modulus, 2)
+    bank_k.e = OpenSSL::BN.new(auth_key_exponent, 2)
 
     self.keys["#{host_id.upcase}.X002"] = Epics::Key.new(bank_k)
 
-    encyption_key_modulus  = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Modulus").last.content).to_hex_string(false)
-    encyption_key_exponent = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Exponent").last.content).to_hex_string(false)
+    encyption_key_modulus  = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Modulus").last.content)
+    encyption_key_exponent = Base64.decode64(hpb.xpath("//xmlns:PubKeyValue/ds:RSAKeyValue/ds:Exponent").last.content)
 
     bank_k = OpenSSL::PKey::RSA.new
-    bank_k.n = OpenSSL::BN.new(encyption_key_modulus, 16)
-    bank_k.e = OpenSSL::BN.new(encyption_key_exponent, 16)
+    bank_k.n = OpenSSL::BN.new(encyption_key_modulus, 2)
+    bank_k.e = OpenSSL::BN.new(encyption_key_exponent, 2)
 
     self.keys["#{host_id.upcase}.E002"] = Epics::Key.new(bank_k)
   end
