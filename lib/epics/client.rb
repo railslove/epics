@@ -35,6 +35,12 @@ class Epics::Client
     keys["#{host_id.upcase}.X002"]
   end
 
+  def HIA
+    document = Epics::HIA.new(self)
+
+    post(self.url, document.to_xml).body
+  end
+
   def INI
     document = Epics::INI.new(self)
 
