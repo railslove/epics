@@ -1,14 +1,15 @@
 require 'faraday_middleware/response_middleware'
 
-class Epics::ParseEbics < FaradayMiddleware::ResponseMiddleware
-    class_attribute :client
+class Epics::ParseEbics < Faraday::Middleware
+  def initialize(app = nil, options = {})
+    @app = app
+    @client = options[:client]
+    super(app)
+  end
 
-    def initialize(app = nil, options = {})
-      super
-      self.class.client = @options[:client]
+  def call(env)
+    @app.call(env).on_complete do |env|
+      env[:body] = ::Epics::Response.new(@client, env[:body])
     end
-
-    define_parser do |body|
-      ::Epics::Response.new(client, body) unless body.strip.empty?
-    end
+  end
 end
