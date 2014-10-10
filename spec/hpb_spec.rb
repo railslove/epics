@@ -3,7 +3,7 @@ RSpec.describe Epics::HPB do
   describe '#to_xml' do
     subject { Nokogiri::XML.parse(described_class.new(client).to_xml) }
 
-    it 'foo' do
+    specify do
       expect(subject.xpath("//xmlns:Timestamp").first.content).to_not be_nil
       expect(subject.xpath("//xmlns:Nonce").first.content).to_not be_nil
       expect(subject.xpath("//xmlns:HostID").first.content).to eq("HOST")
