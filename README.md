@@ -26,6 +26,11 @@ Or install it yourself as:
 e = Epics::Client.new('/path/to/keyfile', 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
+`TODO`
+
+* what is a keyfile and where will I get one?
+* where do I get all these credentials?
+
 ### Initialization (coming soon)
 
 * INI (Sends the public key of the electronic signature.)
