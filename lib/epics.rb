@@ -24,6 +24,7 @@ require "epics/hpd"
 require "epics/cd1"
 require "epics/cct"
 require "epics/cdd"
+require "epics/hia"
 require "epics/signer"
 require "epics/client"
 
