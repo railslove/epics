@@ -4,6 +4,8 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'epics'
 require 'webmock/rspec'
+require 'rspec/matchers' # req by equivalent-xml custom matcher `be_equivalent_to`
+require 'equivalent-xml'
 
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f}
 

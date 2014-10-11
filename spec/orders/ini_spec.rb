@@ -11,10 +11,10 @@ RSpec.describe Epics::INI do
 
     describe 'validate against fixture' do
 
-      let(:signature_order_data) { File.read File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ini.xml') }
+      let(:signature_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ini.xml'))) }
 
       it "will match exactly" do
-        expect(subject.to_xml).to eq(signature_order_data)
+        expect(Nokogiri::XML(subject.to_xml)).to be_equivalent_to(signature_order_data)
       end
     end
   end
@@ -25,10 +25,10 @@ RSpec.describe Epics::INI do
 
     describe 'validate against fixture' do
 
-      let(:signature_order_data) { File.read File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'signature_pub_key_order_data.xml') }
+      let(:signature_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'signature_pub_key_order_data.xml'))) }
 
       it "will match exactly" do
-        expect(subject.key_signature).to eq(signature_order_data)
+        expect(Nokogiri::XML(subject.key_signature)).to be_equivalent_to(signature_order_data)
       end
     end
   end
