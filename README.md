@@ -26,15 +26,26 @@ Or install it yourself as:
 e = Epics::Client.new('/path/to/keyfile', 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
-`TODO`
+### Initialization
 
-* what is a keyfile and where will I get one?
-* where do I get all these credentials?
-
-### Initialization (coming soon)
+In case your new to EBICS, you'll have to complete a initialization process with
+your bank. When create a `Epics::Client` and the keyfile isn't present, we'll create
+the needed keys for you. You can then call `INI` and `HIA` to transfer the public
+key information to you can. In addition its required to send the key information
+via a second channel, this is what `ini_letter` is for. It creates a html file
+containing all the needed information.
 
 * INI (Sends the public key of the electronic signature.)
 * HIA (Sends the public authentication (X002) and encryption (E002) keys.)
+
+1. create the INI/HIA Letter
+
+`
+e.ini_letter("Bank Name", "/tmp.ini.html")
+`
+
+2. Print the file and send it to your bank :)
+
 
 ### Downloads
 
@@ -70,7 +81,6 @@ puts e.STA('2014-09-01', '2014-09-11')
 ^20wynagrodzenie z tytulu umow^21y o prac e
 ^32SZCZACHOR DOROTA
 ^62RATAJA 13B/1083-032 PSZCZOL^63KI
-
 ```
 
 ### Uploads
@@ -85,8 +95,6 @@ Example:
 ```ruby
 puts e.CD1("i-am-a-PAIN-xml-file")
 # res is a the transaction id of the order
-
-
 ```
 
 ## Supported Banks
