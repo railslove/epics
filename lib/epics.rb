@@ -1,5 +1,6 @@
 require 'openssl'
 require 'base64'
+require 'erb'
 require 'nokogiri'
 require 'gyoku'
 require 'multi_json'

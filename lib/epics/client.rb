@@ -47,6 +47,13 @@ class Epics::Client
     post(self.url, document.to_xml).body
   end
 
+  def ini_letter(bankname, path)
+    raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
+    File.write(path, ERB.new(raw).result(binding))
+
+    path
+  end
+
   def HPB
     res = post(url, Epics::HPB.new(self).to_xml).body
     hpb = Nokogiri::XML.parse(res.order_data)
