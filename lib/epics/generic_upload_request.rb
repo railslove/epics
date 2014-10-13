@@ -64,19 +64,13 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def encrypted_order_data
-    z = Zlib::Deflate.new
-
-    dst = z.deflate(document, Zlib::FINISH)
-    z.close
+    dst = Zlib::Deflate.deflate(document)
 
     Base64.encode64(encrypt(dst)).gsub(/\n/,'')
   end
 
   def encrypted_order_signature
-    z = Zlib::Deflate.new
-
-    dst = z.deflate(order_signature, Zlib::FINISH)
-    z.close
+    dst = Zlib::Deflate.deflate(order_signature)
 
     Base64.encode64(encrypt(dst)).gsub(/\n/,'')
   end

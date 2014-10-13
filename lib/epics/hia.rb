@@ -28,7 +28,7 @@ class Epics::HIA < Epics::GenericRequest
   def body
     {
       "DataTransfer" => {
-        "OrderData" => Base64.strict_encode64(Zlib::Deflate.new.deflate(order_data, Zlib::FINISH))
+        "OrderData" => Base64.strict_encode64(Zlib::Deflate.deflate(order_data))
       }
     }
   end

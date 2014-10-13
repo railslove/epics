@@ -46,12 +46,7 @@ class Epics::Response
 
     data = (cipher.update(order_data_encrypted) + cipher.final)
 
-    zstream = Zlib::Inflate.new
-    buffer = zstream.inflate(data)
-    zstream.finish
-    zstream.close
-
-    buffer
+    Zlib::Inflate.new.inflate(data)
   end
 
   def cipher
