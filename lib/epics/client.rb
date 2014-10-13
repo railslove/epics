@@ -78,15 +78,15 @@ class Epics::Client
   end
 
   def CD1(document)
-    cd1 = Epics::CD1.new(self, document)
+    upload(Epics::CD1, document)
+  end
 
-    res = post(url, cd1.to_xml).body
+  def CDD(document)
+    upload(Epics::CDD, document)
+  end
 
-    cd1.transaction_id = res.transaction_id
-
-    res = post(url, cd1.to_transfer_xml).body
-
-    res.transaction_id
+  def CCT(document)
+    upload(Epics::CCT, document)
   end
 
   def STA(from, to)
@@ -130,6 +130,18 @@ class Epics::Client
   end
 
   private
+
+  def upload(order_type, document)
+    order = order_type.new(self, document)
+
+    res = post(url, order.to_xml).body
+
+    order.transaction_id = res.transaction_id
+
+    res = post(url, order.to_transfer_xml).body
+
+    res.transaction_id
+  end
 
   def connection
     @connection ||= Faraday.new do |faraday|
