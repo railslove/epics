@@ -6,9 +6,9 @@ class Epics::Client
   def_delegators :connection, :post
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id)
-    self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content
+    self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
-    self.keys = extract_keys
+    self.keys = extract_keys if keys_content
     self.url  = url
     self.host_id    = host_id
     self.user_id    = user_id
@@ -143,7 +143,11 @@ class Epics::Client
   end
 
   def write_keys(path)
-    File.write(path, MultiJson.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)}, pretty: true))
+    File.write(path, dump_keys)
+  end
+
+  def dump_keys
+    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
   end
 
   def cipher
@@ -154,7 +158,7 @@ class Epics::Client
     salt = OpenSSL::Random.random_bytes(8)
 
     setup_cipher(:encrypt, self.passphrase, salt)
-    cipher.update(data) + cipher.final
+    Base64.strict_encode64([salt, cipher.update(data) + cipher.final].join)
   end
 
   def decrypt(data)
