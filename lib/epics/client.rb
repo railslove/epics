@@ -47,10 +47,13 @@ class Epics::Client
     post(self.url, document.to_xml).body
   end
 
-  def ini_letter(bankname, path)
+  def ini_letter(bankname)
     raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
-    File.write(path, ERB.new(raw).result(binding))
+    ERB.new(raw).result(binding)
+  end
 
+  def save_ini_letter(bankname, path)
+    File.write(path, ini_letter(bankname))
     path
   end
 
