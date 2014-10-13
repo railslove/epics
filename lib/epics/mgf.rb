@@ -1,4 +1,4 @@
-class MGF1
+class Epics::MGF1
   def initialize(digest = OpenSSL::Digest::SHA256)
     @digest = digest.new
     @hlen = 32

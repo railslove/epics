@@ -52,8 +52,8 @@ class Epics::Key
     ps = "\x00" * 190
     db = [ps, "\x01", salt].join
 
-    db_mask   = MGF1.new.generate(m_tick_hash, db.size)
-    masked_db = MGF1.new.xor(db, db_mask)
+    db_mask   = Epics::MGF1.new.generate(m_tick_hash, db.size)
+    masked_db = Epics::MGF1.new.xor(db, db_mask)
 
     masked_db_msb = OpenSSL::BN.new(masked_db[0], 2).to_i.to_s(2).rjust(8, "0")
     masked_db_msb[0] = "0"
