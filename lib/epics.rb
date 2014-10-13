@@ -27,6 +27,7 @@ require "epics/hia"
 require "epics/ini"
 require "epics/signer"
 require "epics/client"
+require "epics/commands"
 
 class Epics
 
