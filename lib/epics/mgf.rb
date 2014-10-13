@@ -1,4 +1,4 @@
-class MGF1
+class Epics::MGF1
   def initialize(digest = OpenSSL::Digest::SHA256)
     @digest = digest.new
     @hlen = 32
@@ -31,7 +31,7 @@ class MGF1
     bits = divceil(num.size, 4) * 4 * 8
     pos = value = 0
     str = ""
-    for idx in 0..(bits - 1)
+    (0..(bits - 1)).each do |idx|
       if num[idx].nonzero?
         value |= (num[idx] << pos)
       end
