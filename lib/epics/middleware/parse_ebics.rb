@@ -1,5 +1,3 @@
-require 'faraday_middleware/response_middleware'
-
 class Epics::ParseEbics < Faraday::Middleware
   def initialize(app = nil, options = {})
     @app = app
