@@ -25,7 +25,13 @@ Or install it yourself as:
 ### Create a client
 
 ```ruby
-e = Epics::Client.new('/path/to/keyfile', 'passphrase', 'url', 'host', 'user', 'partner')
+# read the keys from a file
+e = Epics::Client.new(File.open('/tmp/my.key'), 'passphrase', 'url', 'host', 'user', 'partner')
+
+# or provide a string hoding the key data
+keys = File.read('/tmp/my.key')
+
+e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
 ### Initialization

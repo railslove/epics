@@ -1,10 +1,10 @@
 RSpec.describe Epics::Client do
 
-  subject { described_class.new( File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key'), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  subject { described_class.new( File.read(File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
 
   describe 'attributes' do
     it { expect(subject.host_id).to eq('SIZBN001') }
-    it { expect(subject.keys_file).to match(/SIZBN001.key/) }
+    it { expect(subject.keys_content).to match(/SIZBN001.E002/) }
     it { expect(subject.passphrase).to eq('secret') }
     it { expect(subject.partner_id).to eq('EBICS') }
     it { expect(subject.url).to eq('https://194.180.18.30/ebicsweb/ebicsweb') }
@@ -19,6 +19,7 @@ RSpec.describe Epics::Client do
         "SIZBN001.X002" => be_a(Epics::Key)
       ))
     end
+
   end
 
   describe '#e' do

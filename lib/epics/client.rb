@@ -1,12 +1,12 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_file
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
 
   def_delegators :connection, :post
 
-  def initialize(keys_file, passphrase, url, host_id, user_id, partner_id)
-    self.keys_file = keys_file
+  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id)
+    self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content
     self.passphrase = passphrase
     self.keys = extract_keys
     self.url  = url
@@ -134,13 +134,13 @@ class Epics::Client
   end
 
   def extract_keys
-    MultiJson.load(File.read(keys_file)).each_with_object({}) do |(type, key), memo|
+    MultiJson.load(self.keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
   end
 
-  def write_keys
-    File.write(keys_file, MultiJson.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)}, pretty: true))
+  def write_keys(path)
+    File.write(path, MultiJson.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)}, pretty: true))
   end
 
   def cipher

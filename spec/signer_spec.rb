@@ -1,5 +1,5 @@
 RSpec.describe Epics::Signer do
-  let(:client) { Epics::Client.new( File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key'), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
   let(:hpb) { Epics::HPB.new(client) }
 
   before do
