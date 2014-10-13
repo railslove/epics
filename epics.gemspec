@@ -22,8 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "gyoku"
   spec.add_dependency "multi_json"
   spec.add_dependency "faraday"
-  spec.add_dependency "faraday_middleware"
-  spec.add_dependency "activesupport"
 
   spec.add_development_dependency "bundler", ">= 1.6.2"
   spec.add_development_dependency "rake", "~> 10.0"

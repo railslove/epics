@@ -5,8 +5,6 @@ require 'nokogiri'
 require 'gyoku'
 require 'multi_json'
 require 'faraday'
-require 'faraday_middleware'
-require "active_support/core_ext/class/attribute"
 
 require "epics/version"
 require "epics/key"
