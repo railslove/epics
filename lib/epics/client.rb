@@ -35,17 +35,6 @@ class Epics::Client
     keys["#{host_id.upcase}.X002"]
   end
 
-  def HIA
-    document = Epics::HIA.new(self)
-
-    post(self.url, document.to_xml).body
-  end
-
-  def INI
-    document = Epics::INI.new(self)
-
-    post(self.url, document.to_xml).body
-  end
 
   def ini_letter(bankname)
     raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
@@ -57,10 +46,16 @@ class Epics::Client
     path
   end
 
-  def HPB
-    res = post(url, Epics::HPB.new(self).to_xml).body
-    hpb = Nokogiri::XML.parse(res.order_data)
+  def HIA
+    upload(Epics::HIA)
+  end
 
+  def INI
+    upload(Epics::INI)
+  end
+
+  def HPB
+    hpb = Nokogiri::XML(download(Epics::HPB))
     hpb.xpath("//xmlns:PubKeyValue").each do |node|
       type = node.parent.last_element_child.content
 
@@ -90,39 +85,23 @@ class Epics::Client
   end
 
   def STA(from, to)
-    document = Epics::STA.new(self, from, to)
-
-    res = post(url, document.to_xml).body
-
-    res.order_data
+    download(Epics::STA, from, to)
   end
 
   def HAA
-    document = Epics::HAA.new(self)
-    res = post(url, document.to_xml).body
-
-    Nokogiri::XML(res.order_data).xpath("//xmlns:OrderTypes").first.content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes").content.split(/\s/)
   end
 
   def HTD
-    document = Epics::HTD.new(self)
-    res = post(url, document.to_xml).body
-
-    res.order_data
+    download(Epics::HTD)
   end
 
   def HPD
-    document = Epics::HPD.new(self)
-    res = post(url, document.to_xml).body
-
-    res.order_data
+    download(Epics::HPD)
   end
 
   def PTK(from, to)
-    document = Epics::PTK.new(self, from, to)
-    res = post(url, document.to_xml).body
-
-    res.order_data
+    download(Epics::PTK, from, to)
   end
 
   def save_keys(path)
@@ -141,6 +120,13 @@ class Epics::Client
     res = post(url, order.to_transfer_xml).body
 
     res.transaction_id
+  end
+
+  def download(order_type, *args)
+    document = order_type.new(self, *args)
+    res = post(url, document.to_xml).body
+
+    res.order_data
   end
 
   def connection
