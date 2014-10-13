@@ -7,13 +7,42 @@ Escort::App.create do |app|
   app.summary 'EPICS is a ruby implementation of the EBICS (Electronic Banking Internet Communication Standard)'
 
   app.options do |opts|
-    opts.opt :config, 'Configuration file', short: '-c', long: '--config'
-    opts.validate(:config, 'must be a readable file') { |option| File.exist?(option) }
+    opts.opt :ebics_config, 'Configuration file for the client', short: '-e', long: '--ebics_config', type: :string
+    opts.validate(:ebics_config, 'must be a readable file, have you run `init`?') { |option| File.exist?(option) }
+    # TODO: force flag for overwriting config ?
   end
 
-  Epics::COMMANDS.each do |cmd|
-    app.command cmd.name do |command|
-      command.summary cmd.description
+  app.command :init do |command|
+    command.summary 'configure epics with your client settings, run `epics init --help` for more info'
+
+    command.options do |opts|
+      opts.opt :keys_file, 'keys', long: '--keys_file', type: :string, default: nil
+      opts.opt :passphrase, 'passphrase', long: '--passphrase', type: :string, default: nil
+      opts.opt :url, 'url', long: '--url', type: :string, default: nil
+      opts.opt :host_id, 'host', long: '--host', type: :string, default: nil
+      opts.opt :user_id, 'user', long: '--user', type: :string, default: nil
+      opts.opt :partner_id, 'partner', long: '--partner', type: :string, default: nil
+    end
+
+    command.action do |options, arguments|
+      Commander.new(options, arguments).init
+    end
+  end
+
+  {
+    HPB: "fetch your bank's public keys",
+    STA: "statements in MT940 format",
+    HAA: "available order types",
+    HTD: "user properties and settings",
+    HPD: "the available bank parameters",
+    PTK: "customer usage report in text format",
+  }.each do |cmd, description|
+    app.command cmd do |command|
+      command.summary description
+
+      command.options do |opts|
+        # TODO: on the fly ebics_config
+      end
 
       command.action do |options, arguments|
         Commander.new(options, arguments).execute
