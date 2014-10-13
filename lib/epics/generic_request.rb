@@ -78,7 +78,7 @@ class Epics::GenericRequest
           }
         }
       }
-    }, order!: [:header, :AuthSignature]), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
   def to_xml
@@ -92,7 +92,7 @@ class Epics::GenericRequest
         "AuthSignature" => auth_signature,
         "body" => body
       }
-    }, order!: [:header, :AuthSignature]), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end
 
 
