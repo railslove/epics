@@ -1,211 +1,229 @@
-<h2>EBICS-Initialisierungsbrief (INI)</h2>
-<table>
-  <tr>
-    <td>
-      Datum
-    </td>
-    <td>
-      <%= Date.today.strftime("%d.%m.%Y") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Uhrzeit
-    </td>
-    <td>
-      <%= Time.now.strftime("%H:%M:%S") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Empfänger
-    </td>
-    <td>
-      <%= bankname %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      User-ID
-    </td>
-    <td>
-      <%= user_id %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Kunden-ID
-    </td>
-    <td>
-      <%= partner_id %>
-    </td>
-  </tr>
-</table>
-<p>Öffentlicher Schlüssel für die elektronische Unterschrift (A006)</p>
-<p>Exponent (<%= a.key.e.num_bytes * 8 %> Bit):</p>
-<code><%= a.e %></code>
-<p>Modulus (<%= a.key.n.num_bytes * 8 %> Bit):</p>
-<code><%= a.n.scan(/.{2}/).join(" ") %></code>
-<p>Hash (SHA-256):</p>
-<code><%= Base64.decode64(a.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
-<p>Ich bestätige hiermit den obigen öffentlichen Schlüssel für meine elektronische Unterschrift.</p>
-</br>
-</br>
-</br>
-</br>
-<table>
-  <tr>
-    <td>
-      _________________
-    </td>
-    <td>
-      _________________
-    </td>
-    <td>
-      _________________
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Ort/Datum
-    </td>
-    <td>
-      Name/Firma
-    </td>
-    <td>
-      Unterschrift
-    </td>
-  </tr>
-</table>
-<div style="page-break-after:always"></div>
-<h2>EBICS-Initialisierungsbrief (HIA) - Seite 1/2</h2>
-<table>
-  <tr>
-    <td>
-      Datum
-    </td>
-    <td>
-      <%= Date.today.strftime("%d.%m.%Y") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Uhrzeit
-    </td>
-    <td>
-      <%= Time.now.strftime("%H:%M:%S") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Empfänger
-    </td>
-    <td>
-      <%= bankname %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      User-ID
-    </td>
-    <td>
-      <%= user_id %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Kunden-ID
-    </td>
-    <td>
-      <%= partner_id %>
-    </td>
-  </tr>
-</table>
-<p>Öffentlicher Authentifikationsschlüssel (X002)</p>
-<p>Exponent (<%= x.key.e.num_bytes * 8 %> Bit):</p>
-<code><%= x.e %></code>
-<p>Modulus (<%= x.key.n.num_bytes * 8 %> Bit):</p>
-<code><%= x.n.scan(/.{2}/).join(" ") %></code>
-<p>Hash (SHA-256):</p>
-<code><%= Base64.decode64(x.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
-<p> Fortsetzung auf Seite 2 ...</p>
-<div style="page-break-after:always"></div>
-<h2>EBICS-Initialisierungsbrief (HIA) - Seite 2/2</h2>
-<table>
-  <tr>
-    <td>
-      Datum
-    </td>
-    <td>
-      <%= Date.today.strftime("%d.%m.%Y") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Uhrzeit
-    </td>
-    <td>
-      <%= Time.now.strftime("%H:%M:%S") %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Empfänger
-    </td>
-    <td>
-      <%= bankname %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      User-ID
-    </td>
-    <td>
-      <%= user_id %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Kunden-ID
-    </td>
-    <td>
-      <%= partner_id %>
-    </td>
-  </tr>
-</table>
-<p>Öffentlicher Verschlüsselungsschlüssel (E002)</p>
-<p>Exponent (<%= e.key.e.num_bytes * 8 %> Bit):</p>
-<code><%= e.e %></code>
-<p>Modulus (<%= e.key.n.num_bytes * 8 %> Bit):</p>
-<p style="width:20cm;"><%= e.n.scan(/.{2}/).join(" ") %></p>
-<p>Hash (SHA-256):</p>
-<code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
-<p>Ich bestätige hiermit die obigen öffentlichen Schlüssel für meinen EBICS-Zugang.</p>
-</br>
-</br>
-</br>
-</br>
-<table>
-  <tr>
-    <td>
-      _________________
-    </td>
-    <td>
-      _________________
-    </td>
-    <td>
-      _________________
-    </td>
-  </tr>
-  <tr>
-    <td>
-      Ort/Datum
-    </td>
-    <td>
-      Name/Firma
-    </td>
-    <td>
-      Unterschrift
-    </td>
-  </tr>
-</table>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <div>
+      <h2>EBICS-Initialisierungsbrief (INI)</h2>
+      <table>
+        <tr>
+          <td>
+            Datum
+          </td>
+          <td>
+            <%= Date.today.strftime("%d.%m.%Y") %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Uhrzeit
+          </td>
+          <td>
+            <%= Time.now.strftime("%H:%M:%S") %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Empfänger
+          </td>
+          <td>
+            <%= bankname %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            User-ID
+          </td>
+          <td>
+            <%= user_id %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Kunden-ID
+          </td>
+          <td>
+            <%= partner_id %>
+          </td>
+        </tr>
+      </table>
+      <p>Öffentlicher Schlüssel für die elektronische Unterschrift (A006)</p>
+      <p>Exponent (<%= a.key.e.num_bytes * 8 %> Bit):</p>
+      <p><code><%= a.e %></code></p>
+      <p>Modulus (<%= a.key.n.num_bytes * 8 %> Bit):</p>
+      <p><code><%= a.n.scan(/.{2}/).join(" ") %></code></p>
+      <p>Hash (SHA-256):</p>
+      <p>
+      <code><%= Base64.decode64(a.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
+      </p>
+      <p>Ich bestätige hiermit den obigen öffentlichen Schlüssel für meine elektronische Unterschrift.</p>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <table>
+        <tr>
+          <td>
+            _________________
+          </td>
+          <td>
+            _________________
+          </td>
+          <td>
+            _________________
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Ort/Datum
+          </td>
+          <td>
+            Name/Firma
+          </td>
+          <td>
+            Unterschrift
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div style="page-break-after:always"></div>
+    <h2>EBICS-Initialisierungsbrief (HIA) - Seite 1/2</h2>
+    <table>
+      <tr>
+        <td>
+          Datum
+        </td>
+        <td>
+          <%= Date.today.strftime("%d.%m.%Y") %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Uhrzeit
+        </td>
+        <td>
+          <%= Time.now.strftime("%H:%M:%S") %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Empfänger
+        </td>
+        <td>
+          <%= bankname %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          User-ID
+        </td>
+        <td>
+          <%= user_id %>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Kunden-ID
+        </td>
+        <td>
+          <%= partner_id %>
+        </td>
+      </tr>
+    </table>
+    <div>
+      <p>Öffentlicher Authentifikationsschlüssel (X002)</p>
+      <p>Exponent (<%= x.key.e.num_bytes * 8 %> Bit):</p>
+      <p><code><%= x.e %></code></p>
+      <p>Modulus (<%= x.key.n.num_bytes * 8 %> Bit):</p>
+      <p><code><%= x.n.scan(/.{2}/).join(" ") %></code></p>
+      <p>Hash (SHA-256):</p>
+      <p>
+      <code><%= Base64.decode64(x.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
+      </p>
+      <p> Fortsetzung auf Seite 2 ...</p>
+      <div style="page-break-after:always"></div>
+      <h2>EBICS-Initialisierungsbrief (HIA) - Seite 2/2</h2>
+      <table>
+        <tr>
+          <td>
+            Datum
+          </td>
+          <td>
+            <%= Date.today.strftime("%d.%m.%Y") %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Uhrzeit
+          </td>
+          <td>
+            <%= Time.now.strftime("%H:%M:%S") %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Empfänger
+          </td>
+          <td>
+            <%= bankname %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            User-ID
+          </td>
+          <td>
+            <%= user_id %>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Kunden-ID
+          </td>
+          <td>
+            <%= partner_id %>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <p>Öffentlicher Verschlüsselungsschlüssel (E002)</p>
+      <p>Exponent (<%= e.key.e.num_bytes * 8 %> Bit):</p>
+      <p><code><%= e.e %></code></p>
+      <p>Modulus (<%= e.key.n.num_bytes * 8 %> Bit):</p>
+      <p style="width:20cm;"><%= e.n.scan(/.{2}/).join(" ") %></p>
+      <p>Hash (SHA-256):</p>
+      <p><code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code></p>
+      <p>Ich bestätige hiermit die obigen öffentlichen Schlüssel für meinen EBICS-Zugang.</p>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <table>
+        <tr>
+          <td>
+            _________________
+          </td>
+          <td>
+            _________________
+          </td>
+          <td>
+            _________________
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Ort/Datum
+          </td>
+          <td>
+            Name/Firma
+          </td>
+          <td>
+            Unterschrift
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
