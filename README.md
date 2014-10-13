@@ -20,6 +20,43 @@ Or install it yourself as:
 
     $ gem install epics
 
+
+## Getting started
+
+In case your new to EBICS, you'll have to complete a initialization process with
+your bank. Epics can help you to generate all the necessary keys and directly store
+them for later use.
+
+```ruby
+e = Epics.initialize("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
+```
+
+This will be plain JSON, holding your authentication, encryption and signature key
+encrypted with AES-256.
+
+To use the keys later, just store them in a file
+
+```ruby
+e.save_keys("/home/epics/my.key")
+# or store the json elsewhere, but store it! for gods sake :D
+```
+
+It is really __important__ to keep your keys around, once your user has been initialized
+you'll have to start over when you loose the keys!
+
+The next step is to print the INI letter and sending it to your bank:
+
+```ruby
+e.save_ini_letter( 'My Banks Name', "/home/epics/ini.html" )
+```
+
+Open the generated HTML file in your favorite browser and print it out (skipping
+header and footer sounds like a solid setting here ;)
+
+Put the INI letter in a envelope and mail it to your bank!
+
+Done!
+
 ## Usage
 
 ### Create a client
@@ -34,26 +71,10 @@ keys = File.read('/tmp/my.key')
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
-### Initialization
-
-In case your new to EBICS, you'll have to complete a initialization process with
-your bank. When create a `Epics::Client` and the keyfile isn't present, we'll create
-the needed keys for you. You can then call `INI` and `HIA` to transfer the public
-key information to you can. In addition its required to send the key information
-via a second channel, this is what `ini_letter` is for. It creates a html file
-containing all the needed information.
+## Initialization
 
 * INI (Sends the public key of the electronic signature.)
 * HIA (Sends the public authentication (X002) and encryption (E002) keys.)
-
-1. create the INI/HIA Letter
-
-`
-e.ini_letter("Bank Name", "/tmp.ini.html")
-`
-
-2. Print the file and send it to your bank :)
-
 
 ### Downloads
 

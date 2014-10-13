@@ -34,13 +34,13 @@ class Epics
     @client = Client.new(*args)
   end
 
-  def self.initialize(passphrase, keysize = 2048)
-    @client = Client.new(nil, passphrase, nil, nil, nil, nil)
+  def self.initialize(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
+    @client = Client.new(nil, passphrase, url, host_id, user_id, partner_id)
     @client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
       memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
     end
 
-    @client.send(:dump_keys)
+    @client
   end
 
   def credit(document)

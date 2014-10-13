@@ -125,6 +125,10 @@ class Epics::Client
     res.order_data
   end
 
+  def save_keys(path)
+    File.write(path, dump_keys)
+  end
+
   private
 
   def connection
@@ -140,10 +144,6 @@ class Epics::Client
     JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
-  end
-
-  def write_keys(path)
-    File.write(path, dump_keys)
   end
 
   def dump_keys
