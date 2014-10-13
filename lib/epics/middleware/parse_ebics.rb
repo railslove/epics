@@ -1,8 +1,8 @@
 class Epics::ParseEbics < Faraday::Middleware
+
   def initialize(app = nil, options = {})
-    @app = app
-    @client = options[:client]
     super(app)
+    @client = options[:client]
   end
 
   def call(env)
