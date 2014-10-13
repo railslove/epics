@@ -135,12 +135,37 @@ class Epics::Client
 
   def extract_keys
     MultiJson.load(File.read(keys_file)).each_with_object({}) do |(type, key), memo|
-      memo[type] = Epics::Key.new(Base64.decode64(key)) if key
+      memo[type] = Epics::Key.new(decrypt(key)) if key
     end
   end
 
   def write_keys
-    File.write(keys_file, MultiJson.dump(keys.each_with_object({}) {|(k,v),m| m[k]= Base64.encode64(v.key.to_der)}, pretty: true))
+    File.write(keys_file, MultiJson.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)}, pretty: true))
+  end
+
+  def cipher
+    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+  end
+
+  def encrypt(data)
+    salt = OpenSSL::Random.random_bytes(8)
+
+    setup_cipher(:encrypt, self.passphrase, salt)
+    cipher.update(data) + cipher.final
+  end
+
+  def decrypt(data)
+    data = Base64.strict_decode64(data)
+    salt = data[0..7]
+    data = data[8..-1]
+
+    setup_cipher(:decrypt, self.passphrase, salt)
+    cipher.update(data) + cipher.final
+  end
+
+  def setup_cipher(method, passphrase, salt)
+    cipher.send(method)
+    cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
   end
 
 end
