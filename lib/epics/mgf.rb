@@ -31,7 +31,7 @@ class Epics::MGF1
     bits = divceil(num.size, 4) * 4 * 8
     pos = value = 0
     str = ""
-    for idx in 0..(bits - 1)
+    (0..(bits - 1)).each do |idx|
       if num[idx].nonzero?
         value |= (num[idx] << pos)
       end
