@@ -1,3 +1,5 @@
+[![Build Status](https://magnum.travis-ci.com/railslove/epics.svg?token=EhFJyZWe1sxdBDmF2bzC&branch=master)](https://magnum.travis-ci.com/railslove/epics)
+
 # Epics
 
 EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard)
