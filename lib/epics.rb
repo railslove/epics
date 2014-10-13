@@ -1,9 +1,9 @@
 require 'openssl'
 require 'base64'
 require 'erb'
+require 'json'
 require 'nokogiri'
 require 'gyoku'
-require 'multi_json'
 require 'faraday'
 
 require "epics/version"

@@ -137,7 +137,7 @@ class Epics::Client
   end
 
   def extract_keys
-    MultiJson.load(self.keys_content).each_with_object({}) do |(type, key), memo|
+    JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
   end
