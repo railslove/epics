@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+require 'escort'
+require 'epics'
+
+Escort::App.create do |app|
+  app.version Epics::VERSION
+  app.summary 'EPICS is a ruby implementation of the EBICS (Electronic Banking Internet Communication Standard)'
+
+  app.options do |opts|
+    opts.opt :config, 'Configuration file', short: '-c', long: '--config'
+    opts.validate(:config, 'must be a readable file') { |option| File.exist?(option) }
+  end
+
+  Epics::COMMANDS.each do |cmd|
+    app.command cmd.name do |command|
+      command.summary cmd.description
+
+      command.action do |options, arguments|
+        Commander.new(options, arguments).execute
+      end
+    end
+  end
+end

@@ -29,6 +29,7 @@ require "epics/hia"
 require "epics/ini"
 require "epics/signer"
 require "epics/client"
+require "epics/commands"
 
 module Epics
   # Your code goes here...
