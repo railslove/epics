@@ -76,6 +76,23 @@ RSpec.describe Epics::Client do
       it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
     end
+  end
 
+  describe '#HTD' do
+    before do
+      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
+    end
+
+    it 'sets @iban' do
+      expect { subject.HTD }.to change { subject.instance_variable_get("@iban") }
+    end
+
+    it 'sets @bic' do
+      expect { subject.HTD }.to change { subject.instance_variable_get("@bic") }
+    end
+
+    it 'sets @name' do
+      expect { subject.HTD }.to change { subject.instance_variable_get("@name") }
+    end
   end
 end

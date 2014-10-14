@@ -2,6 +2,7 @@ class Epics::Client
   extend Forwardable
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
+  attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
 
@@ -35,6 +36,17 @@ class Epics::Client
     keys["#{host_id.upcase}.X002"]
   end
 
+  def name
+    @name ||= (self.HTD; @name)
+  end
+
+  def iban
+    @iban ||= (self.HTD; @iban)
+  end
+
+  def bic
+    @bic ||= (self.HTD; @bic)
+  end
 
   def ini_letter(bankname)
     raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
@@ -93,7 +105,11 @@ class Epics::Client
   end
 
   def HTD
-    download(Epics::HTD)
+    Nokogiri::XML(download(Epics::HTD)).tap do |htd|
+      @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']").text
+      @bic  ||= htd.at_xpath("//xmlns:BankCode[@international='true']").text
+      @name ||= htd.at_xpath("//xmlns:Name").text
+    end.to_xml
   end
 
   def HPD

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTDResponseOrderData xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_orders_H004.xsd">
+  <PartnerInfo>
+    <AddressInfo>
+      <Name>Railslove GmbH</Name>
+      <Country>Deutschland</Country>
+    </AddressInfo>
+    <BankInfo>
+      <HostID>SIZBN001</HostID>
+    </BankInfo>
+    <AccountInfo ID="1">
+      <AccountNumber international="false">1929807319</AccountNumber>
+      <AccountNumber international="true">DE51370501981929807319</AccountNumber>
+      <BankCode international="false" Prefix="DE">37050198</BankCode>
+      <BankCode international="true">COLSDE33XXX</BankCode>
+    </AccountInfo>
+    <OrderInfo>
+      <OrderType>HTD</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Kunden- und Teilnehmerdaten abholen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>STA</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Abholen SWIFT-Tagesauszüge</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>PTK</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Abholen Kundenprotokoll</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HPD</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Bankparameter abholen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HAC</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>HAC</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HAA</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Abrufbare Auftragsarten abholen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVT</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>VEU-Transaktionsdetails abrufen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVU</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>VEU-Übersicht abholen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVD</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>VEU-Status abrufen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HPB</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Abholen Public-Keys der Bank</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVZ</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>VEU-Übersicht mit Zusatzinformationen abholen</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>CCS</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>CCS</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>INI</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Passwort-Initialisierung</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HIA</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Initiales Senden Public Key</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HCA</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Senden Public Key</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HSA</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Initiales Senden Public Key</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>SPR</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Sperren der Zugangsberechtigung</Description>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>PUB</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Senden Public Key zur Unterschrift</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVE</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>VEU-Unterschrift hinzufügen</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>HVS</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>VEU-Storno</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>CCT</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Credit Transfer Initiation</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>CD1</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>CD1</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
+      <OrderType>CDD</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Direct Debit Initiation</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+  </PartnerInfo>
+  <UserInfo>
+    <UserID Status="1">EBIX</UserID>
+    <Name>Ebi, Epics</Name>
+    <Permission>
+      <OrderTypes>PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ</OrderTypes>
+    </Permission>
+    <Permission AuthorisationLevel="E">
+      <OrderTypes>INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDD</OrderTypes>
+    </Permission>
+  </UserInfo>
+</HTDResponseOrderData>
