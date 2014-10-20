@@ -80,23 +80,15 @@ class Epics::Client
   end
 
   def HIA
-    order = Epics::HIA.new(self)
+    respnse = post(url, Epics::HIA.new(self).to_xml).body
 
-    puts order.to_xml
-
-    res = post(url, order.to_xml).body
-
-    res.ok?
+    respnse.ok?
   end
 
   def INI
-    order = Epics::INI.new(self)
+    respnse = post(url, Epics::INI.new(self).to_xml).body
 
-    puts order.to_xml
-
-    res = post(url, order.to_xml).body
-
-    res.ok?
+    respnse.ok?
   end
 
   def HPB
