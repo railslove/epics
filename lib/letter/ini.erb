@@ -194,7 +194,7 @@
       <p>Exponent (<%= e.key.e.num_bytes * 8 %> Bit):</p>
       <p><code><%= e.e %></code></p>
       <p>Modulus (<%= e.key.n.num_bytes * 8 %> Bit):</p>
-      <p style="width:20cm;"><%= e.n.scan(/.{2}/).join(" ") %></p>
+      <p><code><%= e.n.scan(/.{2}/).join(" ") %></code></p>
       <p>Hash (SHA-256):</p>
       <p><code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code></p>
       <p>Ich bestätige hiermit die obigen öffentlichen Schlüssel für meinen EBICS-Zugang.</p>
