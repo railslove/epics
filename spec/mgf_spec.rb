@@ -18,12 +18,6 @@ RSpec.describe Epics::MGF1 do
     it { expect { subject.i2osp(256, 1) }.to raise_error(ArgumentError, 'integer too large') }
   end
 
-  describe '#to_bytes' do
-    it { expect(subject.to_bytes(1).bytes.to_a).to eq([0, 0, 0, 0, 0, 0, 0, 1]) }
-    it { expect(subject.to_bytes(123456789).bytes.to_a).to eq([0, 0, 0, 0, 7, 91, 205, 21]) }
-    it { expect(subject.to_bytes(987654321).bytes.to_a).to eq([0, 0, 0, 0, 58, 222, 104, 177]) }
-  end
-
   describe '#divceil' do
     it { expect(subject.divceil(1, 1)).to eq(1) }
     it { expect(subject.divceil(8, 2)).to eq(4) }
