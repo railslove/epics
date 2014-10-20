@@ -3,12 +3,12 @@ class Epics::Error < StandardError
     [@error.fetch("symbol", "EPICS_UNKNOWN"), @error.fetch("short_text", "unknown")].join(" - ")
   end
 
-  class TechnicalError < Epics::Error
-    def initialize(code)
-      @code = code
-      @error = ERRORS.fetch(code, {})
-    end
+  def initialize(code)
+    @code = code
+    @error = self.class::ERRORS.fetch(code, {})
+  end
 
+  class TechnicalError < self
     ERRORS = {
       "000000" => {
         "symbol" => "EBICS_OK",
@@ -163,12 +163,7 @@ class Epics::Error < StandardError
     }
   end
 
-  class BusinessError < Epics::Error
-    def initialize(code)
-      @code = code
-      @error = ERRORS.fetch(code, {})
-    end
-
+  class BusinessError < self
     ERRORS =  {
       "000000" => {
         "symbol" => "EBICS_OK",
