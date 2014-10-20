@@ -35,7 +35,8 @@ Once the paperwork is done, your bank should provide you with:
 * a PARTNER ID
 * n User IDs (this depends on the bank and your needs)
 
-Take this parameters and start setting up 1 UserID:
+Take this parameters and start setting up one UserID (repeat this for every user
+you want to initialize):
 
 ```ruby
 e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
@@ -71,7 +72,25 @@ with the encoding, try forcing your browser to use UTF-8.
 
 Put the INI letter in a envelope and mail it to your bank!
 
-Done!
+Done! ... Well not completly :)
+
+Once the bank confirms that your user is completely initialized. You'll have to
+download the public keys of your bank:
+
+```ruby
+### see below for client creation
+e.HPB
+```
+
+Then again, save the keys or store the json somewhere safe.
+
+You're now ready to go. Maybe try:
+
+```ruby
+e.HAA
+```
+
+To get a list of all supported order types.
 
 ## Usage
 
@@ -90,11 +109,11 @@ e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ### Lazy Mode
 
 Once you have a client, go ahead and start playing! There are 3 convinence methods
-that are hiding some strange name from you:
+that are hiding some strange names from you:
 
-* debit(_xml_) (submits a PAIN.008.003.02 document via CDD)
-* credit(_xml_) (submits a pain.001.003.03 document)
-* statements(_from_, _to_) (fetches an account statement via STA)
+* debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
+* credit( _xml_ ) (submits a pain.001.003.03 document)
+* statements( _from_, _to_ ) (fetches an account statement via STA)
 
 If you need more sophisticated EBICS order types, please read the next section
 about the supported functionalities.
