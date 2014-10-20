@@ -28,7 +28,7 @@ your bank. Epics can help you to generate all the necessary keys and directly st
 them for later use.
 
 ```ruby
-e = Epics.initialize("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
 ```
 
 This will be plain JSON, holding your authentication, encryption and signature key
@@ -43,6 +43,13 @@ e.save_keys("/home/epics/my.key")
 
 It is really __important__ to keep your keys around, once your user has been initialized
 you'll have to start over when you loose the keys!
+
+Submit thek keys to your bank:
+
+```ruby
+e.INI
+e.HIA
+```
 
 The next step is to print the INI letter and sending it to your bank:
 

@@ -28,30 +28,6 @@ require "epics/ini"
 require "epics/signer"
 require "epics/client"
 
-class Epics
+module Epics
 
-  def initialize(*args)
-    @client = Client.new(*args)
-  end
-
-  def self.initialize(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
-    @client = Client.new(nil, passphrase, url, host_id, user_id, partner_id)
-    @client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
-      memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
-    end
-
-    @client
-  end
-
-  def credit(document)
-    @client.CCT(document)
-  end
-
-  def debit(document, type = :CDD)
-    @client.send(type, document)
-  end
-
-  def statements(from, to, type = :STA)
-    @client.send(type, from, to)
-  end
 end

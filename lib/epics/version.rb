@@ -1,3 +1,3 @@
-class Epics
+module Epics
   VERSION = "0.0.1"
 end

@@ -48,6 +48,15 @@ class Epics::Client
     @bic ||= (self.HTD; @bic)
   end
 
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
+    client = Client.new(nil, passphrase, url, host_id, user_id, partner_id)
+    client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
+      memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
+    end
+
+    client
+  end
+
   def ini_letter(bankname)
     raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
     ERB.new(raw).result(binding)
@@ -56,6 +65,18 @@ class Epics::Client
   def save_ini_letter(bankname, path)
     File.write(path, ini_letter(bankname))
     path
+  end
+
+  def credit(document)
+    @client.CCT(document)
+  end
+
+  def debit(document, type = :CDD)
+    @client.send(type, document)
+  end
+
+  def statements(from, to, type = :STA)
+    @client.send(type, from, to)
   end
 
   def HIA
