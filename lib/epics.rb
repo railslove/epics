@@ -31,3 +31,4 @@ require "epics/client"
 module Epics
 
 end
+Ebics = Epics
