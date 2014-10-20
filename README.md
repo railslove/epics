@@ -23,16 +23,23 @@ Or install it yourself as:
 
 ## Getting started
 
-In case your new to EBICS, you'll have to complete a initialization process with
+In case you are new to EBICS, you'll have to complete a initialization process with
 your bank. Epics can help you to generate all the necessary keys and directly store
-them for later use.
+them for later use, but first you'll have to to lift some contractually work with your
+bank.
+
+Once the paperwork is done, your bank should provide you with:
+
+* a URL to their EBICS Server
+* a HOST ID
+* a PARTNER ID
+* n User IDs (this depends on the bank and your needs)
+
+Take this parameters and start setting up 1 UserID:
 
 ```ruby
 e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
 ```
-
-This will be plain JSON, holding your authentication, encryption and signature key
-encrypted with AES-256.
 
 To use the keys later, just store them in a file
 
@@ -44,21 +51,23 @@ e.save_keys("/home/epics/my.key")
 It is really __important__ to keep your keys around, once your user has been initialized
 you'll have to start over when you loose the keys!
 
-Submit thek keys to your bank:
+Submit the keys to your bank:
 
 ```ruby
-e.INI
-e.HIA
+e.INI # sends the signature key
+
+e.HIA # sends the encryption and authentication keys
 ```
 
-The next step is to print the INI letter and sending it to your bank:
+The next step is to print the INI letter and post it to your bank:
 
 ```ruby
 e.save_ini_letter( 'My Banks Name', "/home/epics/ini.html" )
 ```
 
 Open the generated HTML file in your favorite browser and print it out (skipping
-header and footer sounds like a solid setting here ;)
+header and footer sounds like a solid setting here ;) In case your having difficulties
+with the encoding, try forcing your browser to use UTF-8.
 
 Put the INI letter in a envelope and mail it to your bank!
 
@@ -78,7 +87,21 @@ keys = File.read('/tmp/my.key')
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
-## Initialization
+### Lazy Mode
+
+Once you have a client, go ahead and start playing! There are 3 convinence methods
+that are hiding some strange name from you:
+
+* debit(_xml_) (submits a PAIN.008.003.02 document via CDD)
+* credit(_xml_) (submits a pain.001.003.03 document)
+* statements(_from_, _to_) (fetches an account statement via STA)
+
+If you need more sophisticated EBICS order types, please read the next section
+about the supported functionalities.
+
+## Features
+
+### Initialization
 
 * INI (Sends the public key of the electronic signature.)
 * HIA (Sends the public authentication (X002) and encryption (E002) keys.)
