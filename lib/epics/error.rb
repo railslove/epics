@@ -18,17 +18,17 @@ class Epics::Error < StandardError
       "011000" => {
         "symbol" => "EBICS_DOWNLOAD_POSTPROCESS_DONE",
         "short_text" => "Positive acknowledgement received",
-        "meaning" => "After receipt of a positive acknowledgement the download task was finished at the server’s end and the EBICS transaction ended.",
+        "meaning" => "After receipt of a positive acknowledgement the download task was finished at the server's end and the EBICS transaction ended.",
       },
       "011001" => {
         "symbol" => "EBICS_DOWNLOAD_POSTPROCESS_SKIPPED",
         "short_text" => "Negative acknowledgement received",
-        "meaning" => "After receipt of a negative acknowledgement the transaction was ended at the server’s end without finishing the download task",
+        "meaning" => "After receipt of a negative acknowledgement the transaction was ended at the server's end without finishing the download task",
       },
       "011101" => {
         "symbol" => "EBICS_TX_SEGMENT_NUMBER_UNDERRUN",
         "short_text" => "Segment number not reached",
-        "meaning" => "The total number of segments transmitted during transaction initialisation was not reached (i.e. the attribute @lastSegment was set to “true” before the specified segment number was reached)",
+        "meaning" => "The total number of segments transmitted during transaction initialisation was not reached (i.e. the attribute @lastSegment was set to \"true\" before the specified segment number was reached)",
       },
       "031001" => {
         "symbol" => "EBICS_ORDER_PARAMS_IGNORED",
@@ -53,7 +53,7 @@ class Epics::Error < StandardError
       "061101" => {
         "symbol" => "EBICS_TX_RECOVERY_SYNC",
         "short_text" => "Synchronisation necessary",
-        "meaning" => "Recovery of the transaction requires synchronisation between the customer system and the bank system Continuation of the transaction using the recovery point from the bank system’s EBICS response",
+        "meaning" => "Recovery of the transaction requires synchronisation between the customer system and the bank system Continuation of the transaction using the recovery point from the bank system's EBICS response",
       },
       "091002" => {
         "symbol" => "EBICS_INVALID_USER_OR_USER_STATE",
@@ -102,8 +102,8 @@ class Epics::Error < StandardError
       },
       "091011" => {
         "symbol" => "EBICS_INVALID_HOST_ID",
-        "short_text" => "The transmitted HostID is unknown on the bank’s side",
-        "meaning" => "The transmitted HostID is unknown on the bank’s side. The use of this code is only provided for the HEV request Check the used HostID and correct it. Consultation with the bank, if necessary",
+        "short_text" => "The transmitted HostID is unknown on the bank's side",
+        "meaning" => "The transmitted HostID is unknown on the bank's side. The use of this code is only provided for the HEV request Check the used HostID and correct it. Consultation with the bank, if necessary",
       },
       "091101" => {
         "symbol" => "EBICS_TX_UNKNOWN_TXID",
@@ -113,7 +113,7 @@ class Epics::Error < StandardError
       "091102" => {
         "symbol" => "EBICS_TX_ABORT",
         "short_text" => "Transaction cancelled",
-        "meaning" => "The transaction was cancelled at the server’s end since recovery of the transaction is not supported or is no longer possible due to the recovery counter being too high",
+        "meaning" => "The transaction was cancelled at the server's end since recovery of the transaction is not supported or is no longer possible due to the recovery counter being too high",
       },
       "091103" => {
         "symbol" => "EBICS_TX_MESSAGE_REPLAY",
@@ -123,7 +123,7 @@ class Epics::Error < StandardError
       "091104" => {
         "symbol" => "EBICS_TX_SEGMENT_NUMBER_EXCEEDED",
         "short_text" => "Segment number exceeded",
-        "meaning" => "The total segment number from transaction initialisation was exceeded, i.e. the attribute @lastSegment was set to “false” when the last segment was transmitted",
+        "meaning" => "The total segment number from transaction initialisation was exceeded, i.e. the attribute @lastSegment was set to \"false\" when the last segment was transmitted",
       },
       "091112" => {
         "symbol" => "EBICS_INVALID_ORDER_PARAMS",
@@ -158,7 +158,7 @@ class Epics::Error < StandardError
       "091121" => {
         "symbol" => "EBICS_INCOMPATIBLE_ORDER_ATTRIBUTE",
         "short_text" => "The specified order attribute is not compatible with the order in the bank system",
-        "meaning" => "Case 1) File with order attribute “DZHNN” or “OZHNN” submitted with an orderId or Case 2) File with order attribute “UZHNN” submitted without an orderId or with orderID which is already used for “DZHNN” File with order attribute “DZHNN” submitted with an orderId",
+        "meaning" => "Case 1) File with order attribute \"DZHNN\" or \"OZHNN\" submitted with an orderId or Case 2) File with order attribute \"UZHNN\" submitted without an orderId or with orderID which is already used for \"DZHNN\" File with order attribute \"DZHNN\" submitted with an orderId",
       }
     }
   end
@@ -277,7 +277,7 @@ class Epics::Error < StandardError
       },
       "091214" => {
         "symbol" => "EBICS_X509_UNKNOWN_CERTIFICATE_AUTHORITY",
-        "short_text" => "The chain cannot be verified due to an unknown certificate authority (CA) If OrderType = INI, PUB or HCS and X509v3 supported: The Reject of the Request is mandatory, if signature class <> “T”"
+        "short_text" => "The chain cannot be verified due to an unknown certificate authority (CA) If OrderType = INI, PUB or HCS and X509v3 supported: The Reject of the Request is mandatory, if signature class <> \"T\""
       },
       "091215" => {
         "symbol" => "EBICS_X509_INVALID_POLICY",
