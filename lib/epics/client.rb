@@ -59,11 +59,23 @@ class Epics::Client
   end
 
   def HIA
-    upload(Epics::HIA)
+    order = Epics::HIA.new(self)
+
+    puts order.to_xml
+
+    res = post(url, order.to_xml).body
+
+    res.ok?
   end
 
   def INI
-    upload(Epics::INI)
+    order = Epics::INI.new(self)
+
+    puts order.to_xml
+
+    res = post(url, order.to_xml).body
+
+    res.ok?
   end
 
   def HPB
