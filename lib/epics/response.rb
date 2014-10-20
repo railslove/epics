@@ -7,8 +7,30 @@ class Epics::Response
     self.client = client
   end
 
+  def technical_error?
+    technical_code != "000000"
+  end
+
+  def technical_code
+    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:ReturnCode").text
+  end
+
+  def business_error?
+    business_code != "000000" && business_code != ""
+  end
+
+  def business_code
+    doc.xpath("//xmlns:body/xmlns:ReturnCode").text
+  end
+
+  def ok?
+    !technical_error? & !business_error?
+  end
+
   def return_code
-    doc.xpath("//xmlns:ReturnCode").first.content
+    doc.xpath("//xmlns:ReturnCode").last.content
+  rescue NoMethodError
+    nil
   end
 
   def report_text
