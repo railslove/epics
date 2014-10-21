@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{a ruby implementation of the EBICS protocol}
   spec.description   = %q{a ruby implementation of the EBICS protocol}
   spec.homepage      = "https://github.com/railslove/epics"
+  spec.license       = "LGPL-3.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
