@@ -184,6 +184,7 @@ puts e.CD1("i-am-a-PAIN-xml-file")
 
 ## Contributing
 
+0. Contact team@raislove.com for information about howto CLA
 1. Fork it ( https://github.com/[my-github-username]/epics/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
