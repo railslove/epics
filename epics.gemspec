@@ -9,7 +9,19 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Lars Brillert"]
   spec.email         = ["lars@railslove.com"]
   spec.summary       = %q{a ruby implementation of the EBICS protocol}
-  spec.description   = %q{a ruby implementation of the EBICS protocol}
+  spec.description   = <<-description
+    Epics is a ruby implementation of the EBIC standard (H004)
+
+    It supports the complete initialization process comprising INI, HIA and HPB
+    including the INI letter generation.
+
+    Furthermore it offers support for the most common download types:
+      STA HAA HTD HPD PKT
+
+    And the following upload orders:
+      CD1 CDD CCT
+  description
+
   spec.homepage      = "https://github.com/railslove/epics"
 
   spec.files         = `git ls-files -z`.split("\x0")
