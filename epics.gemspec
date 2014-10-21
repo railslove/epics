@@ -17,6 +17,13 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.post_install_message  = "\n\e[32m" + ("*" * 60) + "\n\e[0m"
+  spec.post_install_message += "Thanks for using Epics - your epic EBICS client!\n"
+  spec.post_install_message += "Epics provides a full production-tested implementation of the Electronic Banking Internet Communication Standard.\n"
+  spec.post_install_message += "Railslove as the maintainer is commited to provide extensive developer tools to make integrating financial institutions fun and easy.\n"
+  spec.post_install_message += "Please create an issue on github (railslove/epics) if anything does not work as expected. And contact team@railslove.com if you are looking for support with your integration.\n"
+  spec.post_install_message += "\e[32m" + ("*" * 60) + "\n\e[0m"
+  
   spec.add_dependency "nokogiri"
   spec.add_dependency "gyoku"
   spec.add_dependency "faraday"
