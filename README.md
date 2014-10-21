@@ -4,6 +4,8 @@
 
 EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard)
 
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -187,3 +189,8 @@ puts e.CD1("i-am-a-PAIN-xml-file")
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+
+
+
+made with love by [railslove](http://www.railslove.com)
