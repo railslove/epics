@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/railslove/epics.svg?branch=master)](https://travis-ci.org/railslove/epics)
+[![Gem Version](https://badge.fury.io/rb/epics.svg)](http://badge.fury.io/rb/epics)
 
 # Epics
 
@@ -13,10 +14,6 @@ Add this line to your application's Gemfile:
 ```ruby
 gem 'epics'
 ```
-
-And then execute:
-
-    $ bundle
 
 Or install it yourself as:
 
@@ -108,17 +105,6 @@ keys = File.read('/tmp/my.key')
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
-### Lazy Mode
-
-Once you have a client, go ahead and start playing! There are 3 convinence methods
-that are hiding some strange names from you:
-
-* debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
-* credit( _xml_ ) (submits a pain.001.003.03 document)
-* statements( _from_, _to_ ) (fetches an account statement via STA)
-
-If you need more sophisticated EBICS order types, please read the next section
-about the supported functionalities.
 
 ## Features
 
@@ -178,19 +164,50 @@ puts e.CD1("i-am-a-PAIN-xml-file")
 # res is a the transaction id of the order
 ```
 
+### Lazy Mode
+
+Once you have a client, go ahead and start playing! There are 3 convinence methods
+that are hiding some strange names from you:
+
+* debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
+* credit( _xml_ ) (submits a pain.001.003.03 document)
+* statements( _from_, _to_ ) (fetches an account statement via STA)
+
+If you need more sophisticated EBICS order types, please read the next section
+about the supported functionalities.
+
+
+## Issues and Feature Requests
+
+[Railslove](http://railslove.com) is commited to provide the best developer tools for integrating with financial institutions. Epics is one of our many tools and services. 
+If you are missing some features or something is not working as expected please create an issue. 
+
+
+
 ## Supported Banks
 
-Besides EBCIS being a Standard, some server implementations are slighty
-different. Is Epics working with your institution? Please help us to grow
-this list of supported banks:
+This gem provides a full implementation of the Electronic Banking Internet Communication Standard and works with any bank that supports this standard. Please ask your bank if they support EBICS and what order types are available. 
+
+Besides EBCIS being a standard, some server implementations are slighty different. 
+Is Epics working with your institution? 
+Please help us to grow this list of supported banks:
 
 * Sofortbank
 * Deutsche Bank
 * Sparkasse KölnBonn
 
+
+## Links
+
+* [ebics.de](http://www.ebics.de/)
+* [EBICS specification](http://www.ebics.de/index.php?id=30)
+* [Common Integrative Implementation Guide to Supplement the EBICS Specification (pdf)](http://www.ebics.de/fileadmin/unsecured/specification/implementation_guide_DE/EBICS_Common_IG_basiert_auf_EBICS_2.5.pdf)
+* [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/) 
+
+
 ## Contributing
 
-0. Contact team@railslove.com for information about howto CLA
+0. Contact team@railslove.com for information about the CLA
 1. Fork it ( https://github.com/[my-github-username]/epics/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
@@ -198,6 +215,5 @@ this list of supported banks:
 5. Create a new Pull Request
 
 
-
-
-made with love by [railslove](http://www.railslove.com)
+------------
+2014 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
