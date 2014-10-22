@@ -137,6 +137,7 @@ Currently this EPICS implementation supports the following order types:
 * HTD (user properties and settings)
 * HPD (the available bank parameters)
 * PKT (customer usage report in text format)
+* HAC (customer usage report in xml format)
 * ... more coming soon
 
 Example:

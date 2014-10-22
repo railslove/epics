@@ -144,6 +144,10 @@ class Epics::Client
     download(Epics::PTK, from, to)
   end
 
+  def HAC(from, to)
+    download(Epics::HAC, from, to)
+  end
+
   def save_keys(path)
     File.write(path, dump_keys)
   end
