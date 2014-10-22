@@ -124,6 +124,14 @@ class Epics::Client
     download(Epics::STA, from, to)
   end
 
+  def C52(from, to)
+    download(Epics::C52, from, to)
+  end
+
+  def C53(from, to)
+    download(Epics::C53, from, to)
+  end
+
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes").content.split(/\s/)
   end
@@ -138,6 +146,10 @@ class Epics::Client
 
   def HPD
     download(Epics::HPD)
+  end
+
+  def HKD
+    download(Epics::HKD)
   end
 
   def PTK(from, to)
