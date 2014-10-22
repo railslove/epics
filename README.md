@@ -92,6 +92,13 @@ e.HAA
 
 To get a list of all supported order types.
 
+
+## Need help? Having questions? 
+
+We have many years of experience in developing innovative applications for the finance sector and integration application with financial institutions. - you might want to have a look at our [portfolio](http://www.railslove.com/portfolio)   
+__If you need help we are happy to provide consulting or development services. Contact us: [team@railslove.com](mailto:team@railslove.com)__
+
+
 ## Usage
 
 ### Create a client
