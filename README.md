@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/railslove/epics.svg?token=EhFJyZWe1sxdBDmF2bzC&branch=master)](https://magnum.travis-ci.com/railslove/epics)
+[![Build Status](https://travis-ci.org/railslove/epics.svg?branch=master)](https://travis-ci.org/railslove/epics)
 
 # Epics
 
