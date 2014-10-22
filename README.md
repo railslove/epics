@@ -181,6 +181,7 @@ puts e.CD1("i-am-a-PAIN-xml-file")
 
 * Sofortbank
 * Deutsche Bank
+* Sparkasse KölnBonn
 
 ## Contributing
 
