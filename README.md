@@ -179,6 +179,10 @@ puts e.CD1("i-am-a-PAIN-xml-file")
 
 ## Supported Banks
 
+Besides EBCIS being a Standard, some server implementations are slighty
+different. Is Epics working with your institution? Please help us to grow
+this list of supported banks:
+
 * Sofortbank
 * Deutsche Bank
 * Sparkasse KölnBonn
