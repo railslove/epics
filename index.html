@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Epics - the epic EBICS client  by railslove</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Epics - the epic EBICS client </h1>
+        <p>a full ruby implementation of EBICS </p>
+
+        <p class="view"><a href="https://github.com/railslove/epics">View the Project on GitHub <small>railslove/epics</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/railslove/epics/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/railslove/epics/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/railslove/epics">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://travis-ci.org/railslove/epics"><img src="https://travis-ci.org/railslove/epics.svg?branch=master" alt="Build Status"></a>
+<a href="http://badge.fury.io/rb/epics"><img src="https://badge.fury.io/rb/epics.svg" alt="Gem Version"></a></p>
+
+<h1>
+<a name="epics" class="anchor" href="#epics"><span class="octicon octicon-link"></span></a>Epics</h1>
+
+<p>EPICS is a ruby implementation of the <a href="http://www.ebics.org/">EBICS</a> (Electronic Banking Internet Communication Standard)</p>
+
+<p>The client support the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT)</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">gem</span> <span class="s1">'epics'</span>
+</pre></div>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install epics
+</code></pre>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting started</h2>
+
+<p>In case you are new to EBICS, you'll have to complete a initialization process with
+your bank. Epics can help you to generate all the necessary keys and directly store
+them for later use, but first you'll have to to lift some contractually work with your
+bank.</p>
+
+<p>Once the paperwork is done, your bank should provide you with:</p>
+
+<ul>
+<li>a URL to their EBICS Server</li>
+<li>a HOST ID</li>
+<li>a PARTNER ID</li>
+<li>n User IDs (this depends on the bank and your needs)</li>
+</ul>
+
+<p>Take this parameters and start setting up one UserID (repeat this for every user
+you want to initialize):</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">e</span> <span class="o">=</span> <span class="no">Epics</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="s2">"my-super-secret"</span><span class="p">,</span> <span class="s2">"https://ebics.sandbox"</span><span class="p">,</span> <span class="s2">"SIZBN001"</span><span class="p">,</span> <span class="s2">"EBIX"</span><span class="p">,</span> <span class="s2">"EPICS"</span><span class="p">)</span>
+</pre></div>
+
+<p>To use the keys later, just store them in a file</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">e</span><span class="o">.</span><span class="n">save_keys</span><span class="p">(</span><span class="s2">"/home/epics/my.key"</span><span class="p">)</span>
+<span class="c1"># or store the json elsewhere, but store it! for gods sake :D</span>
+</pre></div>
+
+<p>It is really <strong>important</strong> to keep your keys around, once your user has been initialized
+you'll have to start over when you loose the keys!</p>
+
+<p>Submit the keys to your bank:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">e</span><span class="o">.</span><span class="n">INI</span> <span class="c1"># sends the signature key</span>
+
+<span class="n">e</span><span class="o">.</span><span class="n">HIA</span> <span class="c1"># sends the encryption and authentication keys</span>
+</pre></div>
+
+<p>The next step is to print the INI letter and post it to your bank:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">e</span><span class="o">.</span><span class="n">save_ini_letter</span><span class="p">(</span> <span class="s1">'My Banks Name'</span><span class="p">,</span> <span class="s2">"/home/epics/ini.html"</span> <span class="p">)</span>
+</pre></div>
+
+<p>Open the generated HTML file in your favorite browser and print it out (skipping
+header and footer sounds like a solid setting here ;) In case your having difficulties
+with the encoding, try forcing your browser to use UTF-8.</p>
+
+<p>Put the INI letter in a envelope and mail it to your bank!</p>
+
+<p>Done! ... Well not completly :)</p>
+
+<p>Once the bank confirms that your user is completely initialized. You'll have to
+download the public keys of your bank:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="c1">### see below for client creation</span>
+<span class="n">e</span><span class="o">.</span><span class="n">HPB</span>
+</pre></div>
+
+<p>Then again, save the keys or store the json somewhere safe.</p>
+
+<p>You're now ready to go. Maybe try:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">e</span><span class="o">.</span><span class="n">HAA</span>
+</pre></div>
+
+<p>To get a list of all supported order types.</p>
+
+<h2>
+<a name="need-help-having-questions" class="anchor" href="#need-help-having-questions"><span class="octicon octicon-link"></span></a>Need help? Having questions?</h2>
+
+<p>We have many years of experience in developing innovative applications for the finance sector and integration application with financial institutions. - you might want to have a look at our <a href="http://www.railslove.com/portfolio">portfolio</a><br>
+<strong>If you need help we are happy to provide consulting or development services. Contact us: <a href="mailto:team@railslove.com">team@railslove.com</a></strong></p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="create-a-client" class="anchor" href="#create-a-client"><span class="octicon octicon-link"></span></a>Create a client</h3>
+
+<div class="highlight highlight-ruby"><pre><span class="c1"># read the keys from a file</span>
+<span class="n">e</span> <span class="o">=</span> <span class="no">Epics</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">'/tmp/my.key'</span><span class="p">),</span> <span class="s1">'passphrase'</span><span class="p">,</span> <span class="s1">'url'</span><span class="p">,</span> <span class="s1">'host'</span><span class="p">,</span> <span class="s1">'user'</span><span class="p">,</span> <span class="s1">'partner'</span><span class="p">)</span>
+
+<span class="c1"># or provide a string hoding the key data</span>
+<span class="n">keys</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">'/tmp/my.key'</span><span class="p">)</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="no">Epics</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="s1">'passphrase'</span><span class="p">,</span> <span class="s1">'url'</span><span class="p">,</span> <span class="s1">'host'</span><span class="p">,</span> <span class="s1">'user'</span><span class="p">,</span> <span class="s1">'partner'</span><span class="p">)</span>
+</pre></div>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<h3>
+<a name="initialization" class="anchor" href="#initialization"><span class="octicon octicon-link"></span></a>Initialization</h3>
+
+<ul>
+<li>INI (Sends the public key of the electronic signature.)</li>
+<li>HIA (Sends the public authentication (X002) and encryption (E002) keys.)</li>
+</ul>
+
+<h3>
+<a name="downloads" class="anchor" href="#downloads"><span class="octicon octicon-link"></span></a>Downloads</h3>
+
+<p>Currently this EPICS implementation supports the following order types:</p>
+
+<ul>
+<li>HPB (fetch your bank's public keys)</li>
+<li>STA (statements in MT940 format)</li>
+<li>HAA (available order types)</li>
+<li>HTD (user properties and settings)</li>
+<li>HPD (the available bank parameters)</li>
+<li>PKT (customer usage report in text format)</li>
+<li>HAC (customer usage report in xml format)</li>
+<li>... more coming soon</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="nb">puts</span> <span class="n">e</span><span class="o">.</span><span class="n">STA</span><span class="p">(</span><span class="s1">'2014-09-01'</span><span class="p">,</span> <span class="s1">'2014-09-11'</span><span class="p">)</span>
+<span class="c1"># result is a MT940 feed</span>
+
+<span class="p">:</span><span class="mi">20</span><span class="p">:</span><span class="mi">1</span>
+<span class="p">:</span><span class="mi">25</span><span class="ss">:/</span><span class="no">PL12124012551111000015237873</span>
+<span class="p">:</span><span class="mi">28</span><span class="ss">C</span><span class="p">:</span><span class="mo">00152</span>
+<span class="p">:</span><span class="mi">60</span><span class="ss">F</span><span class="p">:</span><span class="no">C081130PLN000000002535</span><span class="p">,</span><span class="mo">03</span>
+<span class="p">:</span><span class="mi">61</span><span class="p">:</span><span class="mi">0810021002</span><span class="no">DN000000001273</span><span class="p">,</span><span class="mi">23</span><span class="no">N641NONREF</span>
+<span class="p">:</span><span class="mi">86</span><span class="p">:</span><span class="mi">641</span><span class="o">^</span><span class="mo">00</span><span class="no">PRZELEW</span> <span class="no">MI</span><span class="err">¨</span><span class="no">DZYBANKOWY</span> <span class="no">BETA</span><span class="o">/^</span><span class="mi">34000</span>
+<span class="o">^</span><span class="mi">3019401076</span><span class="o">^</span><span class="mi">38</span><span class="no">PL54194010765205871800000000</span>
+<span class="o">^</span><span class="mi">20</span><span class="n">wynagrodzenie</span> <span class="n">z</span> <span class="n">tytulu</span> <span class="n">umow</span><span class="o">^</span><span class="mi">21</span><span class="n">y</span> <span class="n">o</span> <span class="n">prac</span> <span class="n">e</span>
+<span class="o">^</span><span class="mi">32</span><span class="no">BANKA</span> <span class="no">MONIKA</span>
+<span class="o">^</span><span class="mi">62</span><span class="no">PODCHORAZYCH</span> <span class="mi">16</span><span class="o">/</span><span class="mi">1580</span><span class="o">-</span><span class="mi">298</span> <span class="no">GD</span><span class="o">^</span><span class="mi">63</span><span class="no">ANSK</span>
+<span class="p">:</span><span class="mi">61</span><span class="p">:</span><span class="mi">0810021002</span><span class="no">DN000000001287</span><span class="p">,</span><span class="mi">40</span><span class="no">N641NONREF</span>
+<span class="p">:</span><span class="mi">86</span><span class="p">:</span><span class="mi">641</span><span class="o">^</span><span class="mo">00</span><span class="no">PRZELEW</span> <span class="no">MI</span><span class="err">¨</span><span class="no">DZYBANKOWY</span> <span class="no">BETA</span><span class="o">/^</span><span class="mi">34000</span>
+<span class="o">^</span><span class="mi">3010201909</span><span class="o">^</span><span class="mi">38</span><span class="no">PL74102019090000310200475772</span>
+<span class="o">^</span><span class="mi">20</span><span class="n">wynagrodzenie</span> <span class="n">z</span> <span class="n">tytulu</span> <span class="n">umow</span><span class="o">^</span><span class="mi">21</span><span class="n">y</span> <span class="n">o</span> <span class="n">prac</span> <span class="n">e</span>
+<span class="o">^</span><span class="mi">32</span><span class="no">SZCZACHOR</span> <span class="no">DOROTA</span>
+<span class="o">^</span><span class="mi">62</span><span class="no">RATAJA</span> <span class="mi">13</span><span class="n">B</span><span class="o">/</span><span class="mi">1083</span><span class="o">-</span><span class="mo">032</span> <span class="no">PSZCZOL</span><span class="o">^</span><span class="mi">63</span><span class="no">KI</span>
+</pre></div>
+
+<h3>
+<a name="uploads" class="anchor" href="#uploads"><span class="octicon octicon-link"></span></a>Uploads</h3>
+
+<ul>
+<li>CD1 (Uploads a SEPA Direct Debit document of type COR1)</li>
+<li>CDD (Uploads a SEPA Direct Debit document of type CORE)</li>
+<li>CCT (Uploads a SEPA Credit document)</li>
+<li>... more coming soon</li>
+</ul>
+
+<p>Example:</p>
+
+<div class="highlight highlight-ruby"><pre><span class="nb">puts</span> <span class="n">e</span><span class="o">.</span><span class="n">CD1</span><span class="p">(</span><span class="s2">"i-am-a-PAIN-xml-file"</span><span class="p">)</span>
+<span class="c1"># res is a the transaction id of the order</span>
+</pre></div>
+
+<h3>
+<a name="lazy-mode" class="anchor" href="#lazy-mode"><span class="octicon octicon-link"></span></a>Lazy Mode</h3>
+
+<p>Once you have a client, go ahead and start playing! There are 3 convinence methods
+that are hiding some strange names from you:</p>
+
+<ul>
+<li>debit( <em>xml</em> ) (submits a PAIN.008.003.02 document via CDD)</li>
+<li>credit( <em>xml</em> ) (submits a pain.001.003.03 document)</li>
+<li>statements( <em>from</em>, <em>to</em> ) (fetches an account statement via STA)</li>
+</ul>
+
+<p>If you need more sophisticated EBICS order types, please read the next section
+about the supported functionalities.</p>
+
+<h2>
+<a name="issues-and-feature-requests" class="anchor" href="#issues-and-feature-requests"><span class="octicon octicon-link"></span></a>Issues and Feature Requests</h2>
+
+<p><a href="http://railslove.com">Railslove</a> is commited to provide the best developer tools for integrating with financial institutions. Epics is one of our many tools and services. 
+If you are missing some features or something is not working as expected please create an issue. </p>
+
+<h2>
+<a name="supported-banks" class="anchor" href="#supported-banks"><span class="octicon octicon-link"></span></a>Supported Banks</h2>
+
+<p>This gem provides a full implementation of the Electronic Banking Internet Communication Standard and works with any bank that supports this standard. Please ask your bank if they support EBICS and what order types are available. </p>
+
+<p>Besides EBCIS being a standard, some server implementations are slighty different. 
+Is Epics working with your institution? 
+Please help us to grow this list of supported banks:</p>
+
+<ul>
+<li>Sofortbank</li>
+<li>Deutsche Bank</li>
+<li>Sparkasse KölnBonn</li>
+</ul>
+
+<h2>
+<a name="links" class="anchor" href="#links"><span class="octicon octicon-link"></span></a>Links</h2>
+
+<ul>
+<li><a href="http://www.ebics.de/">ebics.de</a></li>
+<li><a href="http://www.ebics.de/index.php?id=30">EBICS specification</a></li>
+<li><a href="http://www.ebics.de/fileadmin/unsecured/specification/implementation_guide_DE/EBICS_Common_IG_basiert_auf_EBICS_2.5.pdf">Common Integrative Implementation Guide to Supplement the EBICS Specification (pdf)</a></li>
+<li>
+<a href="http://www.die-deutsche-kreditwirtschaft.de/">Die Deutsche Kreditwirtschaft</a> </li>
+</ul>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Contact <a href="mailto:team@railslove.com">team@railslove.com</a> for information about the CLA</li>
+<li>Fork it ( <a href="https://github.com/%5Bmy-github-username%5D/epics/fork">https://github.com/[my-github-username]/epics/fork</a> )</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create a new Pull Request</li>
+</ol>
+
+<hr>
+
+<p>2014 - built with love by <a href="http://railslove.com">Railslove</a> and released under the <a href="https://github.com/railslove/epics/blob/master/LICENSE.txt">GNU LESSER GENERAL PUBLIC LICENSE</a>. We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at <a href="mailto:team@railslove.com">team@railslove.com</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/railslove">railslove</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-3621621-23");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
