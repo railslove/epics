@@ -16,6 +16,13 @@ class Epics::Client
     self.partner_id = partner_id
   end
 
+  def inspect
+    "#<#{self.class}:#{self.object_id}
+     @keys=#{self.keys.keys},
+     @user_id=#{self.user_id},
+     @partner_id=#{self.partner_id}"
+  end
+
   def e
     keys["E002"]
   end

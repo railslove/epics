@@ -22,6 +22,14 @@ RSpec.describe Epics::Client do
 
   end
 
+  describe '#inspect' do
+    it 'will not print the complete object' do
+      expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
+      expect(subject.inspect).to include("@user_id=#{subject.user_id}")
+      expect(subject.inspect).to include("@partner_id=#{subject.partner_id}")
+    end
+  end
+
   describe '#e' do
     it 'the encryption key' do
       expect(subject.e.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
