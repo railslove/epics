@@ -5,7 +5,8 @@ require 'json'
 require 'nokogiri'
 require 'gyoku'
 require 'faraday'
-
+require 'securerandom'
+require 'time'
 require "epics/version"
 require "epics/key"
 require "epics/mgf"
