@@ -2,7 +2,6 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
 
   attr_accessor :key
   attr_accessor :document
-  attr_accessor :transaction_id
 
   def initialize(client, document)
     super(client)

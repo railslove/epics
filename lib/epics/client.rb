@@ -175,9 +175,7 @@ class Epics::Client
 
   def upload(order_type, document)
     order = order_type.new(self, document)
-
     res = post(url, order.to_xml).body
-
     order.transaction_id = res.transaction_id
 
     res = post(url, order.to_transfer_xml).body
@@ -188,6 +186,11 @@ class Epics::Client
   def download(order_type, *args)
     document = order_type.new(self, *args)
     res = post(url, document.to_xml).body
+    document.transaction_id = res.transaction_id
+
+    if res.segmented? && res.last_segment?
+      post(url, document.to_receipt_xml).body
+    end
 
     res.order_data
   end

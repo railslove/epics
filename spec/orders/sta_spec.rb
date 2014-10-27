@@ -8,4 +8,10 @@ RSpec.describe Epics::STA do
     specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
   end
 
+  describe '#to_receipt_xml' do
+    before { subject.transaction_id = SecureRandom.hex(16) }
+
+    specify { expect(subject.to_receipt_xml).to be_a_valid_ebics_doc }
+  end
+
 end
