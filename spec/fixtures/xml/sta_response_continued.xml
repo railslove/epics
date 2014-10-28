@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsResponse xmlns="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_response_H004.xsd" Version="H004" Revision="1">
+  <header authenticate="true">
+    <static>
+      <TransactionID>ECD6F062AAEDFA77250526A68CBEC549</TransactionID>
+      <NumSegments>2</NumSegments>
+    </static>
+    <mutable>
+      <TransactionPhase>Initialisation</TransactionPhase>
+      <SegmentNumber lastSegment="false">1</SegmentNumber>
+      <ReturnCode>000000</ReturnCode>
+      <ReportText>[EBICS_OK] OK</ReportText>
+    </mutable>
+  </header>
+  <AuthSignature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="#xpointer(//*[@authenticate='true'])">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>OnY4VczV+1XfplpMS/SCKFWn+FDMge40X8TJ9pA6HEI=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>Qiz8clr/Ym+wLpB8CzTuxKP5rgIR2P4SaX8O4gGZx0Di8Lzd4hsBO3koqIuX11NRZo0RYA5E/IKQCoYLepkcM4QHvLT37YidbrXsTZe6cml/yF8OdyRAcd/9U7AoA9GKENFk4lnBFfZYmM4ADK6wVOCE/ABaOk0NeCDDbxrKA75tfTxwxTvQBfUOHZ87LrZxuQf//L9pzmtI07/7GbsQX8ZceQq40SpBFZn/oRvT/Q38Qu2ZO59MZexJn+BTzlhpfv9fQGF/sgXkdhUkPTEW3nL4j7ehasq3CtySGO2RnEppohEvJ4m07RDtEY3OWyAAZoPFVpvnECM6pOLbIuR40w==</ds:SignatureValue>
+  </AuthSignature>
+  <body>
+    <DataTransfer>
+      <DataEncryptionInfo authenticate="true">
+        <EncryptionPubKeyDigest Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" Version="E002">IUW05JB5cuCzRYYa4kIAZ2ehYVrLI3lKvxZvo1uP+ug=</EncryptionPubKeyDigest>
+        <TransactionKey>CPdd6ODXrCxHWpYrwS/5a3NIZ1R2SDscHHJSONc2I7g8ara7qv5Ra7H03W+336DPQLZQxH+EBRWdE2FQ1vrVTcypK6fkFarmO1dEtQt6Ka89AozC7aQMyp4yGl+zlF+XvFkJXZbRXgoEOPsgcG0xM6nKLXnr1ThYRFOoAasigLDGwqxliyhoR94F9dL7YB8Le/uZeRj78mNp4smkE5ZKKyPhwVx+0IW78YuVCSC2c2qbsMmm4evAvycdpLfuuoG4KVlNMIlvkKeBfMZFELcmeKKm85D2zPYkZ7cqG2IfAAp5qdS6K8P7RY4gtjUhOtP5mi8bZt/ZcjioUmIR9dAMnA==</TransactionKey>
+      </DataEncryptionInfo>
+      <OrderData>lJ/v1HvOYAZKTPkxULH4mOcUy01+EaAsxLzCPhtieAo9m5AtU5URdyBVfmclHbtWe3ELb02lR37bChynq0Esqpljxx7CiB+kl/bVs7XkNQQmtGPlh08O7ApJ7AHdKPFFvE+SM2OWpSwUrqJGtmyaU6s+RM66o/3Q0wvKi4y3+Q2jm8nkiWZpPfNt52g4ReE9Ge86o+L+EBOBgZm634L5Z/i6pq908mXBAklPdk1ERdEgWONaOeYYmB70FToplR1gINJEF2CnfAtD/wV+DuQFPDth+EWHqhe3a4xO0d9eJ55ou2QCYOPUC2g/qz1sp7GR74W7P5IWJdmnUEuPFsKJ6OvM+1V8S06jZGDa/QhUGDK8F3G/TMP09W1MsrlQTRr3YQ5H43+pMY7I6Jysze+X9OKZZTTpv4GmYm1USjmraGyMuPF3j9hrlmpttK+1gg2WzytCJO44YsZp9ckls8JNK4bT5uwTuomKZoRgmiIOTcMh4VP7V28TWj2XdF+T6rBFILTvQyXMOzvbe1kLwg2O31JDBdJ8X1fHCYJxKsIrYCSDPz4sha8h7QmHrCSFmjoXb+LUElnbLXZVRkY5/Dc73EM6Es3wAgjwSJK2asRqdqU0PhbS5qpIlgYKsNcb+Wes</OrderData>
+    </DataTransfer>
+    <ReturnCode authenticate="true">000000</ReturnCode>
+    <TimestampBankParameter authenticate="true">2013-12-09T15:14:30.000Z</TimestampBankParameter>
+  </body>
+</ebicsResponse>

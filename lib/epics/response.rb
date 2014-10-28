@@ -8,7 +8,7 @@ class Epics::Response
   end
 
   def technical_error?
-    technical_code != "000000"
+    !["011000", "000000"].include?(technical_code)
   end
 
   def technical_code
@@ -16,7 +16,7 @@ class Epics::Response
   end
 
   def business_error?
-    business_code != "000000" && business_code != ""
+    !["", "000000"].include?(business_code)
   end
 
   def business_code
@@ -25,6 +25,14 @@ class Epics::Response
 
   def ok?
     !technical_error? & !business_error?
+  end
+
+  def last_segment?
+    !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']")
+  end
+
+  def segmented?
+    !!doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber")
   end
 
   def return_code
@@ -38,7 +46,7 @@ class Epics::Response
   end
 
   def transaction_id
-    doc.xpath("//xmlns:TransactionID").first.content
+    doc.xpath("//xmlns:header/xmlns:static/xmlns:TransactionID").text
   end
 
   def digest_valid?
