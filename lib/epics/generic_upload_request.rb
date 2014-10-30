@@ -76,14 +76,11 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def pad(d)
-    if d.size % 32 == 0
-      return d
-    else
-      len = 32*((d.size / 32)+1)
-      padded = d.ljust(len, "\x01")
-      padded[-1] = ["#{len - d.size}".rjust(2, "0")].pack("*H")
-      padded
-    end
+    len = cipher.block_size*((d.size / cipher.block_size)+1)
+    padded = d.ljust(len, [0].pack("C*"))
+    padded[-1] = [len - d.size].pack("C*")
+
+    padded
   end
 
 end
