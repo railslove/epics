@@ -14,7 +14,7 @@ class Epics::CCT < Epics::GenericUploadRequest
           :content! => "EPICS - a ruby ebics kernel"
         },
         "OrderDetails" => {
-          "OrderType" => "CD1",
+          "OrderType" => "CCT",
           "OrderAttribute" => "OZHNN",
           "StandardOrderParams/" => ""
         },
