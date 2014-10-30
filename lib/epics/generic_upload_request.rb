@@ -56,6 +56,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def encrypt(d)
+    cipher.reset
     cipher.encrypt
     cipher.padding = 0
     cipher.key = self.key
