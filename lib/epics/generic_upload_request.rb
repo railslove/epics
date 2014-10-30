@@ -52,7 +52,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def signature_value
-    Base64.encode64(client.a.sign( digester.digest(document.gsub(/\n|\r/, "")) )).gsub(/\n/, "")
+    client.a.sign( digester.digest(document.gsub(/\n|\r/, "")) )
   end
 
   def encrypt(d)
