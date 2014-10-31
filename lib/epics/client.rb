@@ -87,15 +87,11 @@ class Epics::Client
   end
 
   def HIA
-    respnse = post(url, Epics::HIA.new(self).to_xml).body
-
-    respnse.ok?
+    post(url, Epics::HIA.new(self).to_xml).body.ok?
   end
 
   def INI
-    respnse = post(url, Epics::INI.new(self).to_xml).body
-
-    respnse.ok?
+    post(url, Epics::INI.new(self).to_xml).body.ok?
   end
 
   def HPB
