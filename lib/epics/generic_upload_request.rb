@@ -77,10 +77,10 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
 
   def pad(d)
     len = cipher.block_size*((d.size / cipher.block_size)+1)
-    padded = d.ljust(len, [0].pack("C*"))
-    padded[-1] = [len - d.size].pack("C*")
 
-    padded
+    d.ljust(len, [0].pack("C*")).tap do |padded|
+      padded[-1] = [len - d.size].pack("C*")
+    end
   end
 
 end
