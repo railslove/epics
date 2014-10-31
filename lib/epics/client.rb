@@ -19,8 +19,8 @@ class Epics::Client
   def inspect
     "#<#{self.class}:#{self.object_id}
      @keys=#{self.keys.keys},
-     @user_id=#{self.user_id},
-     @partner_id=#{self.partner_id}"
+     @user_id=\"#{self.user_id}\",
+     @partner_id=\"#{self.partner_id}\""
   end
 
   def e

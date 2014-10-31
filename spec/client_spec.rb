@@ -25,8 +25,8 @@ RSpec.describe Epics::Client do
   describe '#inspect' do
     it 'will not print the complete object' do
       expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
-      expect(subject.inspect).to include("@user_id=#{subject.user_id}")
-      expect(subject.inspect).to include("@partner_id=#{subject.partner_id}")
+      expect(subject.inspect).to include("@user_id=\"#{subject.user_id}\"")
+      expect(subject.inspect).to include("@partner_id=\"#{subject.partner_id}\"")
     end
   end
 
