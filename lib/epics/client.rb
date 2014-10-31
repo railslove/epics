@@ -196,7 +196,7 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new do |faraday|
+    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.response :logger                  # log requests to STDOUT
