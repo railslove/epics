@@ -1,3 +1,8 @@
+### 1.1.2
+
+  * [BUGFIX] missing require statements for `zlib`
+  * [BUGFIX] #16 `setup` tried to initialize wrong class
+
 ### 1.1.1
 
   * [BUGFIX] CCT order was submited as CD1
