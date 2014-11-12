@@ -56,7 +56,7 @@ class Epics::Client
   end
 
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
-    client = Client.new(nil, passphrase, url, host_id, user_id, partner_id)
+    client = new(nil, passphrase, url, host_id, user_id, partner_id)
     client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
       memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
     end
