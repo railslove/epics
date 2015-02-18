@@ -135,6 +135,10 @@ class Epics::Client
     download(Epics::C53, from, to)
   end
 
+  def C54(from, to)
+    download(Epics::C54, from, to)
+  end
+
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes").content.split(/\s/)
   end
