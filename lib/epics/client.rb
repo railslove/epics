@@ -176,7 +176,7 @@ class Epics::Client
 
     res = post(url, order.to_transfer_xml).body
 
-    res.transaction_id
+    return res.transaction_id, res.order_id
   end
 
   def download(order_type, *args)

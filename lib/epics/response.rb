@@ -49,6 +49,10 @@ class Epics::Response
     doc.xpath("//xmlns:header/xmlns:static/xmlns:TransactionID").text
   end
 
+  def order_id
+    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:OrderID").text
+  end
+
   def digest_valid?
     authenticated = doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join
     digest_value = doc.xpath("//ds:DigestValue").first

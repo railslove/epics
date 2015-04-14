@@ -86,6 +86,20 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#CD1' do
+    let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
+    before do
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+    end
+
+    it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+  end
+
   describe '#HTD' do
     before do
       allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
