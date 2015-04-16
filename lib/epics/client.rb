@@ -75,15 +75,15 @@ class Epics::Client
   end
 
   def credit(document)
-    @client.CCT(document)
+    self.CCT(document)
   end
 
   def debit(document, type = :CDD)
-    @client.send(type, document)
+    self.public_send(type, document)
   end
 
   def statements(from, to, type = :STA)
-    @client.send(type, from, to)
+    self.public_send(type, from, to)
   end
 
   def HIA
