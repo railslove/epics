@@ -200,10 +200,10 @@ Besides EBCIS being a standard, some server implementations are slighty differen
 Is Epics working with your institution? 
 Please help us to grow this list of supported banks:
 
-* Sofortbank
+* Handelsbank
 * Deutsche Bank
 * Sparkasse KölnBonn
-
+* Commerz Bank
 
 ## Links
 
