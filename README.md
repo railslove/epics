@@ -5,7 +5,7 @@
 
 EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard)
 
-The client supports the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT)
+The client supports the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDB CDD CCT)
 
 
 ## Installation
@@ -162,6 +162,7 @@ puts e.STA('2014-09-01', '2014-09-11')
 
 * CD1 (Uploads a SEPA Direct Debit document of type COR1)
 * CDD (Uploads a SEPA Direct Debit document of type CORE)
+* CDB (Uploads a SEPA Direct Debit document of type B2B)
 * CCT (Uploads a SEPA Credit document)
 * ... more coming soon
 
