@@ -111,6 +111,10 @@ class Epics::Client
     [bank_x, bank_e]
   end
 
+  def CDB(document)
+    upload(Epics::CDB, document)
+  end
+
   def CD1(document)
     upload(Epics::CD1, document)
   end
