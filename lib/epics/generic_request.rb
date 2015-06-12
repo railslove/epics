@@ -1,7 +1,7 @@
 class Epics::GenericRequest
   extend Forwardable
   attr_accessor :client
-  attr_accessor :transaction_id
+  attr_accessor :transaction_id, :transaction_key, :segment_number
 
   def initialize(client)
     self.client = client
@@ -78,6 +78,33 @@ class Epics::GenericRequest
             "OrderData" => encrypted_order_data
           }
         }
+      }
+    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+  end
+
+  def to_fetch_segment_xml
+    Nokogiri::XML.parse(Gyoku.xml({
+      root => {
+        :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
+        :@xmlns => "urn:org:ebics:H004",
+        :@Version => "H004",
+        :@Revision => "1",
+        "header" => {
+          :@authenticate => true,
+          "static" => {
+            "HostID" => host_id,
+            "TransactionID" => transaction_id
+          },
+          "mutable" => {
+            "TransactionPhase" => "Transfer",
+            "SegmentNumber" => {
+              :@lastSegment => false,
+              :content! => segment_number + 1
+            }
+          }
+        },
+        "AuthSignature" => auth_signature,
+        "body" => {}
       }
     }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
   end

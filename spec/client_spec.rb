@@ -103,4 +103,28 @@ RSpec.describe Epics::Client do
       expect { subject.HTD }.to change { subject.instance_variable_get("@name") }
     end
   end
+
+  describe 'doing a segmented download' do
+    it 'sends several transfer requests when the first response says the data is segmented' do
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[Initialisation</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'sta_segmented_1.xml')))
+
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[2</SegmentNumber>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'sta_segmented_2.xml')))
+
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[3</SegmentNumber>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'sta_segmented_3.xml')))
+
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[Receipt</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'sta_segmented_receipt.xml')))
+
+      data = subject.STA("2014-09-01", "2014-09-30")
+
+      expect(data).to match /(<?xml.*){3}/
+    end
+  end
 end

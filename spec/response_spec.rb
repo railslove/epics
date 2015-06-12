@@ -59,6 +59,24 @@ RSpec.describe Epics::Response do
     end
   end
 
+  describe '#segment_number' do
+    describe 'when the response is segemnted' do
+      let(:ebics_response) { File.read('spec/fixtures/xml/sta_response.xml') }
+
+      it 'will return the segment number' do
+        expect(subject.segment_number).to eq 1
+      end
+    end
+
+    describe 'when the response is not segemnted' do
+      let(:ebics_response) { File.read('spec/fixtures/xml/hpb_response.xml') }
+
+      it 'will return nil' do
+        expect(subject.segment_number).to be nil
+      end
+    end
+  end
+
   describe '#segmented?' do
     describe 'when the response is segemnted' do
       let(:ebics_response) { File.read('spec/fixtures/xml/sta_response.xml') }

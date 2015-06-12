@@ -1,6 +1,6 @@
 class Epics::Response
   attr_accessor :doc
-  attr_accessor :client
+  attr_accessor :client, :transaction_key
 
   def initialize(client, xml)
     self.doc = Nokogiri::XML.parse(xml)
@@ -31,8 +31,13 @@ class Epics::Response
     !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']")
   end
 
+  def segment_number
+    node = doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber")
+    node.respond_to?(:text) ? node.text.to_i : nil
+  end
+
   def segmented?
-    !!doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber")
+    !!segment_number
   end
 
   def return_code
@@ -76,7 +81,7 @@ class Epics::Response
 
     data = (cipher.update(order_data_encrypted) + cipher.final)
 
-    Zlib::Inflate.new.inflate(data)
+    data
   end
 
   def cipher
@@ -89,9 +94,10 @@ class Epics::Response
   end
 
   def transaction_key
-    transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey").first.content)
-
-    @transaction_key ||= client.e.key.private_decrypt(transaction_key_encrypted)
+    @transaction_key ||= begin
+      transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey").first.content)
+      client.e.key.private_decrypt(transaction_key_encrypted)
+    end
   end
 
   def digester
