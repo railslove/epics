@@ -1,11 +1,22 @@
 class Epics::Error < StandardError
+
+  attr_reader :code
+
   def to_s
-    [@error.fetch("symbol", "EPICS_UNKNOWN"), @error.fetch("short_text", "unknown")].join(" - ")
+    "#{symbol} - #{short_text}"
   end
 
   def initialize(code)
     @code = code
     @error = self.class::ERRORS.fetch(code, {})
+  end
+
+  def symbol
+    @error.fetch("symbol", "EPICS_UNKNOWN")
+  end
+
+  def short_text
+    @error.fetch("short_text", "unknown")
   end
 
   class TechnicalError < self
