@@ -1,3 +1,15 @@
+### 1.2.2
+
+  * [BUGFIX] HPB namespaces are unpredictable so be ignore them
+
+### 1.2.1
+
+  * [BUGFIX] fixing wrong variable bind within `credit`, `debit` and `statements`
+
+### 1.2.0
+
+  * [ENHANCEMENT] uploads will return both ebics_order_id and ebics_transaction_id
+
 ### 1.1.2
 
   * [BUGFIX] missing require statements for `zlib`
