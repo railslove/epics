@@ -98,8 +98,8 @@ class Epics::Client
     Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue").each do |node|
       type = node.parent.last_element_child.content
 
-      modulus  = Base64.decode64(node.at_xpath(".//ds:Modulus").content)
-      exponent = Base64.decode64(node.at_xpath(".//ds:Exponent").content)
+      modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
+      exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
       bank   = OpenSSL::PKey::RSA.new
       bank.n = OpenSSL::BN.new(modulus, 2)

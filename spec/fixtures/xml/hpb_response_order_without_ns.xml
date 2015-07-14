@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HPBResponseOrderData xmlns="urn:org:ebics:H004">
+  <AuthenticationPubKeyInfo>
+    <PubKeyValue>
+      <RSAKeyValue xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <Modulus>AJ2/0OoIZydb9sgKbiwqDcwA0NtcUMIYi6GK7PqoRszu1uytGnxJjQhGt62kMslWvLgebUSwdq/T3YyGsa3KQeIGaUUn9iqyu3BoNOMdo2DLN4NdGMY1WR/HbYRKR3JHyURhTBKw27KScRRdKGl6jY+VcXcTKJL8PjXMQH5cD6Gz</Modulus>
+        <Exponent>AQAB</Exponent>
+      </RSAKeyValue>
+      <TimeStamp>2007-03-13T11:33:16.616Z</TimeStamp>
+    </PubKeyValue>
+    <AuthenticationVersion>X002</AuthenticationVersion>
+  </AuthenticationPubKeyInfo>
+  <EncryptionPubKeyInfo>
+    <PubKeyValue>
+      <RSAKeyValue xmlns="http://www.w3.org/2000/09/xmldsig#">
+        <Modulus>AJ2/0OoIZydb9sgKbiwqDcwA0NtcUMIYi6GK7PqoRszu1uytGnxJjQhGt62kMslWvLgebUSwdq/T3YyGsa3KQeIGaUUn9iqyu3BoNOMdo2DLN4NdGMY1WR/HbYRKR3JHyURhTBKw27KScRRdKGl6jY+VcXcTKJL8PjXMQH5cD6Gz</Modulus>
+        <Exponent>AQAB</Exponent>
+      </RSAKeyValue>
+      <TimeStamp>2007-03-13T11:33:16.682Z</TimeStamp>
+    </PubKeyValue>
+    <EncryptionVersion>E002</EncryptionVersion>
+  </EncryptionPubKeyInfo>
+  <HostID>SIZBN001</HostID>
+</HPBResponseOrderData>

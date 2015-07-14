@@ -61,6 +61,10 @@ RSpec.describe Epics::Client do
   end
 
   describe '#HPB' do
+    let(:e_key) do
+      Epics::Key.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
+    end
+
     before do
       stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
         .with(:body => %r[<?xml(.*)ebicsNoPubKeyDigestsRequest>])
@@ -75,14 +79,23 @@ RSpec.describe Epics::Client do
     end
 
     describe 'crypto' do
-      let(:e_key) do
-        Epics::Key.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
-      end
 
       before { subject.HPB }
 
       it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
+    end
+
+    describe 'when order data wont include namesspaces' do
+      before do
+        allow(subject).to receive(:download).with(Epics::HPB).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response_order_without_ns.xml')))
+
+        subject.HPB
+      end
+
+      it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
+      it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
+
     end
   end
 
