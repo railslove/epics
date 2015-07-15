@@ -183,12 +183,21 @@ class Epics::Client
     document = order_type.new(self, *args)
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
+    document.transaction_key = res.transaction_key
 
-    if res.segmented? && res.last_segment?
+    data = [res.order_data]
+
+    if res.segmented?
+      until res.last_segment?
+        document.segment_number = res.segment_number
+        res = post(url, document.to_fetch_segment_xml).body
+        res.transaction_key = document.transaction_key
+        data << res.order_data
+      end
       post(url, document.to_receipt_xml).body
     end
 
-    res.order_data
+    Zlib::Inflate.new.inflate(data.join)
   end
 
   def connection
