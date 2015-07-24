@@ -128,11 +128,11 @@ class Epics::Client
   end
 
   def C52(from, to)
-    download(Epics::C52, from, to)
+    download_and_unzip(Epics::C52, from, to)
   end
 
   def C53(from, to)
-    download(Epics::C53, from, to)
+    download_and_unzip(Epics::C53, from, to)
   end
 
   def HAA
@@ -189,6 +189,16 @@ class Epics::Client
     end
 
     res.order_data
+  end
+
+  def download_and_unzip(order_type, *args)
+    [].tap do |entries|
+      Zip::InputStream.open(StringIO.new( download(order_type, *args) )) do |stream|
+        while stream.get_next_entry
+          entries << stream.read
+        end
+      end
+    end
   end
 
   def connection
