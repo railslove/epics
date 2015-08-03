@@ -168,8 +168,12 @@ puts e.STA('2014-09-01', '2014-09-11')
 Example:
 
 ```ruby
-puts e.CD1("i-am-a-PAIN-xml-file")
-# res is a the transaction id of the order
+puts e.CD1("i-am-PAIN-xml")
+# res is a the transaction id and id of the order 
+
+# if the XML is a file in your FS, read it first and give if epics to consume
+puts e.CD1(File.read("/where/the/xml/is/stored.xml"))
+
 ```
 
 ### Lazy Mode
