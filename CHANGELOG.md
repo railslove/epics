@@ -1,3 +1,8 @@
+### 1.3.0
+
+  * [BUGFIX] unzip C5X payloads
+  * [ENHANCEMENT] B2B direct debits
+
 ### 1.2.2
 
   * [BUGFIX] HPB namespaces are unpredictable so be ignore them
