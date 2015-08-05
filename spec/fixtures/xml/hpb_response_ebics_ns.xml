@@ -1,4 +1,4 @@
-<ebics:ebicsKeyManagementResponse xmlns:ebics="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H004" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_response_H004.xsd">
+<ebics:bicsKeyManagementResponse xmlns:ebics="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H004" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_response_H004.xsd">
   <ebics:header authenticate="true">
     <ebics:static />
     <ebics:mutable>
@@ -12,9 +12,9 @@
         <ebics:EncryptionPubKeyDigest Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" Version="E002">rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=</ebics:EncryptionPubKeyDigest>
         <ebics:TransactionKey>CPdd6ODXrCxHWpYrwS/5a3NIZ1R2SDscHHJSONc2I7g8ara7qv5Ra7H03W+336DPQLZQxH+EBRWdE2FQ1vrVTcypK6fkFarmO1dEtQt6Ka89AozC7aQMyp4yGl+zlF+XvFkJXZbRXgoEOPsgcG0xM6nKLXnr1ThYRFOoAasigLDGwqxliyhoR94F9dL7YB8Le/uZeRj78mNp4smkE5ZKKyPhwVx+0IW78YuVCSC2c2qbsMmm4evAvycdpLfuuoG4KVlNMIlvkKeBfMZFELcmeKKm85D2zPYkZ7cqG2IfAAp5qdS6K8P7RY4gtjUhOtP5mi8bZt/ZcjioUmIR9dAMnA==</ebics:TransactionKey>
       </ebics:DataEncryptionInfo>
-      <ebics:OrderData>lJ/v1HvOYAZKTPkxULH4mOcUy01+EaAsxLzCPhtieAo9m5AtU5URdyBVfmclHbtWe3ELb02lR37bChynq0Esqpljxx7CiB+kl/bVs7XkNQQmtGPlh08O7ApJ7AHdKPFFvE+SM2OWpSwUrqJGtmyaU6s+RM66o/3Q0wvKi4y3+Q2jm8nkiWZpPfNt52g4ReE9Ge86o+L+EBOBgZm634L5Z/i6pq908mXBAklPdk1ERdEgWONaOeYYmB70FToplR1gINJEF2CnfAtD/wV+DuQFPDth+EWHqhe3a4xO0d9eJ55ou2QCYOPUC2g/qz1sp7GR74W7P5IWJdmnUEuPFsKJ6OvM+1V8S06jZGDa/QhUGDK8F3G/TMP09W1MsrlQTRr3YQ5H43+pMY7I6Jysze+X9OKZZTTpv4GmYm1USjmraGyMuPF3j9hrlmpttK+1gg2WzytCJO44YsZp9ckls8JNK4bT5uwTuomKZoRgmiIOTcMh4VP7V28TWj2XdF+T6rBFILTvQyXMOzvbe1kLwg2O31JDBdJ8X1fHCYJxKsIrYCSDPz4sha8h7QmHrCSFmjoXb+LUElnbLXZVRkY5/Dc73EM6Es3wAgjwSJK2asRqdqU0PhbS5qpIlgYKsNcb+Wes</ebics:OrderData>
+      <ebics:OrderData>tPp8sZbGSkjaUy4IoNektKEK1KekTQxLwIZ+AYhyuL99erg26xK1ZcvXd+vJwSfl5TV21qQHybID5CnnP5ZvjcxBdwrK0hyMyp2FYJAY16wLAt++Esydx55XSBvutQASBEnPd01uq3Gd4tPLLbrlBGCDEtqJcfbLEOyWvxYFNDb/HU6RpOCD7JN3jL+LRLsFfrZEK96QO8IzpCtiAYBJ6C3OaHsETt0wBx1lYy7JBSw+nIEEzE6+N3EjJjE3++9BfCDE0ca7kpWCSJ666dUuelPuIS45LjcFbTGROdZ1BTJc6F39Zjxud2yUJIEJINQUZA2O8628gVi2GvoUZuILFx1TsCik1T2ims7EVqkfSNEBpKCa3mtmNMEFepdXNTBm3Kf+J+5ATnqq1EJrYBkGpDPii4jgvVPNIkXJlx5DqqhgUUCShnCLOingwrE+z5ekRM5091iHl1C4APfR05gl0Q81D5HiV9m4CuMjx4Lp7mm0vdgP1LNiaA1BnKIeFob+4SN4Kv7AoP7nxk+3nINMd0yGujsnMx6WgGFn4lvv7IH250+LUZJM4rkdVx9FacxU+P+B6+GDHpLKZyT84WKvPXWnoIhPpykR/Pbysoe+WdAf7cMVp9K5Q5QhfPaMu2eIZjR5+IRIUXxhTo8k2vDG4XBcjgVygP5GJAN83pjXuwdo5JRxyGZAOqvBr7cHmmCG</ebics:OrderData>
     </ebics:DataTransfer>
-    <ebics:ReturnCode authenticate="true">091116</ebics:ReturnCode>
+    <ebics:ReturnCode authenticate="true">000000</ebics:ReturnCode>
     <ebics:TimestampBankParameter authenticate="true">2007-10-19T14:58:39.467Z</ebics:TimestampBankParameter>
   </ebics:body>
 </ebics:ebicsKeyManagementResponse>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<HPBResponseOrderData xmlns="http://www.ebics.org/H003" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_orders.xsd">
+<HPBResponseOrderData xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_orders.xsd">
   <AuthenticationPubKeyInfo>
     <PubKeyValue>
       <ds:RSAKeyValue>
         <ds:Modulus>AJ2/0OoIZydb9sgKbiwqDcwA0NtcUMIYi6GK7PqoRszu1uytGnxJjQhGt62kMslWvLgebUSwdq/T3YyGsa3KQeIGaUUn9iqyu3BoNOMdo2DLN4NdGMY1WR/HbYRKR3JHyURhTBKw27KScRRdKGl6jY+VcXcTKJL8PjXMQH5cD6Gz</ds:Modulus>
         <ds:Exponent>AQAB</ds:Exponent>
       </ds:RSAKeyValue>
+      <TimeStamp>2007-03-13T11:33:16.616Z</TimeStamp>
     </PubKeyValue>
     <AuthenticationVersion>X002</AuthenticationVersion>
   </AuthenticationPubKeyInfo>
@@ -15,6 +16,7 @@
         <ds:Modulus>AJ2/0OoIZydb9sgKbiwqDcwA0NtcUMIYi6GK7PqoRszu1uytGnxJjQhGt62kMslWvLgebUSwdq/T3YyGsa3KQeIGaUUn9iqyu3BoNOMdo2DLN4NdGMY1WR/HbYRKR3JHyURhTBKw27KScRRdKGl6jY+VcXcTKJL8PjXMQH5cD6Gz</ds:Modulus>
         <ds:Exponent>AQAB</ds:Exponent>
       </ds:RSAKeyValue>
+      <TimeStamp>2007-03-13T11:33:16.616Z</TimeStamp>
     </PubKeyValue>
     <EncryptionVersion>E002</EncryptionVersion>
   </EncryptionPubKeyInfo>

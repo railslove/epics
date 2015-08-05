@@ -1,0 +1,13 @@
+<h004:ebicsKeyManagementResponse xmlns:h004="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 ebics_H004.xsd" Version="H004" Revision="1">
+  <h004:header authenticate="true">
+    <h004:static />
+    <h004:mutable>
+      <h004:OrderID>B004</h004:OrderID>
+      <h004:ReturnCode>000000</h004:ReturnCode>
+      <h004:ReportText>[EBICS_OK] OK</h004:ReportText>
+    </h004:mutable>
+  </h004:header>
+  <h004:body>
+    <h004:ReturnCode authenticate="true">000000</h004:ReturnCode>
+  </h004:body>
+</h004:ebicsKeyManagementResponse>

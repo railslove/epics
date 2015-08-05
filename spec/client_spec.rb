@@ -67,8 +67,8 @@ RSpec.describe Epics::Client do
 
     before do
       stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<?xml(.*)ebicsNoPubKeyDigestsRequest>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response.xml')))
+        .with(:body => %r[ebicsNoPubKeyDigestsRequest])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response_ebics_ns.xml')))
     end
 
     it { expect(subject.HPB).to match([be_a(Epics::Key), be_a(Epics::Key)]) }

@@ -136,14 +136,14 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes").content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']").text
-      @bic  ||= htd.at_xpath("//xmlns:BankCode[@international='true']").text
-      @name ||= htd.at_xpath("//xmlns:Name").text
+      @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @bic  ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @name ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text
     end.to_xml
   end
 

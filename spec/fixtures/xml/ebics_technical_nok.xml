@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ebicsKeyManagementResponse xmlns="http://www.ebics.org/H003" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H003" xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_keymgmt_response.xsd">
+<ebicsKeyManagementResponse xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H004" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_response_H004.xsd">
   <header authenticate="true">
     <static/>
     <mutable>
