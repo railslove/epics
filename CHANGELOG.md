@@ -1,3 +1,8 @@
+### 1.3.1
+
+  * [ENHANCEMENT] make xpath namespaces explicit, so we can cover a wider
+  rage of responses
+
 ### 1.3.0
 
   * [BUGFIX] unzip C5X payloads
