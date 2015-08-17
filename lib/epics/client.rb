@@ -95,7 +95,7 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue").each do |node|
+    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: "urn:org:ebics:H004").each do |node|
       type = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
