@@ -1,5 +1,3 @@
 # Contributing to Epics
 
-## Before You Start
-
-Please contact team@railslove.com before working on Epics!
+To get started, <a href="https://www.clahub.com/agreements/railslove/epics">sign the Contributor License Agreement</a>.
