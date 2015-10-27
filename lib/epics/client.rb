@@ -247,7 +247,7 @@ class Epics::Client
   end
 
   def use_proxy?
-    ENV['EPICS_HTTP_PROXY'].present?
+    !ENV['EPICS_HTTP_PROXY'].nil?
   end
 
   def http_proxy
