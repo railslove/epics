@@ -202,11 +202,12 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}) do |faraday|
+    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.response :logger                  # log requests to STDOUT
       faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+      faraday.proxy http_proxy if use_proxy?
     end
   end
 
@@ -245,4 +246,15 @@ class Epics::Client
     cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
   end
 
+  def use_proxy?
+    ENV['EPICS_HTTP_PROXY'].present?
+  end
+
+  def http_proxy
+    ENV['EPICS_HTTP_PROXY']
+  end
+
+  def verify_ssl?
+    ENV['EPICS_VERIFY_SSL'] != 'false'
+  end
 end
