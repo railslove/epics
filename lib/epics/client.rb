@@ -207,7 +207,6 @@ class Epics::Client
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.response :logger                  # log requests to STDOUT
       faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      faraday.proxy http_proxy if use_proxy?
     end
   end
 
@@ -244,14 +243,6 @@ class Epics::Client
   def setup_cipher(method, passphrase, salt)
     cipher.send(method)
     cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
-  end
-
-  def use_proxy?
-    !ENV['EPICS_HTTP_PROXY'].nil?
-  end
-
-  def http_proxy
-    ENV['EPICS_HTTP_PROXY']
   end
 
   def verify_ssl?

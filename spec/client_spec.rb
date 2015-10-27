@@ -24,19 +24,7 @@ RSpec.describe Epics::Client do
 
   context 'environment settings' do
     before(:each) do
-      ENV.delete('EPICS_HTTP_PROXY')
       ENV.delete('EPICS_VERIFY_SSL')
-    end
-
-    describe '#use_proxy?' do
-      it 'returns false if there is no configured proxy' do
-        expect(subject.send(:use_proxy?)).to eq false
-      end
-
-      it 'returns true if there is a configured proxy' do
-        ENV['EPICS_HTTP_PROXY'] = 'yourproxy:31337'
-        expect(subject.send(:use_proxy?)).to eq true
-      end
     end
 
     describe '#verify_ssl?' do
