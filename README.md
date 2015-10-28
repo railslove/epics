@@ -3,9 +3,9 @@
 
 # Epics
 
-EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard)
+EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard).
 
-The client supports the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT)
+The client supports the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT).
 
 
 ## Installation
@@ -23,9 +23,9 @@ Or install it yourself as:
 
 ## Getting started
 
-In case you are new to EBICS, you'll have to complete a initialization process with
-your bank. Epics can help you to generate all the necessary keys and directly store
-them for later use, but first you'll have to to lift some contractually work with your
+In case you are new to EBICS, you'll have to complete an initialization process with
+your bank. Epics can help you generate all necessary keys and directly store
+them for later use. But first you'll have to lift some contractually work with your
 bank.
 
 Once the paperwork is done, your bank should provide you with:
@@ -35,7 +35,7 @@ Once the paperwork is done, your bank should provide you with:
 * a PARTNER ID
 * n User IDs (this depends on the bank and your needs)
 
-Take this parameters and start setting up one UserID (repeat this for every user
+Take these parameters and start setting up a UserID (repeat this for every user
 you want to initialize):
 
 ```ruby
@@ -66,15 +66,15 @@ The next step is to print the INI letter and post it to your bank:
 e.save_ini_letter( 'My Banks Name', "/home/epics/ini.html" )
 ```
 
-Open the generated HTML file in your favorite browser and print it out (skipping
-header and footer sounds like a solid setting here ;) In case your having difficulties
+Open the generated HTML file in your favorite browser and print it (skipping
+header and footer sounds like a solid setting here ;). In case you're having difficulties
 with the encoding, try forcing your browser to use UTF-8.
 
-Put the INI letter in a envelope and mail it to your bank!
+Put the INI letter in an envelope and mail it to your bank!
 
-Done! ... Well not completly :)
+Done! ... Well not completely :)
 
-Once the bank confirms that your user is completely initialized. You'll have to
+Once the bank confirms that your user is completely initialized, you'll have to
 download the public keys of your bank:
 
 ```ruby
@@ -95,7 +95,7 @@ To get a list of all supported order types.
 
 ## Need help? Having questions? 
 
-We have many years of experience in developing innovative applications for the finance sector and integration application with financial institutions. - you might want to have a look at our [portfolio](http://www.railslove.com/portfolio)   
+We have many years of experience in developing innovative applications for the finance sector and integrating applications with financial institutions. - you might want to have a look at our [portfolio](http://www.railslove.com/portfolio)   
 __If you need help we are happy to provide consulting or development services. Contact us: [team@railslove.com](mailto:team@railslove.com)__
 
 
@@ -178,7 +178,7 @@ puts e.CD1(File.read("/where/the/xml/is/stored.xml"))
 
 ### Lazy Mode
 
-Once you have a client, go ahead and start playing! There are 3 convinence methods
+Once you have a client, go ahead and start playing! There are 3 convenience methods
 that are hiding some strange names from you:
 
 * debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
