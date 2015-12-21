@@ -159,7 +159,7 @@ class Epics::Client
     download(Epics::PTK, from, to)
   end
 
-  def HAC(from, to)
+  def HAC(from = nil, to = nil)
     download(Epics::HAC, from, to)
   end
 
