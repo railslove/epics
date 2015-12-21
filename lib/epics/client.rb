@@ -123,7 +123,7 @@ class Epics::Client
     upload(Epics::CCT, document)
   end
 
-  def STA(from, to)
+  def STA(from = nil, to = nil)
     download(Epics::STA, from, to)
   end
 
