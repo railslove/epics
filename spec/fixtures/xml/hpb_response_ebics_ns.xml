@@ -1,4 +1,4 @@
-<ebics:bicsKeyManagementResponse xmlns:ebics="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H004" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_response_H004.xsd">
+<ebics:ebicsKeyManagementResponse xmlns:ebics="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H004" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_response_H004.xsd">
   <ebics:header authenticate="true">
     <ebics:static />
     <ebics:mutable>
