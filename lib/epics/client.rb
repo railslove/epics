@@ -1,3 +1,7 @@
+require_relative 'h004'
+require_relative './hvu'
+require_relative './hvz'
+
 class Epics::Client
   extend Forwardable
 
@@ -135,10 +139,12 @@ class Epics::Client
     download_and_unzip(Epics::C53, from, to)
   end
 
+  # Abrufbare Auftragsdaten abholen
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
 
+  # Kunden- und Teilnehmerinformationen des Kunden abholen
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
       @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
@@ -147,21 +153,59 @@ class Epics::Client
     end.to_xml
   end
 
+  # Bankparameter-Datei abholen
   def HPD
     download(Epics::HPD)
   end
 
+  # Kunden- und Teilnehmerinformationen des Kunden abholen
   def HKD
     download(Epics::HKD)
   end
 
+  # Protokolldatei abholen
   def PTK(from, to)
     download(Epics::PTK, from, to)
   end
 
+  # XML Protokolldatei abholen
   def HAC(from = nil, to = nil)
     download(Epics::HAC, from, to)
   end
+
+  # VEU related actions
+
+  # Unterschriftsmappe einsehen
+  def HVU
+    Epics::H004.from_xml(download(Epics::HVU)).to_h
+  end
+
+  # Übersicht mit Zusatzinformationen abrufen (enthält Unterzeichner + Unterschriftsklasse)
+  def HVZ
+    Epics::H004.from_xml(download(Epics::HVZ)).to_h
+  end
+
+  # # Statusinformationen abholen
+  # def HVD
+  #   download(Epics::HVD)
+  # end
+
+  # # Transaktionsdetails abrufen
+  # def HVT
+  #   download(Epics::HVT)
+  # end
+  #
+  # # Unterschrift einreichen
+  # def HVE
+  #   download(Epics::HVE)
+  # end
+  #
+  # # Unterschrift stornieren
+  # def HVS
+  #   download(Epics::HVS)
+  # end
+
+  # More stuff
 
   def save_keys(path)
     File.write(path, dump_keys)

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h004:HVZResponseOrderData xmlns:h004="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebics.org/H004 http://www.ebics.org/H004/ebics.xsd">
+  <h004:OrderDetails>
+    <h004:OrderType>CCT</h004:OrderType>
+    <h004:OrderID>B03N</h004:OrderID>
+    <h004:DataDigest SignatureVersion="A006">Ej9Q5zvpef87V9Ef5vdEY/aiPvEiVYupcZHir51G94g=</h004:DataDigest>
+    <h004:OrderDataAvailable>true</h004:OrderDataAvailable>
+    <h004:OrderDataSize>1776</h004:OrderDataSize>
+    <h004:OrderDetailsAvailable>false</h004:OrderDetailsAvailable>
+    <h004:TotalOrders>1</h004:TotalOrders>
+    <h004:TotalAmount isCredit="true">1000.13</h004:TotalAmount>
+    <h004:Currency>EUR</h004:Currency>
+    <h004:SigningInfo readyToBeSigned="true" NumSigRequired="1" NumSigDone="1"/>
+    <h004:SignerInfo>
+      <h004:PartnerID>RS</h004:PartnerID>
+      <h004:UserID>RST</h004:UserID>
+      <h004:Name>
+        RS T</h004:Name>
+      <h004:Timestamp>2016-03-23T08:56:39.000000Z</h004:Timestamp>
+      <h004:Permission AuthorisationLevel="T"/>
+    </h004:SignerInfo>
+    <h004:SignerInfo>
+      <h004:PartnerID>RS</h004:PartnerID>
+      <h004:UserID>RSA</h004:UserID>
+      <h004:Name>
+        RS A</h004:Name>
+      <h004:Timestamp>2016-03-23T09:26:33.000000Z</h004:Timestamp>
+      <h004:Permission AuthorisationLevel="A"/>
+    </h004:SignerInfo>
+    <h004:OriginatorInfo>
+      <h004:PartnerID>RS</h004:PartnerID>
+      <h004:UserID>RST</h004:UserID>
+      <h004:Name>
+        RS T</h004:Name>
+      <h004:Timestamp>2016-03-23T08:56:39.000000Z</h004:Timestamp>
+    </h004:OriginatorInfo>
+  </h004:OrderDetails>
+  <h004:OrderDetails>
+    <h004:OrderType>CCT</h004:OrderType>
+    <h004:OrderID>B03P</h004:OrderID>
+    <h004:DataDigest SignatureVersion="A006">INN6KG5EHVovPLsbzdnNbfL7GGneYztgIYxXlRQwwI4=</h004:DataDigest>
+    <h004:OrderDataAvailable>true</h004:OrderDataAvailable>
+    <h004:OrderDataSize>1776</h004:OrderDataSize>
+    <h004:OrderDetailsAvailable>false</h004:OrderDetailsAvailable>
+    <h004:TotalOrders>1</h004:TotalOrders>
+    <h004:TotalAmount isCredit="true">1000.13</h004:TotalAmount>
+    <h004:Currency>EUR</h004:Currency>
+    <h004:SigningInfo readyToBeSigned="true" NumSigRequired="1" NumSigDone="0"/>
+    <h004:SignerInfo>
+      <h004:PartnerID>RS</h004:PartnerID>
+      <h004:UserID>RST</h004:UserID>
+      <h004:Name>
+        RS T</h004:Name>
+      <h004:Timestamp>2016-03-29T10:57:12.000000Z</h004:Timestamp>
+      <h004:Permission AuthorisationLevel="T"/>
+    </h004:SignerInfo>
+    <h004:OriginatorInfo>
+      <h004:PartnerID>RS</h004:PartnerID>
+      <h004:UserID>RST</h004:UserID>
+      <h004:Name>
+        RS T</h004:Name>
+      <h004:Timestamp>2016-03-29T10:57:11.000000Z</h004:Timestamp>
+    </h004:OriginatorInfo>
+  </h004:OrderDetails>
+</h004:HVZResponseOrderData>
