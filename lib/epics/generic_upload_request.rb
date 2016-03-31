@@ -3,10 +3,14 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   attr_accessor :key
   attr_accessor :document
 
-  def initialize(client, document)
+  def initialize(client, document = nil)
     super(client)
     self.document = document
     self.key ||= cipher.random_key
+  end
+
+  def segmented?
+    true
   end
 
   def cipher

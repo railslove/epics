@@ -2,6 +2,8 @@ require_relative 'h004'
 require_relative './hvu'
 require_relative './hvz'
 require_relative './hvd'
+require_relative './hve'
+require_relative './hvs'
 
 class Epics::Client
   extend Forwardable
@@ -176,37 +178,30 @@ class Epics::Client
 
   # VEU related actions
 
-  # Unterschriftsmappe einsehen
+  # Fetch overview of all orders which need to be signed
   def HVU
     Epics::H004.from_xml(download(Epics::HVU)).to_h
   end
 
-  # Übersicht mit Zusatzinformationen abrufen (enthält Unterzeichner + Unterschriftsklasse)
+  # Fetch detailed overview of all orders which need to be signed
   def HVZ
     Epics::H004.from_xml(download(Epics::HVZ)).to_h
   end
 
-  # Statusinformationen abholen
+  # Fetch details for an order
   def HVD(order_id, order_type)
     Epics::H004.from_xml(download(Epics::HVD, order_id, order_type)).to_h
   end
 
-  # # Transaktionsdetails abrufen
-  # def HVT
-  #   download(Epics::HVT)
-  # end
-  #
-  # # Unterschrift einreichen
-  # def HVE
-  #   download(Epics::HVE)
-  # end
-  #
-  # # Unterschrift stornieren
-  # def HVS
-  #   download(Epics::HVS)
-  # end
+  # sign an order
+  def HVE(order_id, order_type, digest)
+    upload(Epics::HVE, order_id, order_type, digest)
+  end
 
-  # More stuff
+  # reject an order
+  def HVS(order_id, order_type, digest)
+    upload(Epics::HVS, order_id, order_type, digest)
+  end
 
   def save_keys(path)
     File.write(path, dump_keys)
@@ -214,12 +209,14 @@ class Epics::Client
 
   private
 
-  def upload(order_type, document)
-    order = order_type.new(self, document)
+  def upload(order_type, *args)
+    order = order_type.new(self, *args)
     res = post(url, order.to_xml).body
     order.transaction_id = res.transaction_id
 
-    res = post(url, order.to_transfer_xml).body
+    if order.segmented?
+      res = post(url, order.to_transfer_xml).body
+    end
 
     return res.transaction_id, res.order_id
   end

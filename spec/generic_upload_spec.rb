@@ -2,6 +2,12 @@ RSpec.describe Epics::GenericUploadRequest do
   let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
   subject { described_class.new(client, "\x01" * 12) }
 
+  describe '#segmented?' do
+    it 'returns true by default' do
+      expect(subject.segmented?).to eq(true)
+    end
+  end
+
   describe '#pad' do
 
     it 'will complete the block to the next 16byte' do
