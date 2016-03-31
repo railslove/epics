@@ -2,6 +2,7 @@ require 'nokogiri'
 
 require_relative './h004/hvu'
 require_relative './h004/hvz'
+require_relative './h004/hvd'
 
 module Epics
   module H004
@@ -19,6 +20,8 @@ module Epics
         Epics::H004::HVZ.new(doc)
       when "HVUResponseOrderData"
         Epics::H004::HVU.new(doc)
+      when "HVDResponseOrderData"
+        Epics::H004::HVD.new(doc)
       end
     rescue Nokogiri::XML::XPath::SyntaxError => ex
       fail UnknownInput, "Invalid XML input data: #{ex.message}"

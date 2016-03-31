@@ -1,6 +1,7 @@
 require_relative 'h004'
 require_relative './hvu'
 require_relative './hvz'
+require_relative './hvd'
 
 class Epics::Client
   extend Forwardable
@@ -185,10 +186,10 @@ class Epics::Client
     Epics::H004.from_xml(download(Epics::HVZ)).to_h
   end
 
-  # # Statusinformationen abholen
-  # def HVD
-  #   download(Epics::HVD)
-  # end
+  # Statusinformationen abholen
+  def HVD(order_id, order_type)
+    Epics::H004.from_xml(download(Epics::HVD, order_id, order_type)).to_h
+  end
 
   # # Transaktionsdetails abrufen
   # def HVT
