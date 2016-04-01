@@ -207,7 +207,8 @@ Please help us to grow this list of supported banks:
 * Handelsbank
 * Deutsche Bank
 * Sparkasse KölnBonn
-* Commerz Bank
+* Commerzbank
+* Sparkasse Mayen #HAA doesn´t work as expected, use instead e.HKD
 
 ## Links
 
