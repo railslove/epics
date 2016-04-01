@@ -14,7 +14,7 @@ class Epics::CDB < Epics::GenericUploadRequest
           :content! => "EPICS - a ruby ebics kernel"
         },
         "OrderDetails" => {
-          "OrderType" => "CDD",
+          "OrderType" => "CDB",
           "OrderAttribute" => "OZHNN",
           "StandardOrderParams/" => ""
         },
