@@ -127,6 +127,10 @@ class Epics::Client
     download(Epics::STA, from, to)
   end
 
+  def VMK(from = nil, to = nil)
+    download(Epics::VMK, from, to)
+  end
+
   def C52(from, to)
     download_and_unzip(Epics::C52, from, to)
   end
