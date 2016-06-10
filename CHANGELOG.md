@@ -1,3 +1,7 @@
+### 1.4.1
+
+  * [ENHANCEMENT] support for fetching the VMK order type
+
 ### 1.4.0
 
   * [ENHANCEMENT] STA without date range to fetch all statements which have not yet been fetched
