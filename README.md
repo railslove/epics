@@ -8,7 +8,7 @@ Communication Standard).
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT).
+(STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT VMK).
 
 
 ## Installation
@@ -136,6 +136,7 @@ Currently this EPICS implementation supports the following order types:
 * HPD (the available bank parameters)
 * PKT (customer usage report in text format)
 * HAC (customer usage report in xml format)
+* VMK (customer usage report in xml format)
 * ... more coming soon
 
 Example:
