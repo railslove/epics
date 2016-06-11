@@ -34,7 +34,9 @@ require "epics/cdb"
 require "epics/cdd"
 require "epics/hia"
 require "epics/ini"
+require "epics/h3k"
 require "epics/signer"
+require "epics/signer_cert"
 require "epics/client"
 
 module Epics
