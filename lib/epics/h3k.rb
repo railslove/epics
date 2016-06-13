@@ -8,7 +8,7 @@ require_relative 'signer_cert'
 
 class Epics::H3K < Epics::GenericRequest
 
-  def ebics_unsigned_request(host_id, partner_id, user_id, system_id='',)
+  def ebics_unsigned_request(host_id, partner_id, user_id, system_id='')
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.ebicsUnsignedRequest(
