@@ -69,6 +69,10 @@ class Epics::Client
     ERB.new(raw).result(binding)
   end
 
+  def order_data
+    # TODO: should provide order data from h3k request
+  end
+
   def save_ini_letter(bankname, path)
     File.write(path, ini_letter(bankname))
     path
@@ -92,6 +96,12 @@ class Epics::Client
 
   def INI
     post(url, Epics::INI.new(self).to_xml).body.ok?
+  end
+
+  def H3K
+    #TODO: do something
+    require 'pry'
+    binding.pry
   end
 
   def HPB
