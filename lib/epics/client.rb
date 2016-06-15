@@ -69,7 +69,7 @@ class Epics::Client
     ERB.new(raw).result(binding)
   end
 
-  def h3k_unsigned_order_data(subscriber)
+  def h3k_unsigned_order_data(subscriber) 
     h3k = Epics::H3K.new(self)
     h3k.unsigned_order_data(subscriber.es_cert, subscriber.auth_cert, subscriber.encrypt_cert)
   end
@@ -99,8 +99,8 @@ class Epics::Client
     post(url, Epics::INI.new(self).to_xml).body.ok?
   end
 
-  def H3K
-    #TODO: create complete h3k request and send it to bank
+  def H3K(signature, order_data)
+    post(url, Epics::H3K.new(self).ebics_unsigned_request(signature, order_data)).body.ok?
   end
 
   def HPB

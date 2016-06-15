@@ -8,7 +8,8 @@ require_relative 'signer_cert'
 
 class Epics::H3K < Epics::GenericRequest
 
-  def ebics_unsigned_request(host_id, partner_id, user_id, system_id='')
+
+  def ebics_unsigned_request(signature, order_data)
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.ebicsUnsignedRequest(
@@ -23,7 +24,6 @@ class Epics::H3K < Epics::GenericRequest
             xml.HostID host_id         
             xml.PartnerID partner_id
             xml.UserID user_id
-            xml.SystemID system_id
             xml.Product(Language: "de") { xml.text "EPICS - a ruby ebics kernel" }
             xml.OrderDetails { 
               xml.OrderType "H3K"
@@ -35,8 +35,8 @@ class Epics::H3K < Epics::GenericRequest
         }
         xml.body {
           xml.DataTransfer {
-            xml.SignatureData(authenticate: true){ xml.text signature_data }
-            xml.OrderData order_data
+            xml.SignatureData(authenticate: true){ xml.text Base64.encode64(Zlib::Deflate.deflate(signature)) }
+            xml.OrderData Base64.encode64(Zlib::Deflate.deflate(order_data))
           }
         }
       }
@@ -77,33 +77,6 @@ class Epics::H3K < Epics::GenericRequest
       }
     end
     builder.to_xml
-  end
-
-
-  def order_data
-    data = h3k_request_order_data
-    data_bin = compress(data)
-    data_base_64 = encode(data_bin)
-  end
-
-
-  def signature_data
-    key = OpenSSL::PKey::RSA.new(2048) #Should be provided, will generate here for testing
-    signature = Epics::Signer_cert.new(key, h3k_request_order_data)
-    signature_bin = compress(data)
-    signature_base_64 = encode(data_bin)
-  end
-
-
-
-  ###   Helper Methods from the block above    ###
-
-  def compress(data)
-    Zlib::Deflate.deflate(data)
-  end
-
-  def encode(data)
-    Base64.encode64(data)
   end
 
 end
