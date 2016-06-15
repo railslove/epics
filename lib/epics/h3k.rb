@@ -46,9 +46,7 @@ class Epics::H3K < Epics::GenericRequest
 
 
 
-  def h3k_request_order_data
-
-    #TODO: xml needs correct values
+  def unsigned_order_data(es_certificate, auth_certificate, encrypt_certificate)
     
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.H3KRequestOrderData(
@@ -58,24 +56,24 @@ class Epics::H3K < Epics::GenericRequest
         "xsi:schemaLocation" => "urn:org:ebics:H004 ebics_orders_H004.xsd") {
         xml.SignatureCertificateInfo {
           xml['ds'].X509Data {
-            xml.X509SubjectName "bla"
+            xml.X509Certificate es_certificate
           }
           xml.SignatureVersion "A006"
         }
         xml.AuthenticationCertificateInfo {
           xml['ds'].X509Data {
-            xml.X509SubjectName "bla"
+            xml.X509Certificate auth_certificate
           }
           xml.AuthenticationVersion "X002"
         }
         xml.EncryptionCertificateInfo {
           xml['ds'].X509Data {
-            xml.X509SubjectName "bla"
+            xml.X509Certificate encrypt_certificate
           }
           xml.EncryptionVersion "E002"
         }
-        xml.PartnerID "999888777"
-        xml.UserID "USERID"
+        xml.PartnerID partner_id
+        xml.UserID user_id
       }
     end
     builder.to_xml

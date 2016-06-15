@@ -38,6 +38,7 @@ require "epics/h3k"
 require "epics/signer"
 require "epics/signer_cert"
 require "epics/client"
+require "epics/ca"
 
 module Epics
 

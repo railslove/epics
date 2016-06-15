@@ -69,8 +69,9 @@ class Epics::Client
     ERB.new(raw).result(binding)
   end
 
-  def order_data
-    # TODO: should provide order data from h3k request
+  def h3k_unsigned_order_data(subscriber)
+    h3k = Epics::H3K.new(self)
+    h3k.unsigned_order_data(subscriber.es_cert, subscriber.auth_cert, subscriber.encrypt_cert)
   end
 
   def save_ini_letter(bankname, path)
@@ -99,9 +100,7 @@ class Epics::Client
   end
 
   def H3K
-    #TODO: do something
-    require 'pry'
-    binding.pry
+    #TODO: create complete h3k request and send it to bank
   end
 
   def HPB

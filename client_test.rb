@@ -1,4 +1,4 @@
-require './lib/epics/h3k'
+require './lib/epics'
 
 require 'byebug'
 byebug
