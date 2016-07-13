@@ -4,7 +4,6 @@ require 'nokogiri'
 require 'base64'
 require 'openssl'
 require_relative 'mgf'
-require_relative 'signer_cert'
 
 class Epics::H3K < Epics::GenericRequest
 
@@ -14,7 +13,7 @@ class Epics::H3K < Epics::GenericRequest
 
   def ebics_unsigned_request(signature, order_data)
 
-    builder = Nokogiri::XML::Builder.new do |xml|
+    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       xml.ebicsUnsignedRequest(
         xmlns: 'urn:org:ebics:H004',
         'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
@@ -38,7 +37,7 @@ class Epics::H3K < Epics::GenericRequest
         }
         xml.body {
           xml.DataTransfer {
-            xml.SignatureData(authenticate: true){ xml.text Zlib::Deflate.deflate(signature) }
+            xml.SignatureData(authenticate: true){ xml.text Base64.encode64( Zlib::Deflate.deflate(Base64.decode64(signature))) }
             xml.OrderData Base64.encode64(Zlib::Deflate.deflate(order_data))
           }
         }
@@ -49,7 +48,7 @@ class Epics::H3K < Epics::GenericRequest
 
   def unsigned_order_data(es_certificate, auth_certificate, encrypt_certificate)
     
-    builder = Nokogiri::XML::Builder.new do |xml|
+    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       xml.H3KRequestOrderData(
         xmlns: 'urn:org:ebics:H004',
         'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
