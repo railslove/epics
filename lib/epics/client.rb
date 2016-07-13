@@ -100,7 +100,11 @@ class Epics::Client
   end
 
   def H3K(signature, order_data)
-    post(url, Epics::H3K.new(self).to_xml(signature, order_data)).body.ok?
+    require 'byebug'
+    byebug
+    request = Epics::H3K.new(self).to_xml(signature, order_data)
+    File.open(File.dirname(__FILE__) + '../../h3k.xml', 'w') { |f| f.print request}
+    post(url, request).body.ok?
   end
 
   def HPB
