@@ -1,12 +1,11 @@
 class Epics::CA
-
   def initialize(client)
     @client = client
   end
 
   def certificate(key_ref)
     key = @client.keys[key_ref].key
-    subject = OpenSSL::X509::Name.parse("/C=DE/CN=#{@client.name}")
+    subject = OpenSSL::X509::Name.parse("/C=DE/CN=#{@client.user_id}") # CN shall be the client's name
     cert = OpenSSL::X509::Certificate.new
     cert.version = 3
     cert.serial = rand.to_s[2..8].to_i # rand number for prototype version only
