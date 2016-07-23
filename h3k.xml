@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsUnsignedRequest xmlns="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 ebics_keymgmt_request_H004.xsd" Version="H004" Revision="1">
+  <header authenticate="true">
+    <static>
+      <HostID>EBIXHOST</HostID>
+      <PartnerID>KUNDE001</PartnerID>
+      <UserID>TLN100</UserID>
+      <Product Language="de">EPICS - a ruby ebics kernel</Product>
+      <OrderDetails>
+        <OrderType>H3K</OrderType>
+        <OrderAttribute>OZNNN</OrderAttribute>
+      </OrderDetails>
+      <SecurityMedium>0000</SecurityMedium>
+    </static>
+    <mutable/>
+  </header>
+  <body>
+    <DataTransfer>
+      <SignatureData authenticate="true">eJwBAAH//rPyCP2Atq8oFjMpq5ArrIBdT4u0J9RF/VyPOIH1if8sA9DPhG9s
+QXyZYfS9QugB7MtIjyz9EYRLgzYFXNegpqYqQHoIQn8rIVKYQ7K/IHCXWb9T
+7TRJnzrypxmRdCHke/Sp/dYZusWSL12Leai4DDjOw6A+3rCobFvIp7ckg5IN
+9gB882M6xzndyAG/h9KUhnIHs8T7/3fMjgLaGB95yo/61j+k22kals0sXZPQ
+roDviYEvtECq9KPfZQKNuyfWSVuPH9tCnX1EGplGAFMWilhkd8aQYtYKEfhL
+/8Af6WLAQq+lbffwdHQxjgNBXEr40seGGcRH0KfI9t9TGzgv2KCwcoJK
+</SignatureData>
+      <OrderData>eJztmFmvo1YWhd/5FaXqR5RiMDamdKuiw2BmMIPN8BIxg5lsZvPrm3sr1dVJ
+JWlFnVb3Q1tCOl5rARvvfT4kv/y41NW7Ken6om0+vcc+oO/fJU3UxkWTfXp/
+sU8/HN//+Bl6EXaymTzGpB/0Lk46NhiCd9uZTf/p/dg1H9su+5iERdR/FFCU
+eP/F+hhvbj4M948IMs/zh3n3YcshOIqiCEohWybui+xvX9NLX/xOHENcVbGi
+PKmDH4qmH4ImSraz+uJj/yYqbRQMb/V/X8u7t+VP7WvV/U+vyoelj99/ht69
+e7GKrAmGsUuYpBuKtNiukohN2r6amx33H909Sr0+6xdl016Ff0p//uH1Q3O8
+qL1jONMWTyIDbO5NhVRRZL0bw4DykYFZpEG2HTbQ6Kx85GXBUzNKA6M/AZZm
+VFOdOcOTGV+sC//8VHiDhnjTY8Od1KhmOZ/mX5qbJ0XNtUgsrPec/ZYBM5t5
+7NUwWBbEVuxIe0jkNFqlCZe1OVxlo0VduVW1vad6bV814lfabNw4W92ehslq
+S2prGzoWSwnM0gE49fRXzlfp6B/mV49xJcxryiHkT+OWMVRA8AC7cGCeBejy
+ViLNGvb2O1jizBqeJLe+mE+RBgyOpg3AZhl3BuzmGy2zrWmgYgCXsUu2dDo0
+NjxKo90DWMf7ktzAJfdp+8muY1G56j3XAxEc9meL36M5Fw3iAjt5mkShf6aE
+m2znMLTOtnYQ1KG/nXsxXZ6dPHHV+KyccbSefWZdp9zB5V3s325ilh0Enu0m
+G3QPVJRVhiBFiD+oR8Iy51M+JPUZ8w/Sbj6fFFQ0qX4RKL4OXfOIegSS0Ixw
+nbVY3MP5qHneYvTpTqCg5zTL0f10n3aiAbByEupG9qvHYImGdS9zzPZX1vbO
+NpbduZYl5OESSyMiChk/tiYrnqHyHjaOPz0argspnLyikW2GCNwFhVnbicdY
+vUccEQwRXXkm3AexTn6pU9qJOt8Ldd2z0JLLMcdL+1BSGTBzAATaTeW5mZ23
+gTFRGxgCQoPLvHk0sgKdzrSrYBxpkB5f28FAwPBmwXgL6zTtcSeFe4glR/CE
+5tsPz6124ulkXw0e3FOVPr72PxZnw1PpALxmod8NA5RnrAdvieGO3eaBmS8A
+ENs+MQAF3NgY11AzOFaBEqFkxKS+90MbtdFIiRnSOaFMcI0nsLVfbJNkkTsb
+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
+</OrderData>
+    </DataTransfer>
+  </body>
+</ebicsUnsignedRequest>
