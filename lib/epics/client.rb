@@ -96,6 +96,7 @@ class Epics::Client
   end
 
   def INI
+    File.write('xml_samples/ini.xml', Epics::INI.new(self).to_xml) # for development only
     post(url, Epics::INI.new(self).to_xml).body.ok?
   end
 
