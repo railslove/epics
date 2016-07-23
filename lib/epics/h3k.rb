@@ -37,7 +37,7 @@ class Epics::H3K < Epics::GenericRequest
         }
         xml.body {
           xml.DataTransfer {
-            xml.SignatureData(authenticate: true){ xml.text Base64.encode64( Zlib::Deflate.deflate(Base64.decode64(signature))) }
+            xml.SignatureData(authenticate: true){ xml.text Base64.encode64( Zlib::Deflate.deflate(Base64.urlsafe_decode64(signature))) }
             xml.OrderData Base64.encode64(Zlib::Deflate.deflate(order_data))
           }
         }
