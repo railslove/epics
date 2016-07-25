@@ -69,9 +69,9 @@ class Epics::Client
     ERB.new(raw).result(binding)
   end
 
-  def h3k_unsigned_order_data(subscriber) 
+  def h3k_unsigned_order_data(es_cert, auth_cert, encrypt_cert) 
     h3k = Epics::H3K.new(self)
-    h3k.unsigned_order_data(subscriber.es_cert, subscriber.auth_cert, subscriber.encrypt_cert)
+    h3k.unsigned_order_data(es_cert, auth_cert, encrypt_cert)
   end
 
   def save_ini_letter(bankname, path)
