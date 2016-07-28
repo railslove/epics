@@ -41,7 +41,7 @@ Once the paperwork is done, your bank should provide you with:
 Take these parameters and start setting up an UserID (repeat this for every user you want to initialize):
 
 ```ruby
-e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID")
 ```
 
 To use the keys later, just store them in a file
