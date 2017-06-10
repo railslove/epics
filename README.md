@@ -228,6 +228,19 @@ Used for example by the following tested institutions:
 
 Is Epics working with your institution? Please help us to grow this list of supported banks:
 
+
+## Development
+
+For development purposes, you may want to use a proxy server in order to have a convienent look into request and response data.
+To do so, it's sufficient to define `http_proxy` in your environment.
+Also you may want to disable SSL verification - simply set `EPICS_VERIFY_SSL` to `"false"`.
+
+For example:
+```
+http_proxy=localhost:8080
+EPICS_VERIFY_SSL=false
+```
+
 ## Links
 
 * [ebics.de](http://www.ebics.de/)
