@@ -1,4 +1,4 @@
-class Epics::STA < Epics::GenericRequest
+class Epics::VMK < Epics::GenericRequest
   attr_accessor :from, :to
 
   def initialize(client, from = nil, to = nil)
@@ -29,7 +29,7 @@ class Epics::STA < Epics::GenericRequest
           :content! => "EPICS - a ruby ebics kernel"
         },
         "OrderDetails" => {
-          "OrderType" => "STA",
+          "OrderType" => "VMK",
           "OrderAttribute" => "DZHNN",
           "StandardOrderParams" => date_range
         },

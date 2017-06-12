@@ -3,9 +3,12 @@
 
 # Epics
 
-EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet Communication Standard)
+EPICS is a ruby implementation of the [EBICS](http://www.ebics.org/) (Electronic Banking Internet
+Communication Standard).
 
-The client supports the complete initialization process comprising INI, HIA and HPB including the INI letter generation. It offers support for the most common download and upload order types (STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT)
+The client supports the complete initialization process comprising INI, HIA and HPB including the
+INI letter generation. It offers support for the most common download and upload order types
+(STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT VMK).
 
 
 ## Installation
@@ -23,23 +26,22 @@ Or install it yourself as:
 
 ## Getting started
 
-In case you are new to EBICS, you'll have to complete a initialization process with
-your bank. Epics can help you to generate all the necessary keys and directly store
-them for later use, but first you'll have to to lift some contractually work with your
+In case you are new to EBICS, you'll have to complete an initialization process with
+your bank. Epics can help you generate all necessary keys and directly store
+them for later use. But first you'll have to lift some contractually work with your
 bank.
 
 Once the paperwork is done, your bank should provide you with:
 
-* a URL to their EBICS Server
-* a HOST ID
-* a PARTNER ID
-* n User IDs (this depends on the bank and your needs)
+* _a_ URL to their EBICS Server
+* _a_ HOST ID
+* _a_ PARTNER ID
+* _n_ User IDs (depends on your bank and needs)
 
-Take this parameters and start setting up one UserID (repeat this for every user
-you want to initialize):
+Take these parameters and start setting up an UserID (repeat this for every user you want to initialize):
 
 ```ruby
-e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID")
 ```
 
 To use the keys later, just store them in a file
@@ -56,7 +58,6 @@ Submit the keys to your bank:
 
 ```ruby
 e.INI # sends the signature key
-
 e.HIA # sends the encryption and authentication keys
 ```
 
@@ -66,15 +67,15 @@ The next step is to print the INI letter and post it to your bank:
 e.save_ini_letter( 'My Banks Name', "/home/epics/ini.html" )
 ```
 
-Open the generated HTML file in your favorite browser and print it out (skipping
-header and footer sounds like a solid setting here ;) In case your having difficulties
+Open the generated HTML file in your favorite browser and print it (skipping
+header and footer sounds like a solid setting here ;). In case you're having difficulties
 with the encoding, try forcing your browser to use UTF-8.
 
-Put the INI letter in a envelope and mail it to your bank!
+Put the INI letter in an envelope and mail it to your bank!
 
-Done! ... Well not completly :)
+Done! ... Well not completely :)
 
-Once the bank confirms that your user is completely initialized. You'll have to
+Once the bank confirms that your user is completely initialized, you'll have to
 download the public keys of your bank:
 
 ```ruby
@@ -93,10 +94,13 @@ e.HAA
 To get a list of all supported order types.
 
 
-## Need help? Having questions? 
+## Need help? Having questions?
 
-We have many years of experience in developing innovative applications for the finance sector and integration application with financial institutions. - you might want to have a look at our [portfolio](http://www.railslove.com/portfolio)   
-__If you need help we are happy to provide consulting or development services. Contact us: [team@railslove.com](mailto:team@railslove.com)__
+We have many years of experience in developing innovative applications for the finance sector and
+integrating applications with financial institutions. - you might want to have a look at our
+[portfolio](http://www.railslove.com/portfolio)   
+__If you need help we are happy to provide consulting or development services. Contact us:
+[team@railslove.com](mailto:team@railslove.com)__
 
 
 ## Usage
@@ -132,6 +136,7 @@ Currently this EPICS implementation supports the following order types:
 * HPD (the available bank parameters)
 * PKT (customer usage report in text format)
 * HAC (customer usage report in xml format)
+* VMK (customer usage report in xml format)
 * ... more coming soon
 
 Example:
@@ -169,7 +174,7 @@ Example:
 
 ```ruby
 puts e.CD1("i-am-PAIN-xml")
-# res is a the transaction id and id of the order 
+# res is a the transaction id and id of the order
 
 # if the XML is a file in your FS, read it first and give if epics to consume
 puts e.CD1(File.read("/where/the/xml/is/stored.xml"))
@@ -178,7 +183,7 @@ puts e.CD1(File.read("/where/the/xml/is/stored.xml"))
 
 ### Lazy Mode
 
-Once you have a client, go ahead and start playing! There are 3 convinence methods
+Once you have a client, go ahead and start playing! There are 3 convenience methods
 that are hiding some strange names from you:
 
 * debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
@@ -191,30 +196,46 @@ about the supported functionalities.
 
 ## Issues and Feature Requests
 
-[Railslove](http://railslove.com) is commited to provide the best developer tools for integrating with financial institutions. Epics is one of our many tools and services. 
-If you are missing some features or something is not working as expected please create an issue. 
+[Railslove](http://railslove.com) is commited to provide the best developer tools for integrating
+with financial institutions. Epics is one of our many tools and services.
+If you are missing some features or something is not working as expected please create an issue.
 
 
 
 ## Supported Banks
 
-This gem provides a full implementation of the Electronic Banking Internet Communication Standard and works with any bank that supports this standard. Please ask your bank if they support EBICS and what order types are available. 
+This gem provides a full implementation of the Electronic Banking Internet Communication Standard
+and works with any bank that supports this standard. Please ask your bank if they support EBICS and
+what order types are available.
 
-Besides EBCIS being a standard, some server implementations are slighty different. 
-Is Epics working with your institution? 
+Besides EBCIS being a standard, some server implementations are slighty different.
+Is Epics working with your institution?
 Please help us to grow this list of supported banks:
 
 * Handelsbank
 * Deutsche Bank
-* Sparkasse KölnBonn
-* Commerz Bank
+* Sparkasse Köln Bonn
+* Commerzbank
+
+
+## Development
+
+For development purposes, you may want to use a proxy server in order to have a convienent look into request and response data.
+To do so, it's sufficient to define `http_proxy` in your environment.
+Also you may want to disable SSL verification - simply set `EPICS_VERIFY_SSL` to `"false"`.
+
+For example:
+```
+http_proxy=localhost:8080
+EPICS_VERIFY_SSL=false
+```
 
 ## Links
 
 * [ebics.de](http://www.ebics.de/)
 * [EBICS specification](http://www.ebics.de/index.php?id=30)
 * [Common Integrative Implementation Guide to Supplement the EBICS Specification (pdf)](http://www.ebics.de/fileadmin/unsecured/specification/implementation_guide_DE/EBICS_Common_IG_basiert_auf_EBICS_2.5.pdf)
-* [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/) 
+* [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
 
 
 ## Contributing

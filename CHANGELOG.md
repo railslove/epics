@@ -1,3 +1,12 @@
+### 1.4.1
+
+  * [ENHANCEMENT] support for fetching the VMK order type
+
+### 1.4.0
+
+  * [ENHANCEMENT] STA without date range to fetch all statements which have not yet been fetched
+  * [ENHANCEMENT] HAC without date range to fetch all transaction logs which have not yet been fetched
+
 ### 1.3.1
 
   * [ENHANCEMENT] make xpath namespaces explicit, so we can cover a wider
