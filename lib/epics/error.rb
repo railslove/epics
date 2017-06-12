@@ -1,9 +1,9 @@
 class Epics::Error < StandardError
   def to_s
-    [@error.fetch("symbol", "EPICS_UNKNOWN"), @error.fetch("short_text", (@message || "unknown"))].join(" - ")
+    [@error.fetch("symbol", "EPICS_UNKNOWN"), @error.fetch("short_text", @message)].join(" - ")
   end
 
-  def initialize(code, message = nil)
+  def initialize(code, message = "unknown")
     @code = code
     @message = message
     @error = self.class::ERRORS.fetch(code, {})
