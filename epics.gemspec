@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
     including the INI letter generation.
 
     Furthermore it offers support for the most common download types:
-      STA HAA HTD HPD PKT HAC HKD C52 C53
+      STA HAA HTD HPD PKT HAC HKD C52 C53 C54
 
     And the following upload orders:
       CD1 CDD CCT
@@ -37,7 +37,12 @@ Gem::Specification.new do |spec|
   spec.post_install_message += "Please create an issue on github (railslove/epics) if anything does not work as expected. And contact team@railslove.com if you are looking for support with your integration.\n"
   spec.post_install_message += "\e[32m" + ("*" * 60) + "\n\e[0m"
 
-  spec.add_dependency "nokogiri"
+  if RUBY_VERSION < '2.1'
+    spec.add_dependency "nokogiri", '< 1.7.0'
+  else
+    spec.add_dependency "nokogiri"
+  end
+
   spec.add_dependency "gyoku"
   spec.add_dependency "faraday"
   spec.add_dependency "rubyzip", ">= 1.0.0"

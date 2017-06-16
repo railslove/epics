@@ -102,8 +102,12 @@ class Epics::Client
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
       bank   = OpenSSL::PKey::RSA.new
-      bank.n = OpenSSL::BN.new(modulus, 2)
-      bank.e = OpenSSL::BN.new(exponent, 2)
+      if bank.respond_to?(:set_key)
+        bank.set_key(OpenSSL::BN.new(modulus, 2), OpenSSL::BN.new(exponent, 2), nil)
+      else
+        bank.n = OpenSSL::BN.new(modulus, 2)
+        bank.e = OpenSSL::BN.new(exponent, 2)
+      end
 
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
@@ -137,6 +141,10 @@ class Epics::Client
 
   def C53(from, to)
     download_and_unzip(Epics::C53, from, to)
+  end
+
+  def C54(from, to)
+    download_and_unzip(Epics::C54, from, to)
   end
 
   def HAA
@@ -225,7 +233,7 @@ class Epics::Client
   end
 
   def cipher
-    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+    @cipher ||= OpenSSL::Cipher.new("aes-256-cbc")
   end
 
   def encrypt(data)
