@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
     including the INI letter generation.
 
     Furthermore it offers support for the most common download types:
-      STA HAA HTD HPD PKT HAC HKD C52 C53
+      STA HAA HTD HPD PKT HAC HKD C52 C53 C54
 
     And the following upload orders:
       CD1 CDD CCT
