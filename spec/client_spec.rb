@@ -131,13 +131,15 @@ RSpec.describe Epics::Client do
     end
   end
 
-  describe '#C53/C52 types with zipped data' do
+  describe '#C53/C52/C54 types with zipped data' do
     before do
       allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test.zip') ))
     end
 
     it 'will unzip the returned data' do
-      expect(subject.C53(:today, :yesterday)).to eq(["ebics is great\n"])
+      %w(C52 C53 C54).each do |c|
+        expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
     end
   end
 end
