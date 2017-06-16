@@ -1,4 +1,6 @@
 language: ruby
+env:
+  - JAVA_OPTS=-Djava.security.egd=file:/dev/./urandom --server -Dcext.enabled=false -Xcompile.invokedynamic=false
 rvm:
   - 2.0.0
   - 2.1.10
