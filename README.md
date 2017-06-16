@@ -208,14 +208,25 @@ This gem provides a full implementation of the Electronic Banking Internet Commu
 and works with any bank that supports this standard. Please ask your bank if they support EBICS and
 what order types are available.
 
-Besides EBCIS being a standard, some server implementations are slighty different.
-Is Epics working with your institution?
-Please help us to grow this list of supported banks:
+Besides EBCIS being a standard, some server implementations are slighty different.  
+But most banks use the same EBICS server implementations. Commonly used and supported by Epics are: 
+
+* Business-Logics EBICS, Banking-Server
+* Travic Corporate 
+
+Used for example by the following tested institutions:
 
 * Handelsbank
 * Deutsche Bank
-* Sparkasse Köln Bonn
 * Commerzbank
+* Kreissparkasse Mayen 
+* Postbank
+* Sozialbank
+* Sparkassen 
+* Volksbanken Raiffeisenbanken
+* Hypo Vereinsbank
+
+Is Epics working with your institution? Please help us to grow this list of supported banks:
 
 
 ## Development
@@ -249,4 +260,4 @@ EPICS_VERIFY_SSL=false
 
 
 ------------
-2014 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
+2014-2017 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
