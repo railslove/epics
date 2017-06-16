@@ -84,7 +84,7 @@ class Epics::Response
   end
 
   def cipher
-    cipher = OpenSSL::Cipher::Cipher.new("aes-128-cbc")
+    cipher = OpenSSL::Cipher.new("aes-128-cbc")
 
     cipher.decrypt
     cipher.padding = 0
