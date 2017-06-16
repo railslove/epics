@@ -102,8 +102,12 @@ class Epics::Client
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
       bank   = OpenSSL::PKey::RSA.new
-      bank.n = OpenSSL::BN.new(modulus, 2)
-      bank.e = OpenSSL::BN.new(exponent, 2)
+      if bank.respond_to?(:set_key)
+        bank.set_key(OpenSSL::BN.new(modulus, 2), OpenSSL::BN.new(exponent, 2), nil)
+      else
+        bank.n = OpenSSL::BN.new(modulus, 2)
+        bank.e = OpenSSL::BN.new(exponent, 2)
+      end
 
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
@@ -210,7 +214,7 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}) do |faraday|
+    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.response :logger                  # log requests to STDOUT
@@ -229,7 +233,7 @@ class Epics::Client
   end
 
   def cipher
-    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+    @cipher ||= OpenSSL::Cipher.new("aes-256-cbc")
   end
 
   def encrypt(data)
@@ -253,4 +257,7 @@ class Epics::Client
     cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
   end
 
+  def verify_ssl?
+    ENV['EPICS_VERIFY_SSL'] != 'false'
+  end
 end
