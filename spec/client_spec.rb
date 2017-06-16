@@ -22,6 +22,28 @@ RSpec.describe Epics::Client do
 
   end
 
+  context 'environment settings' do
+    before(:each) do
+      ENV.delete('EPICS_VERIFY_SSL')
+    end
+
+    describe '#verify_ssl?' do
+      it 'verifies ssl by default' do
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'verifies ssl if there\'s something strange set to your env' do
+        ENV['EPICS_VERIFY_SSL'] = 'somethingstrange'
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'skips ssl verification if you want to' do
+        ENV['EPICS_VERIFY_SSL'] = 'false'
+        expect(subject.send(:verify_ssl?)).to eq false
+      end
+    end
+  end
+
   describe '#inspect' do
     it 'will not print the complete object' do
       expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
