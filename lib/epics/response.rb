@@ -1,8 +1,8 @@
 class Epics::Response
-  attr_accessor :doc
-  attr_accessor :client
+  attr_accessor :doc, :client, :raw
 
   def initialize(client, xml)
+    self.raw = xml
     self.doc = Nokogiri::XML.parse(xml)
     self.client = client
   end
