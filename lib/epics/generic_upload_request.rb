@@ -14,7 +14,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def cipher
-    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-128-cbc")
+    @cipher ||= OpenSSL::Cipher.new("aes-128-cbc")
   end
 
   def digester

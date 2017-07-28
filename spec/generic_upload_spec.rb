@@ -24,7 +24,8 @@ RSpec.describe Epics::GenericUploadRequest do
   end
 
   describe '#signature_value' do
-    before { allow(OpenSSL::Random).to receive(:random_bytes).and_return(Base64.strict_decode64("7wtROfiX4tyN60cygJUSsHkhzxX1RVJa8vGNYnflvKc=")) }
+    before { allow(OpenSSL::Random).to receive(:random_bytes).with(16).and_return("\x01" * 16) } # fake random_key requires a 16byte lenght but is not used in this test
+    before { allow(OpenSSL::Random).to receive(:random_bytes).with(32).and_return(Base64.strict_decode64("7wtROfiX4tyN60cygJUSsHkhzxX1RVJa8vGNYnflvKc=")) } # digest requires 32 bytes
 
     it 'will be the signed document' do
       expect(subject.signature_value).to eq("BQBMyxGHYoAbbmbMJRFbGrvUNinY15+qeeRLF708VL+tuENnbJMO6xHLWxU1rksOnu4xDzxfua9b3IxIaxLyTTFDuVi6bbu3sBslhIt2frdigo0xBL14KUJQ/pYiMj+2pfNYhtVxzamrnvgPSLNAEn36JykK2d347chT87HlZ7CAGNBS7lJHAzRP1v7Hkc+kKttkkWCpOGk06R6FUCxxVKXmQketMEl/scsMyJ3JtBe/EcjEZdDe5WcqZYUu5ARrfEiAeyutVRZnu17c3nKwkmWl7UqFAwp16cS8IPNL4i5FGCytgKl/kyaoxaE/P1lrGOkHcCTsSR0bAbARhndfdQ==")

@@ -1,4 +1,11 @@
-class Epics::CDB < Epics::GenericUploadRequest
+class Epics::C54 < Epics::GenericRequest
+  attr_accessor :from, :to
+
+  def initialize(client, from, to)
+    super(client)
+    self.from = from
+    self.to = to
+  end
 
   def header
     {
@@ -14,9 +21,14 @@ class Epics::CDB < Epics::GenericUploadRequest
           :content! => "EPICS - a ruby ebics kernel"
         },
         "OrderDetails" => {
-          "OrderType" => "CDB",
-          "OrderAttribute" => "OZHNN",
-          "StandardOrderParams/" => ""
+          "OrderType" => "C54",
+          "OrderAttribute" => "DZHNN",
+          "StandardOrderParams" => {
+            "DateRange" => {
+              "Start" => from,
+              "End" => to
+            }
+          }
         },
         "BankPubKeyDigests" => {
           "Authentication" => {
@@ -30,13 +42,11 @@ class Epics::CDB < Epics::GenericUploadRequest
             :content! => client.bank_e.public_digest
           }
         },
-        "SecurityMedium" => "0000",
-        "NumSegments" => 1
+        "SecurityMedium" => "0000"
      },
       "mutable" => {
         "TransactionPhase" => "Initialisation"
       }
     }
   end
-
 end

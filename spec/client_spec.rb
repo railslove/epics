@@ -22,6 +22,28 @@ RSpec.describe Epics::Client do
 
   end
 
+  context 'environment settings' do
+    before(:each) do
+      ENV.delete('EPICS_VERIFY_SSL')
+    end
+
+    describe '#verify_ssl?' do
+      it 'verifies ssl by default' do
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'verifies ssl if there\'s something strange set to your env' do
+        ENV['EPICS_VERIFY_SSL'] = 'somethingstrange'
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'skips ssl verification if you want to' do
+        ENV['EPICS_VERIFY_SSL'] = 'false'
+        expect(subject.send(:verify_ssl?)).to eq false
+      end
+    end
+  end
+
   describe '#inspect' do
     it 'will not print the complete object' do
       expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
@@ -131,13 +153,15 @@ RSpec.describe Epics::Client do
     end
   end
 
-  describe '#C53/C52 types with zipped data' do
+  describe '#C53/C52/C54 types with zipped data' do
     before do
       allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test.zip') ))
     end
 
     it 'will unzip the returned data' do
-      expect(subject.C53(:today, :yesterday)).to eq(["ebics is great\n"])
+      %w(C52 C53 C54).each do |c|
+        expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
     end
   end
 end
