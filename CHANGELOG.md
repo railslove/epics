@@ -1,3 +1,10 @@
+### 1.5.0
+
+  * [ENHANCEMENT] support for fetching the C54 order type
+  * [ENHANCEMENT] Exceptions expose their internal code via `code`
+  * [HOUSEKEEPING] Added Ruby 2.4 compatibility
+  * [HOUSEKEEPING] Drop Ruby 2.0.0
+
 ### 1.4.1
 
   * [ENHANCEMENT] support for fetching the VMK order type
