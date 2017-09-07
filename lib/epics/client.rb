@@ -123,6 +123,10 @@ class Epics::Client
     upload(Epics::CDD, document)
   end
 
+  def CDS(document)
+    upload(Epics::CDS, document)
+  end
+
   def CCT(document)
     upload(Epics::CCT, document)
   end

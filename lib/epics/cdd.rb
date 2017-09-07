@@ -1,4 +1,11 @@
 class Epics::CDD < Epics::GenericUploadRequest
+  def order_attribute
+    'OZHNN'
+  end
+
+  def order_type
+    'CDD'
+  end
 
   def header
     {
@@ -14,8 +21,8 @@ class Epics::CDD < Epics::GenericUploadRequest
           :content! => "EPICS - a ruby ebics kernel"
         },
         "OrderDetails" => {
-          "OrderType" => "CDD",
-          "OrderAttribute" => "OZHNN",
+          "OrderType" => order_type,
+          "OrderAttribute" => order_attribute,
           "StandardOrderParams/" => ""
         },
         "BankPubKeyDigests" => {
