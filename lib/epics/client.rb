@@ -115,6 +115,10 @@ class Epics::Client
     [bank_x, bank_e]
   end
 
+  def AZV(document)
+    upload(Epics::AZV, document)
+  end
+
   def CD1(document)
     upload(Epics::CD1, document)
   end
