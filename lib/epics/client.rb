@@ -115,6 +115,10 @@ class Epics::Client
     [bank_x, bank_e]
   end
 
+  def AZV(document)
+    upload(Epics::AZV, document)
+  end
+
   def CD1(document)
     upload(Epics::CD1, document)
   end
@@ -123,8 +127,16 @@ class Epics::Client
     upload(Epics::CDD, document)
   end
 
+  def CDS(document)
+    upload(Epics::CDS, document)
+  end
+
   def CCT(document)
     upload(Epics::CCT, document)
+  end
+
+  def CCS(document)
+    upload(Epics::CCS, document)
   end
 
   def STA(from = nil, to = nil)
