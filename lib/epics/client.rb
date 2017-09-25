@@ -1,3 +1,10 @@
+require_relative 'h004'
+require_relative './hvu'
+require_relative './hvz'
+require_relative './hvd'
+require_relative './hve'
+require_relative './hvs'
+
 class Epics::Client
   extend Forwardable
 
@@ -163,6 +170,7 @@ class Epics::Client
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
 
+  # fetch client and subscriber data
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
       @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
@@ -171,20 +179,51 @@ class Epics::Client
     end.to_xml
   end
 
+  # fetch bank parameters
   def HPD
     download(Epics::HPD)
   end
 
+  # fetch client and subscriber data
   def HKD
     download(Epics::HKD)
   end
 
+  # fetch text protocol
   def PTK(from, to)
     download(Epics::PTK, from, to)
   end
 
+  # XML Protokolldatei abholen
   def HAC(from = nil, to = nil)
     download(Epics::HAC, from, to)
+  end
+
+  # VEU related actions
+
+  # Fetch overview of all orders which need to be signed
+  def HVU
+    Epics::H004.from_xml(download(Epics::HVU)).to_h
+  end
+
+  # Fetch detailed overview of all orders which need to be signed
+  def HVZ
+    Epics::H004.from_xml(download(Epics::HVZ)).to_h
+  end
+
+  # Fetch details for an order
+  def HVD(order_id, order_type)
+    Epics::H004.from_xml(download(Epics::HVD, order_id, order_type)).to_h
+  end
+
+  # sign an order
+  def HVE(order_id, order_type, digest)
+    upload(Epics::HVE, order_id, order_type, digest)
+  end
+
+  # reject an order
+  def HVS(order_id, order_type, digest)
+    upload(Epics::HVS, order_id, order_type, digest)
   end
 
   def save_keys(path)
@@ -193,12 +232,14 @@ class Epics::Client
 
   private
 
-  def upload(order_type, document)
-    order = order_type.new(self, document)
+  def upload(order_type, *args)
+    order = order_type.new(self, *args)
     res = post(url, order.to_xml).body
     order.transaction_id = res.transaction_id
 
-    res = post(url, order.to_transfer_xml).body
+    if order.segmented?
+      res = post(url, order.to_transfer_xml).body
+    end
 
     return res.transaction_id, res.order_id
   end

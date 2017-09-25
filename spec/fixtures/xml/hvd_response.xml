@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h004:HVDResponseOrderData xmlns:h004="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebics.org/H004 http://www.ebics.org/H004/ebics.xsd">
+  <h004:DataDigest SignatureVersion="A006">Ej9Q5zvpef87V9Ef5vdEY/aiPvEiVYupcZHir51G94g=</h004:DataDigest>
+  <h004:DisplayFile>DQogICAgICAgICA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgIEcgVSBUIFMgQyBIIFIgSSBGIFQgRSBOCiAgICAgICAgIERhdGVpLUlEICAgOiBFQklDUy1CT1gvQTk2MDI5ODg1MTQ4MzY2QUU5NTA4MgogICAgICAgICBEYXR1bS9aZWl0IDogMjMuMDMuMjAxNi8xMDo1NjozNgogICAgICAgICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAgICAgICAgIFNhbW1sZXJyZWZlcmVueiAgICAgICAgICAgICAgOiBFQklDUy1CT1gvQTk2MDI5ODg1MTQ4MzY2QUU5NTA4Mi8xCiAgICAgICAgIEJhbmstQ29kZSAgICAgICAgICAgICAgICAgICAgOiBYQkFOREVDRwogICAgICAgICBLb250b251bW1lciAgICAgICAgICAgICAgICAgIDogREUzNjI1MDQwMDkwMDAwMTIzNDU1NQogICAgICAgICBBdWZ0cmFnZ2ViZXJkYXRlbiAgICAgICAgICAgIDogUUEgS29udG8gQlYKICAgICAgICAgQW56YWhsIGRlciBaYWhsdW5nc3PkdHplICAgICA6IDEKICAgICAgICAgU3VtbWUgZGVyIEJldHLkZ2UgKCBFVVIgKSAgICA6IDEuMDAwLDEzCiAgICAgICAgIEF1c2b8aHJ1bmdzdGVybWluICAgICAgICAgICAgOiAyMy4wMy4yMDE2CiAgICAgICAgID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0=</h004:DisplayFile>
+  <h004:OrderDataAvailable>true</h004:OrderDataAvailable>
+  <h004:OrderDataSize>1776</h004:OrderDataSize>
+  <h004:OrderDetailsAvailable>false</h004:OrderDetailsAvailable>
+  <h004:SignerInfo>
+    <h004:PartnerID>RS</h004:PartnerID>
+    <h004:UserID>RST</h004:UserID>
+    <h004:Name>
+      RS T</h004:Name>
+    <h004:Timestamp>2016-03-23T08:56:39.000000Z</h004:Timestamp>
+    <h004:Permission AuthorisationLevel="T"/>
+  </h004:SignerInfo>
+  <h004:SignerInfo>
+    <h004:PartnerID>RS</h004:PartnerID>
+    <h004:UserID>RSA</h004:UserID>
+    <h004:Name>
+      RS A</h004:Name>
+    <h004:Timestamp>2016-03-23T09:26:33.000000Z</h004:Timestamp>
+    <h004:Permission AuthorisationLevel="A"/>
+  </h004:SignerInfo>
+</h004:HVDResponseOrderData>
