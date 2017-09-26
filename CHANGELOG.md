@@ -1,3 +1,10 @@
+### 1.5.1
+
+  * [ENHANCEMENT] some banks are not returning the order_id in the second upload phase, we now fetch it already
+    from the first response to handle this different behaviour.
+  * [ENHANCEMENT] New order types: `AZV` (Auslandszahlungsverkehr). `CDS` and `CCS` for submitting SEPA credits/debits
+    as SRZ (Service Rechen Zentrum)
+
 ### 1.5.0
 
   * [ENHANCEMENT] support for fetching the C54 order type
