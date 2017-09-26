@@ -117,22 +117,39 @@ RSpec.describe Epics::Client do
 
       it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
-
     end
   end
 
   describe '#CD1' do
     let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
-    before do
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+    describe 'normal behaviour' do
+      before do
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+      end
+
+      it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
     end
 
-    it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+    describe 'special case' do
+      before do
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')).sub('N00L', 'N11L'))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')).sub('<OrderID>N00L</OrderID>', ''))
+      end
+
+      # happend on some handelsbank accounts
+      it 'can also try to fetch the order_id from the first transaction being made' do
+        expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N11L"])
+      end
+    end
   end
 
   describe '#HTD' do
