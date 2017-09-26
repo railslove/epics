@@ -202,7 +202,7 @@ class Epics::Client
 
     res = post(url, order.to_transfer_xml).body
 
-    return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.size.positive? }
+    return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
   end
 
   def download(order_type, *args)
