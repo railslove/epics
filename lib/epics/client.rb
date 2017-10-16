@@ -55,6 +55,10 @@ class Epics::Client
     @bic ||= (self.HTD; @bic)
   end
 
+  def order_types
+    @order_types ||= (self.HTD; @order_types)
+  end
+
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
     client = new(nil, passphrase, url, host_id, user_id, partner_id)
     client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
@@ -165,9 +169,10 @@ class Epics::Client
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
-      @bic  ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text
-      @name ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text
+      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text
+      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
     end.to_xml
   end
 
