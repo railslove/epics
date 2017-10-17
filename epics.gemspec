@@ -45,7 +45,6 @@ Gem::Specification.new do |spec|
     spec.add_dependency "nokogiri"
   end
 
-  spec.add_dependency "gyoku"
   spec.add_dependency "faraday"
   spec.add_dependency "rubyzip", ">= 1.0.0"
 

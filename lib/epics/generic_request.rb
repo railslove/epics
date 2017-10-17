@@ -22,107 +22,82 @@ class Epics::GenericRequest
   end
 
   def body
-    ""
+    Nokogiri::XML::Builder.new do |xml|
+      xml.body
+    end.doc.root
   end
 
   def auth_signature
-    {
-      "ds:SignedInfo" => {
-        "ds:CanonicalizationMethod/" => {
-          :@Algorithm => "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
-        },
-        "ds:SignatureMethod/" => {
-          :@Algorithm => "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
-        },
-        "ds:Reference/" => {
-          :@URI => "#xpointer(//*[@authenticate='true'])",
-          "ds:Transforms" => {
-            "ds:Transform/" => {
-              :@Algorithm => "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
+    Nokogiri::XML::Builder.new do |xml|
+      xml.AuthSignature{
+        xml.send('ds:SignedInfo') {
+          xml.send('ds:CanonicalizationMethod', '', Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
+          xml.send('ds:SignatureMethod', '', Algorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
+          xml.send('ds:Reference', '', URI: "#xpointer(//*[@authenticate='true'])") {
+            xml.send('ds:Transforms') {
+              xml.send('ds:Transform', '', Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
             }
-          },
-          "ds:DigestMethod/" => {
-            :@Algorithm => "http://www.w3.org/2001/04/xmlenc#sha256"
-          },
-          "ds:DigestValue/" => ""
+            xml.send('ds:DigestMethod', '', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
+            xml.send('ds:DigestValue', '')
+          }
         }
-      },
-      "ds:SignatureValue/" => ""
-    }
+        xml.send('ds:SignatureValue', '')
+      }
+    end.doc.root
   end
 
   def to_transfer_xml
-    Nokogiri::XML.parse(Gyoku.xml({
-      root => {
-        :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
-        :@xmlns => "urn:org:ebics:H004",
-        :@Version => "H004",
-        :@Revision => "1",
-        "header" => {
-          :@authenticate => true,
-          "static" => {
-            "HostID" => host_id,
-            "TransactionID" => transaction_id
-          },
-          "mutable" => {
-            "TransactionPhase" => "Transfer",
-            "SegmentNumber" => {
-              :@lastSegment => true,
-              :content! => 1
-            }
+    Nokogiri::XML::Builder.new do |xml|
+      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+        xml.header(authenticate: true) {
+          xml.static {
+            xml.HostID host_id
+            xml.TransactionID transaction_id
           }
-        },
-        "AuthSignature" => auth_signature,
-        "body" => {
-          "DataTransfer" => {
-            "OrderData" => encrypted_order_data
+          xml.mutable {
+            xml.TransactionPhase 'Transfer'
+            xml.SegmentNumber(1, lastSegment: true)
+          }
+        }
+        xml.parent.add_child(auth_signature)
+        xml.body {
+          xml.DataTransfer {
+            xml.OrderData encrypted_order_data
           }
         }
       }
-    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
 
   def to_receipt_xml
-    Nokogiri::XML.parse(Gyoku.xml({
-      root => {
-        :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
-        :@xmlns => "urn:org:ebics:H004",
-        :@Version => "H004",
-        :@Revision => "1",
-        "header" => {
-          :@authenticate => true,
-          "static" => {
-            "HostID" => host_id,
-            "TransactionID" => transaction_id
-          },
-          "mutable" => {
-            "TransactionPhase" => "Receipt"
+    Nokogiri::XML::Builder.new do |xml|
+      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+        xml.header(authenticate: true) {
+          xml.static {
+            xml.HostID host_id
+            xml.TransactionID(transaction_id)
           }
-        },
-        "AuthSignature" => auth_signature,
-        "body" => {
-          "TransferReceipt" => {
-            :@authenticate => true,
-            "ReceiptCode" => 0
+          xml.mutable {
+            xml.TransactionPhase 'Receipt'
+          }
+        }
+        xml.parent.add_child(auth_signature)
+        xml.body {
+          xml.TransferReceipt(authenticate: true) {
+            xml.ReceiptCode 0
           }
         }
       }
-    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
 
   def to_xml
-    Nokogiri::XML.parse(Gyoku.xml(    {
-      root => {
-        :"@xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",
-        :@xmlns => "urn:org:ebics:H004",
-        :@Version => "H004",
-        :@Revision => "1",
-        :header => header,
-        "AuthSignature" => auth_signature,
-        "body" => body
+    Nokogiri::XML::Builder.new do |xml|
+      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+        xml.parent.add_child(header)
+        xml.parent.add_child(auth_signature)
+        xml.parent.add_child(body)
       }
-    }), nil, "utf-8").to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML)
+    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
-
-
 end

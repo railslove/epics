@@ -20,7 +20,6 @@ RSpec.describe Epics::INI do
   end
 
   describe '#key_signature' do
-
     specify { expect(subject.key_signature).to be_a_valid_ebics_doc }
 
     describe 'validate against fixture' do
