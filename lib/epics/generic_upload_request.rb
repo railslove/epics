@@ -32,7 +32,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
 
   def order_signature
     Nokogiri::XML::Builder.new do |xml|
-      xml.UserSignatureData(xmlns: 'http://www.ebics.org/S001', 'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance", 'xsi:schemaLocation': "http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd") {
+      xml.UserSignatureData('xmlns' => 'http://www.ebics.org/S001', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') {
         xml.OrderSignatureData {
           xml.SignatureVersion "A006"
           xml.SignatureValue signature_value

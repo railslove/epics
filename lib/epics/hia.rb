@@ -34,7 +34,7 @@ class Epics::HIA < Epics::GenericRequest
 
   def order_data
     Nokogiri::XML::Builder.new do |xml|
-      xml.HIARequestOrderData('xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004') {
+      xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004') {
         xml.AuthenticationPubKeyInfo {
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
@@ -61,7 +61,7 @@ class Epics::HIA < Epics::GenericRequest
 
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
         xml.parent.add_child(header)
         xml.parent.add_child(body)
       }

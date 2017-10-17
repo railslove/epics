@@ -48,7 +48,7 @@ class Epics::GenericRequest
 
   def to_transfer_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
         xml.header(authenticate: true) {
           xml.static {
             xml.HostID host_id
@@ -71,7 +71,7 @@ class Epics::GenericRequest
 
   def to_receipt_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
         xml.header(authenticate: true) {
           xml.static {
             xml.HostID host_id
@@ -93,7 +93,7 @@ class Epics::GenericRequest
 
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#', xmlns: 'urn:org:ebics:H004', Version: 'H004', Revision: '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision'=> '1') {
         xml.parent.add_child(header)
         xml.parent.add_child(auth_signature)
         xml.parent.add_child(body)
