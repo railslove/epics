@@ -82,6 +82,16 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#order_types' do
+    before do
+      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
+    end
+
+    it 'extracts the accessible order types of a subscriber' do
+      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDD))
+    end
+  end
+
   describe '#HPB' do
     let(:e_key) do
       Epics::Key.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
@@ -167,6 +177,10 @@ RSpec.describe Epics::Client do
 
     it 'sets @name' do
       expect { subject.HTD }.to change { subject.instance_variable_get("@name") }
+    end
+
+    it 'sets @order_types' do
+      expect { subject.HTD }.to change { subject.instance_variable_get("@order_types") }
     end
   end
 
