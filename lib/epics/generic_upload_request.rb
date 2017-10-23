@@ -1,5 +1,4 @@
 class Epics::GenericUploadRequest < Epics::GenericRequest
-
   attr_accessor :key
   attr_accessor :document
 
@@ -18,37 +17,30 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def body
-    {
-      "DataTransfer" => {
-        "DataEncryptionInfo" => {
-          :@authenticate => true,
-          "EncryptionPubKeyDigest" => {
-            :"@Version" => "E002",
-            :"@Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256",
-            :content! => client.bank_e.public_digest
-          },
-          "TransactionKey" => Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
-        },
-        "SignatureData" => {
-          :@authenticate => true,
-          :content! => encrypted_order_signature
+    Nokogiri::XML::Builder.new do |xml|
+      xml.body {
+        xml.DataTransfer {
+          xml.DataEncryptionInfo(authenticate: true) {
+            xml.EncryptionPubKeyDigest(client.bank_e.public_digest, Version: 'E002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
+            xml.TransactionKey Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
+          }
+          xml.SignatureData(encrypted_order_signature, authenticate: true)
         }
       }
-    }
+    end.doc.root
   end
 
   def order_signature
-    Gyoku.xml("UserSignatureData" => {
-      :"@xmlns" => "http://www.ebics.org/S001",
-      :"@xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
-      :"@xsi:schemaLocation" => "http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd",
-      "OrderSignatureData" => {
-        "SignatureVersion" => "A006",
-        "SignatureValue" => signature_value,
-        "PartnerID" => partner_id,
-        "UserID" => user_id
+    Nokogiri::XML::Builder.new do |xml|
+      xml.UserSignatureData('xmlns' => 'http://www.ebics.org/S001', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') {
+        xml.OrderSignatureData {
+          xml.SignatureVersion "A006"
+          xml.SignatureValue signature_value
+          xml.PartnerID partner_id
+          xml.UserID user_id
+        }
       }
-    })
+    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
 
   def signature_value
