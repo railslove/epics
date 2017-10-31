@@ -11,7 +11,7 @@ RSpec.describe Epics::CDB do
   describe '#to_transfer_xml' do
     before { subject.transaction_id = SecureRandom.hex(16) }
 
-    specify { expect(subject.to_transfer_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_transfer_xml[0]).to be_a_valid_ebics_doc }
   end
 
 end

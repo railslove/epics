@@ -205,7 +205,9 @@ class Epics::Client
 
     order_id = res.order_id
 
-    res = post(url, order.to_transfer_xml).body
+    order.to_transfer_xml do |chunk|
+      res = post(url, chunk).body
+    end
 
     return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
   end

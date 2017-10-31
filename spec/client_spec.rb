@@ -145,6 +145,24 @@ RSpec.describe Epics::Client do
       it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
     end
 
+    describe 'big files' do
+      before do
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<SegmentNumber>1</SegmentNumber>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<SegmentNumber lastSegment=\"true\">2</SegmentNumber>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+      end
+
+      let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'big.xml')) }
+
+      it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+    end
+
     describe 'special case' do
       before do
         stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
