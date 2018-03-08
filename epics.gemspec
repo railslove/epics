@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
       STA HAA HTD HPD PKT HAC HKD C52 C53 C54
 
     And the following upload orders:
-      CD1 CDD CCT
+      CD1 CDD CCT B2B CDS CCS
   description
 
   spec.homepage      = "https://github.com/railslove/epics"
