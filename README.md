@@ -8,7 +8,7 @@ Communication Standard).
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PKT HAC HKD C52 C53 C54 CD1 CDD CCT VMK).
+(STA HAA HTD HPD PKT HAC HKD C52 C53 C54 CD1 CDD CCT VMK B2B).
 
 
 ## Installation
@@ -98,7 +98,7 @@ To get a list of all supported order types.
 
 We have many years of experience in developing innovative applications for the finance sector and
 integrating applications with financial institutions. - you might want to have a look at our
-[portfolio](http://www.railslove.com/portfolio)   
+[portfolio](http://www.railslove.com/portfolio)
 __If you need help we are happy to provide consulting or development services. Contact us:
 [team@railslove.com](mailto:team@railslove.com)__
 
@@ -208,21 +208,21 @@ This gem provides a full implementation of the Electronic Banking Internet Commu
 and works with any bank that supports this standard. Please ask your bank if they support EBICS and
 what order types are available.
 
-Besides EBCIS being a standard, some server implementations are slighty different.  
-But most banks use the same EBICS server implementations. Commonly used and supported by Epics are: 
+Besides EBCIS being a standard, some server implementations are slighty different.
+But most banks use the same EBICS server implementations. Commonly used and supported by Epics are:
 
 * Business-Logics EBICS, Banking-Server
-* Travic Corporate 
+* Travic Corporate
 
 Used for example by the following tested institutions:
 
 * Handelsbank
 * Deutsche Bank
 * Commerzbank
-* Kreissparkasse Mayen 
+* Kreissparkasse Mayen
 * Postbank
 * Sozialbank
-* Sparkassen 
+* Sparkassen
 * Volksbanken Raiffeisenbanken
 * Hypo Vereinsbank
 

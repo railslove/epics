@@ -1,3 +1,9 @@
+### 1.5.2
+
+  * [COMPATIBILITY] be removing the `goyku` dependency we're more recilent against old versions of that gem
+  * [ENHANCEMENT] #order_type gives you more complete overview which order types to current client is entitled
+  to use, there was already `HAA` which isn't as complete as this, which gets its info from `HTD`
+
 ### 1.5.1
 
   * [ENHANCEMENT] some banks are not returning the order_id in the second upload phase, we now fetch it already
