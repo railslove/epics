@@ -8,7 +8,7 @@ Communication Standard).
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PKT HAC HKD C52 C53 C54 CD1 CDD CCT VMK B2B).
+(STA HAA HTD HPD PTK HAC HKD C52 C53 C54 CD1 CDD CCT VMK B2B).
 
 
 ## Installation
@@ -134,7 +134,7 @@ Currently this EPICS implementation supports the following order types:
 * HAA (available order types)
 * HTD (user properties and settings)
 * HPD (the available bank parameters)
-* PKT (customer usage report in text format)
+* PTK (customer usage report in text format)
 * HAC (customer usage report in xml format)
 * VMK (customer usage report in xml format)
 * ... more coming soon
@@ -225,6 +225,8 @@ Used for example by the following tested institutions:
 * Sparkassen
 * Volksbanken Raiffeisenbanken
 * Hypo Vereinsbank
+* BAWAG P.S.K. (AT)
+* Bank Frick (LI)
 
 Is Epics working with your institution? Please help us to grow this list of supported banks:
 
