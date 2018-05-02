@@ -195,4 +195,16 @@ RSpec.describe Epics::Client do
       end
     end
   end
+
+  describe '#C53/C52/C54 types with zipped data with general purpose bit flag 3 set' do
+    before do
+      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test_with_general_purpose_bit_3.zip') ))
+    end
+
+    it 'will unzip the returned data' do
+      %w(C52 C53 C54).each do |c|
+        expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
+    end
+  end
 end
