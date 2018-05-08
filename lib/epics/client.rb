@@ -224,10 +224,8 @@ class Epics::Client
 
   def download_and_unzip(order_type, *args)
     [].tap do |entries|
-      Zip::InputStream.open(StringIO.new( download(order_type, *args) )) do |stream|
-        while stream.get_next_entry
-          entries << stream.read
-        end
+      Zip::File.open_buffer(StringIO.new(download(order_type, *args))).each do |zipfile|
+        entries << zipfile.get_input_stream.read
       end
     end
   end
