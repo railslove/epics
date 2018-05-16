@@ -1,3 +1,9 @@
+### 1.6.0
+
+  * [BUGFIX] allow unstreamable zipfile handling
+  * [ENHANCEMENT] adds CDZ order type
+  * updates dependencies
+
 ### 1.5.2
 
   * [COMPATIBILITY] be removing the `goyku` dependency we're more recilent against old versions of that gem
