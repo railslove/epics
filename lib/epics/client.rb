@@ -127,6 +127,10 @@ class Epics::Client
     upload(Epics::CD1, document)
   end
 
+  def CDB(document)
+    upload(Epics::CDB, document)
+  end
+
   def CDD(document)
     upload(Epics::CDD, document)
   end
