@@ -8,7 +8,7 @@ Communication Standard).
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PTK HAC HKD C52 C53 C54 CD1 CDD CCT VMK B2B).
+(STA HAA HTD HPD PTK HAC HKD C52 C53 C54 CD1 CDB CDD CCT VMK).
 
 
 ## Installation
@@ -166,6 +166,7 @@ puts e.STA('2014-09-01', '2014-09-11')
 ### Uploads
 
 * CD1 (Uploads a SEPA Direct Debit document of type COR1)
+* CDB (Uploads a SEPA Direct Debit document of type B2B)
 * CDD (Uploads a SEPA Direct Debit document of type CORE)
 * CCT (Uploads a SEPA Credit document)
 * ... more coming soon

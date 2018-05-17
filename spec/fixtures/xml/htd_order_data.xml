@@ -134,6 +134,12 @@
       <NumSigRequired>1</NumSigRequired>
     </OrderInfo>
     <OrderInfo>
+      <OrderType>CDB</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>CDB</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
       <OrderType>CDD</OrderType>
       <TransferType>Upload</TransferType>
       <Description>Direct Debit Initiation</Description>
@@ -147,7 +153,7 @@
       <OrderTypes>PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ</OrderTypes>
     </Permission>
     <Permission AuthorisationLevel="E">
-      <OrderTypes>INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDD</OrderTypes>
+      <OrderTypes>INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDB CDD</OrderTypes>
     </Permission>
   </UserInfo>
 </HTDResponseOrderData>

@@ -88,7 +88,7 @@ RSpec.describe Epics::Client do
     end
 
     it 'extracts the accessible order types of a subscriber' do
-      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDD))
+      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDB CDD))
     end
   end
 
@@ -128,6 +128,21 @@ RSpec.describe Epics::Client do
       it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
     end
+  end
+
+
+  describe '#CDB' do
+    let(:cdb_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb.xml')) }
+    before do
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_init_response.xml')))
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_transfer_response.xml')))
+    end
+
+    it { expect(subject.CDB(cdb_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
   end
 
   describe '#CD1' do
