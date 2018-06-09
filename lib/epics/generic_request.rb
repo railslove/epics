@@ -47,26 +47,40 @@ class Epics::GenericRequest
   end
 
   def to_transfer_xml
-    Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
-        xml.header(authenticate: true) {
-          xml.static {
-            xml.HostID host_id
-            xml.TransactionID transaction_id
+    [].tap do |data|
+      encrypted_order_data_chunks.each_with_index do |chunk, index|
+        xml_chunk = Nokogiri::XML::Builder.new do |xml|
+          xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+            xml.header(authenticate: true) {
+              xml.static {
+                xml.HostID host_id
+                xml.TransactionID transaction_id
+              }
+              xml.mutable {
+                xml.TransactionPhase 'Transfer'
+                if encrypted_order_data_chunks.last == chunk
+                  xml.SegmentNumber(index + 1, lastSegment: true)
+                else
+                  xml.SegmentNumber(index + 1)
+                end
+              }
+            }
+            xml.parent.add_child(auth_signature)
+            xml.body {
+              xml.DataTransfer {
+                xml.OrderData chunk
+              }
+            }
           }
-          xml.mutable {
-            xml.TransactionPhase 'Transfer'
-            xml.SegmentNumber(1, lastSegment: true)
-          }
-        }
-        xml.parent.add_child(auth_signature)
-        xml.body {
-          xml.DataTransfer {
-            xml.OrderData encrypted_order_data
-          }
-        }
-      }
-    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
+        end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
+
+        if block_given?
+          yield xml_chunk
+        else
+          data << xml_chunk
+        end
+      end
+    end
   end
 
   def to_receipt_xml

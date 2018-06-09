@@ -61,6 +61,10 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
     Base64.encode64(encrypt(dst)).gsub(/\n/,'')
   end
 
+  def encrypted_order_data_chunks
+    @data ||= encrypted_order_data.chars.each_slice(1024000).to_a.map(&:join)
+  end
+
   def encrypted_order_signature
     dst = Zlib::Deflate.deflate(order_signature)
 
