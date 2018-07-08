@@ -1,8 +1,8 @@
 ### 1.7.0
 
-  * [ENHANCEMNT] adds CDB (thanks to @romanlehnert)
+  * [ENHANCEMENT] adds CDB (thanks to @romanlehnert)
   * [BUGFIX] fixes CCS order type and attribute (thanks to @gadimbaylisahil)
-  * [BUGXI] make CDZ callable via client
+  * [BUGFIX] make CDZ callable via client
 
 ### 1.6.0
 
