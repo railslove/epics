@@ -139,6 +139,10 @@ class Epics::Client
     upload(Epics::CDS, document)
   end
 
+  def CDZ(document)
+    upload(Epics::CDZ, document)
+  end
+
   def CCT(document)
     upload(Epics::CCT, document)
   end
