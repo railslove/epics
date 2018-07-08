@@ -1,6 +1,6 @@
 class Epics::CCT < Epics::GenericUploadRequest
   def order_attribute
-    "OZHNN"
+    'OZHNN'
   end
 
   def order_type

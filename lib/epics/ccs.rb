@@ -1,6 +1,6 @@
 class Epics::CCS < Epics::CCT
   def order_attribute
-    "DZHNN"
+    'DZHNN'
   end
 
   def order_type
