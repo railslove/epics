@@ -1,3 +1,39 @@
+### 1.7.0
+
+  * [ENHANCEMENT] adds CDB (thanks to @romanlehnert)
+  * [BUGFIX] fixes CCS order type and attribute (thanks to @gadimbaylisahil)
+  * [BUGFIX] make CDZ callable via client
+
+### 1.6.0
+
+  * [BUGFIX] allow unstreamable zipfile handling
+  * [ENHANCEMENT] adds CDZ order type
+  * updates dependencies
+
+### 1.5.2
+
+  * [COMPATIBILITY] be removing the `goyku` dependency we're more recilent against old versions of that gem
+  * [ENHANCEMENT] #order_type gives you more complete overview which order types to current client is entitled
+  to use, there was already `HAA` which isn't as complete as this, which gets its info from `HTD`
+
+### 1.5.1
+
+  * [ENHANCEMENT] some banks are not returning the order_id in the second upload phase, we now fetch it already
+    from the first response to handle this different behaviour.
+  * [ENHANCEMENT] New order types: `AZV` (Auslandszahlungsverkehr). `CDS` and `CCS` for submitting SEPA credits/debits
+    as SRZ (Service Rechen Zentrum)
+
+### 1.5.0
+
+  * [ENHANCEMENT] support for fetching the C54 order type
+  * [ENHANCEMENT] Exceptions expose their internal code via `code`
+  * [HOUSEKEEPING] Added Ruby 2.4 compatibility
+  * [HOUSEKEEPING] Drop Ruby 2.0.0
+
+### 1.4.1
+
+  * [ENHANCEMENT] support for fetching the VMK order type
+
 ### 1.4.0
 
   * [ENHANCEMENT] STA without date range to fetch all statements which have not yet been fetched

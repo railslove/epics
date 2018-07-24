@@ -22,6 +22,28 @@ RSpec.describe Epics::Client do
 
   end
 
+  context 'environment settings' do
+    before(:each) do
+      ENV.delete('EPICS_VERIFY_SSL')
+    end
+
+    describe '#verify_ssl?' do
+      it 'verifies ssl by default' do
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'verifies ssl if there\'s something strange set to your env' do
+        ENV['EPICS_VERIFY_SSL'] = 'somethingstrange'
+        expect(subject.send(:verify_ssl?)).to eq true
+      end
+
+      it 'skips ssl verification if you want to' do
+        ENV['EPICS_VERIFY_SSL'] = 'false'
+        expect(subject.send(:verify_ssl?)).to eq false
+      end
+    end
+  end
+
   describe '#inspect' do
     it 'will not print the complete object' do
       expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
@@ -60,6 +82,16 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#order_types' do
+    before do
+      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
+    end
+
+    it 'extracts the accessible order types of a subscriber' do
+      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDB CDD))
+    end
+  end
+
   describe '#HPB' do
     let(:e_key) do
       Epics::Key.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
@@ -95,22 +127,54 @@ RSpec.describe Epics::Client do
 
       it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
-
     end
+  end
+
+
+  describe '#CDB' do
+    let(:cdb_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb.xml')) }
+    before do
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_init_response.xml')))
+      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_transfer_response.xml')))
+    end
+
+    it { expect(subject.CDB(cdb_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
   end
 
   describe '#CD1' do
     let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
-    before do
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+    describe 'normal behaviour' do
+      before do
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+      end
+
+      it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
     end
 
-    it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+    describe 'special case' do
+      before do
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')).sub('N00L', 'N11L'))
+        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
+          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')).sub('<OrderID>N00L</OrderID>', ''))
+      end
+
+      # happend on some handelsbank accounts
+      it 'can also try to fetch the order_id from the first transaction being made' do
+        expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N11L"])
+      end
+    end
   end
 
   describe '#HTD' do
@@ -129,15 +193,33 @@ RSpec.describe Epics::Client do
     it 'sets @name' do
       expect { subject.HTD }.to change { subject.instance_variable_get("@name") }
     end
+
+    it 'sets @order_types' do
+      expect { subject.HTD }.to change { subject.instance_variable_get("@order_types") }
+    end
   end
 
-  describe '#C53/C52 types with zipped data' do
+  describe '#C53/C52/C54 types with zipped data' do
     before do
       allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test.zip') ))
     end
 
     it 'will unzip the returned data' do
-      expect(subject.C53(:today, :yesterday)).to eq(["ebics is great\n"])
+      %w(C52 C53 C54).each do |c|
+        expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
+    end
+  end
+
+  describe '#C53/C52/C54 types with zipped data with general purpose bit flag 3 set' do
+    before do
+      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test_with_general_purpose_bit_3.zip') ))
+    end
+
+    it 'will unzip the returned data' do
+      %w(C52 C53 C54).each do |c|
+        expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
     end
   end
 end

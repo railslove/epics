@@ -1,14 +1,6 @@
-class Epics::CDD < Epics::GenericUploadRequest
-  def order_attribute
-    'OZHNN'
-  end
-
-  def order_type
-    'CDD'
-  end
-
+class Epics::AZV < Epics::GenericUploadRequest
   def header
-     Nokogiri::XML::Builder.new do |xml|
+    Nokogiri::XML::Builder.new do |xml|
       xml.header(authenticate: true) {
         xml.static {
           xml.HostID host_id
@@ -18,9 +10,9 @@ class Epics::CDD < Epics::GenericUploadRequest
           xml.UserID user_id
           xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
           xml.OrderDetails {
-            xml.OrderType order_type
-            xml.OrderAttribute order_attribute
-            xml.StandardOrderParams ''
+            xml.OrderType 'CD1'
+            xml.OrderAttribute 'OZHNN'
+            xml.StandardOrderParams
           }
           xml.BankPubKeyDigests {
             xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")

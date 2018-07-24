@@ -8,7 +8,7 @@ Communication Standard).
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PKT HAC HKD C52 C53 CD1 CDD CCT).
+(STA HAA HTD HPD PTK HAC HKD C52 C53 C54 CD1 CDB CDD CCT VMK).
 
 
 ## Installation
@@ -41,7 +41,7 @@ Once the paperwork is done, your bank should provide you with:
 Take these parameters and start setting up an UserID (repeat this for every user you want to initialize):
 
 ```ruby
-e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "SIZBN001", "EBIX", "EPICS")
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID")
 ```
 
 To use the keys later, just store them in a file
@@ -98,7 +98,7 @@ To get a list of all supported order types.
 
 We have many years of experience in developing innovative applications for the finance sector and
 integrating applications with financial institutions. - you might want to have a look at our
-[portfolio](http://www.railslove.com/portfolio)   
+[portfolio](http://www.railslove.com/portfolio)
 __If you need help we are happy to provide consulting or development services. Contact us:
 [team@railslove.com](mailto:team@railslove.com)__
 
@@ -134,8 +134,9 @@ Currently this EPICS implementation supports the following order types:
 * HAA (available order types)
 * HTD (user properties and settings)
 * HPD (the available bank parameters)
-* PKT (customer usage report in text format)
+* PTK (customer usage report in text format)
 * HAC (customer usage report in xml format)
+* VMK (customer usage report in xml format)
 * ... more coming soon
 
 Example:
@@ -165,6 +166,7 @@ puts e.STA('2014-09-01', '2014-09-11')
 ### Uploads
 
 * CD1 (Uploads a SEPA Direct Debit document of type COR1)
+* CDB (Uploads a SEPA Direct Debit document of type B2B)
 * CDD (Uploads a SEPA Direct Debit document of type CORE)
 * CCT (Uploads a SEPA Credit document)
 * ... more coming soon
@@ -208,13 +210,39 @@ and works with any bank that supports this standard. Please ask your bank if the
 what order types are available.
 
 Besides EBCIS being a standard, some server implementations are slighty different.
-Is Epics working with your institution?
-Please help us to grow this list of supported banks:
+But most banks use the same EBICS server implementations. Commonly used and supported by Epics are:
+
+* Business-Logics EBICS, Banking-Server
+* Travic Corporate
+
+Used for example by the following tested institutions:
 
 * Handelsbank
 * Deutsche Bank
-* Sparkasse Köln Bonn
 * Commerzbank
+* Kreissparkasse Mayen
+* Postbank
+* Sozialbank
+* Sparkassen
+* Volksbanken Raiffeisenbanken
+* Hypo Vereinsbank
+* BAWAG P.S.K. (AT)
+* Bank Frick (LI)
+
+Is Epics working with your institution? Please help us to grow this list of supported banks:
+
+
+## Development
+
+For development purposes, you may want to use a proxy server in order to have a convienent look into request and response data.
+To do so, it's sufficient to define `http_proxy` in your environment.
+Also you may want to disable SSL verification - simply set `EPICS_VERIFY_SSL` to `"false"`.
+
+For example:
+```
+http_proxy=localhost:8080
+EPICS_VERIFY_SSL=false
+```
 
 ## Links
 
@@ -235,4 +263,4 @@ Please help us to grow this list of supported banks:
 
 
 ------------
-2014 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
+2014-2018 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.

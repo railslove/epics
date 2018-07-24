@@ -55,6 +55,10 @@ class Epics::Client
     @bic ||= (self.HTD; @bic)
   end
 
+  def order_types
+    @order_types ||= (self.HTD; @order_types)
+  end
+
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
     client = new(nil, passphrase, url, host_id, user_id, partner_id)
     client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
@@ -114,8 +118,12 @@ class Epics::Client
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
       bank   = OpenSSL::PKey::RSA.new
-      bank.n = OpenSSL::BN.new(modulus, 2)
-      bank.e = OpenSSL::BN.new(exponent, 2)
+      if bank.respond_to?(:set_key)
+        bank.set_key(OpenSSL::BN.new(modulus, 2), OpenSSL::BN.new(exponent, 2), nil)
+      else
+        bank.n = OpenSSL::BN.new(modulus, 2)
+        bank.e = OpenSSL::BN.new(exponent, 2)
+      end
 
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
@@ -123,20 +131,44 @@ class Epics::Client
     [bank_x, bank_e]
   end
 
+  def AZV(document)
+    upload(Epics::AZV, document)
+  end
+
   def CD1(document)
     upload(Epics::CD1, document)
+  end
+
+  def CDB(document)
+    upload(Epics::CDB, document)
   end
 
   def CDD(document)
     upload(Epics::CDD, document)
   end
 
+  def CDS(document)
+    upload(Epics::CDS, document)
+  end
+
+  def CDZ(document)
+    upload(Epics::CDZ, document)
+  end
+
   def CCT(document)
     upload(Epics::CCT, document)
   end
 
+  def CCS(document)
+    upload(Epics::CCS, document)
+  end
+
   def STA(from = nil, to = nil)
     download(Epics::STA, from, to)
+  end
+
+  def VMK(from = nil, to = nil)
+    download(Epics::VMK, from, to)
   end
 
   def C52(from, to)
@@ -147,15 +179,20 @@ class Epics::Client
     download_and_unzip(Epics::C53, from, to)
   end
 
+  def C54(from, to)
+    download_and_unzip(Epics::C54, from, to)
+  end
+
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
-      @bic  ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text
-      @name ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text
+      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text
+      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text
+      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
     end.to_xml
   end
 
@@ -186,9 +223,11 @@ class Epics::Client
     res = post(url, order.to_xml).body
     order.transaction_id = res.transaction_id
 
+    order_id = res.order_id
+
     res = post(url, order.to_transfer_xml).body
 
-    return res.transaction_id, res.order_id
+    return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
   end
 
   def download(order_type, *args)
@@ -205,16 +244,14 @@ class Epics::Client
 
   def download_and_unzip(order_type, *args)
     [].tap do |entries|
-      Zip::InputStream.open(StringIO.new( download(order_type, *args) )) do |stream|
-        while stream.get_next_entry
-          entries << stream.read
-        end
+      Zip::File.open_buffer(StringIO.new(download(order_type, *args))).each do |zipfile|
+        entries << zipfile.get_input_stream.read
       end
     end
   end
 
   def connection
-    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}) do |faraday|
+    @connection ||= Faraday.new(headers: {user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.response :logger                  # log requests to STDOUT
@@ -233,7 +270,7 @@ class Epics::Client
   end
 
   def cipher
-    @cipher ||= OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+    @cipher ||= OpenSSL::Cipher.new("aes-256-cbc")
   end
 
   def encrypt(data)
@@ -257,4 +294,7 @@ class Epics::Client
     cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
   end
 
+  def verify_ssl?
+    ENV['EPICS_VERIFY_SSL'] != 'false'
+  end
 end

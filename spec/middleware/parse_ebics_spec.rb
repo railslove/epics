@@ -2,12 +2,12 @@ RSpec.describe Epics::ParseEbics do
 
   subject do
     Faraday.new do |builder|
+      builder.use Epics::ParseEbics
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
         stub.post('/business_nok') {[ 200, {}, File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_business_nok.xml') )  ]}
         stub.post('/technical_nok') {[ 200, {}, File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml') )  ]}
         stub.post('/ok') {[ 200, {}, File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hpb_response_ebics_ns.xml') )  ]}
       end
-      builder.use Epics::ParseEbics
     end
   end
 
