@@ -9,6 +9,7 @@ RSpec.describe Epics::ParseEbics do
         stub.post('/technical_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml'))] }
         stub.post('/ok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hpb_response_ebics_ns.xml'))] }
         stub.post('/timeout') { raise Faraday::TimeoutError }
+        stub.post('/no_connection') { raise Faraday::Error::ConnectionFailed, 'peer has finished all lan parties and gone home' }
       end
     end
   end
@@ -24,5 +25,15 @@ RSpec.describe Epics::ParseEbics do
 
   it 'will handle a timeout with raising an Epics::Error::TechnicalError' do
     expect { subject.post('/timeout') }.to raise_error(Epics::Error::UnknownError, 'timeout')
+  end
+
+  context 'failures' do
+    it 'will handle a timeout with raising an Epics::Error::TechnicalError' do
+      expect { subject.post('/timeout') }.to raise_error(Epics::Error::UnknownError, 'timeout')
+    end
+
+    it 'will handle a no connection error with raising an Epics::Error::TechnicalError' do
+      expect { subject.post('/no_connection') }.to raise_error(Epics::Error::UnknownError, 'peer has finished all lan parties and gone home')
+    end
   end
 end
