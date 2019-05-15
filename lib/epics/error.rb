@@ -334,3 +334,4 @@ class Epics::Error < StandardError
   end
 
 end
+class Epics::Error::UnknownError < StandardError; end
