@@ -197,6 +197,16 @@ RSpec.describe Epics::Client do
     it 'sets @order_types' do
       expect { subject.HTD }.to change { subject.instance_variable_get("@order_types") }
     end
+
+    describe 'without iban' do
+      before do
+        allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data_without_names.xml')))
+      end
+
+      it 'sets @iban' do
+        expect(subject.iban).to be_nil
+      end
+    end
   end
 
   describe '#C53/C52/C54 types with zipped data' do

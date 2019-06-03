@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTDResponseOrderData xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_orders_H004.xsd">
+  <PartnerInfo>
+    <AddressInfo>
+      <Name>Railslove GmbH</Name>
+      <Country>Deutschland</Country>
+    </AddressInfo>
+    <BankInfo>
+      <HostID>SIZBN001</HostID>
+    </BankInfo>
+    <OrderInfo>
+      <OrderType>HTD</OrderType>
+      <TransferType>Download</TransferType>
+      <Description>Kunden- und Teilnehmerdaten abholen</Description>
+    </OrderInfo>
+      </PartnerInfo>
+  <UserInfo>
+    <UserID Status="1">EBIX</UserID>
+    <Name>Ebi, Epics</Name>
+    <Permission>
+      <OrderTypes>HTD</OrderTypes>
+    </Permission>
+    <Permission AuthorisationLevel="E">
+      <OrderTypes></OrderTypes>
+    </Permission>
+  </UserInfo>
+</HTDResponseOrderData>
