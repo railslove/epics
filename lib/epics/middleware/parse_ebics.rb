@@ -1,15 +1,20 @@
-class Epics::ParseEbics < Faraday::Middleware
+# frozen_string_literal: true
 
+class Epics::ParseEbics < Faraday::Middleware
   def initialize(app = nil, options = {})
     super(app)
     @client = options[:client]
   end
 
   def call(env)
-    @app.call(env).on_complete do |env|
-      env[:body] = ::Epics::Response.new(@client, env[:body])
-      raise Epics::Error::TechnicalError.new(env[:body].technical_code) if env[:body].technical_error?
-      raise Epics::Error::BusinessError.new(env[:body].business_code)  if env[:body].business_error?
+    @app.call(env).on_complete do |response|
+      response[:body] = ::Epics::Response.new(@client, response[:body])
+      raise Epics::Error::TechnicalError, response[:body].technical_code if response[:body].technical_error?
+      raise Epics::Error::BusinessError, response[:body].business_code if response[:body].business_error?
     end
+  rescue Epics::Error::TechnicalError, Epics::Error::BusinessError
+    raise # re-raise as otherwise they would be swallowed by the following rescue
+  rescue StandardError => e
+    raise Epics::Error::UnknownError, e
   end
 end
