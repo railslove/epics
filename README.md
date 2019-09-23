@@ -10,7 +10,6 @@ The client supports the complete initialization process comprising INI, HIA and 
 INI letter generation. It offers support for the most common download and upload order types
 (STA HAA HTD HPD PTK HAC HKD C52 C53 C54 CD1 CDB CDD CCT VMK).
 
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +21,6 @@ gem 'epics'
 Or install it yourself as:
 
     $ gem install epics
-
 
 ## Getting started
 
@@ -260,6 +258,16 @@ EPICS_VERIFY_SSL=false
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Contribution Credits
+
+- [@punkle64](https://github.com/punkle64) \
+  for adding XCT order type
+- [@romanlehnert](https://github.com/romanlehnert) \
+  for adding CDB order type
+- [@gadimbaylisahil](https://github.com/gadimbaylisahil) \
+  for fixing CCS order type and attribute
+- you, for contributing too!
 
 
 ------------

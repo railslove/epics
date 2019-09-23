@@ -1,3 +1,7 @@
+### 1.7.2
+
+- [FEATURE] adds XCT order type (thanks to @punkle64)
+
 ### 1.7.1
 
 - [HOUSEKEEPING] sets headers for requests to text/xml
