@@ -1,82 +1,63 @@
 version: v1.0
-name: Parallel
+name: Test
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
+  - name: Setup
+    task:
+      jobs:
+        - name: "Checkout"
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
   - name: Spec versions
     task:
       jobs:
-        - name: '2.0'
+        - name: "2.0.0-p598"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.0
+            - rbenv global 2.0.0-p598
             - bundle install
-            - rspec
-        - name: '2.1'
+            - bundle exec rspec
+        - name: "2.1.10"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.1
+            - rbenv global 2.1.10
             - bundle install
-            - rspec
-        - name: '2.2'
+            - bundle exec rspec
+        - name: "2.2.10"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.2
+            - rbenv global 2.2.10
             - bundle install
-            - rspec
-        - name: '2.3'
+            - bundle exec rspec
+        - name: "2.3.8"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.3
+            - rbenv global 2.3.8
             - bundle install
-            - rspec
-        - name: '2.4'
+            - bundle exec rspec
+        - name: "2.4.9"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.4
+            - rbenv global 2.4.9
             - bundle install
-            - rspec
-        - name: '2.5'
+            - bundle exec rspec
+        - name: "2.5.7"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.5
+            - rbenv global 2.5.7
             - bundle install
-            - rspec
-        - name: '2.6'
+            - bundle exec rspec
+        - name: "2.6.5"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global 2.6
+            - rbenv global 2.6.5
             - bundle install
-            - rspec
-        - name: jruby-9.1
+            - bundle exec rspec
+        - name: "jruby-9.1.17.0"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global jruby-9.1.15.0
+            - rbenv global jruby-9.1.17.0
             - bundle install
-            - rspec
-        - name: jruby-9.2
+            - bundle exec rspec
+        - name: "jruby-9.2.9.0"
           commands:
-            - checkout
-            - ls
-            - rm -f .rbenv-version .ruby-version
-            - rbenv global jruby-9.2.0.0
+            - rbenv global jruby-9.2.9.0
             - bundle install
-            - rspec
+            - bundle exec rspec
