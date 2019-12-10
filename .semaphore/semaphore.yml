@@ -16,66 +16,70 @@ blocks:
   - name: Spec versions
     task:
       jobs:
-        - name: "2.0.0-p598"
+        - name: "2.0"
           commands:
-            - rbenv install -s 2.0.0-p598
-            - rbenv global 2.0.0-p598
-            - gem install bundler
+            - sem-version ruby 2.0
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.1.10"
+        - name: "2.1"
           commands:
-            - rbenv install -s 2.1.10
-            - rbenv global 2.1.10
-            - gem install bundler
+            - sem-version ruby 2.1
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.2.10"
+        - name: "2.2"
           commands:
-            - rbenv install -s 2.2.10
-            - rbenv global 2.2.10
-            - gem install bundler
+            - sem-version ruby 2.2
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.3.8"
+        - name: "2.3"
           commands:
-            - rbenv install -s 2.3.8
-            - rbenv global 2.3.8
-            - gem install bundler
+            - sem-version ruby 2.3
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.4.9"
+        - name: "2.4"
           commands:
-            - rbenv install -s 2.4.9
-            - rbenv global 2.4.9
-            - gem install bundler
+            - sem-version ruby 2.4
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.5.7"
+        - name: "2.5"
           commands:
-            - rbenv install -s 2.5.7
-            - rbenv global 2.5.7
-            - gem install bundler
+            - sem-version ruby 2.5
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "2.6.5"
+        - name: "2.6"
           commands:
-            - rbenv install -s 2.6.5
-            - rbenv global 2.6.5
-            - gem install bundler
+            - sem-version ruby 2.6
+            - cache restore
             - bundle install
+            - cache store
             - bundle exec rspec
-        - name: "jruby-9.1.17.0"
-          commands:
-            - rbenv install -s jruby-9.1.17.0
-            - rbenv global jruby-9.1.17.0
-            - gem install bundler
-            - bundle install
-            - bundle exec rspec
-        - name: "jruby-9.2.9.0"
-          commands:
-            - rbenv install -s jruby-9.2.9.0
-            - rbenv global jruby-9.2.9.0
-            - gem install bundler
-            - bundle install
-            - bundle exec rspec
+        # - name: "jruby-9.1.17.0"
+        #   commands:
+        #     - rbenv install -s jruby-9.1.17.0
+        #     - rbenv global jruby-9.1.17.0
+        #     - gem install bundler
+        - cache restore
+        #     - bundle install
+        - cache store
+        #     - bundle exec rspec
+        # - name: "jruby-9.2.9.0"
+        #   commands:
+        #     - rbenv install -s jruby-9.2.9.0
+        #     - rbenv global jruby-9.2.9.0
+        #     - gem install bundler
+        - cache restore
+        #     - bundle install
+        - cache store
+        #     - bundle exec rspec
