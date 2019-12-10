@@ -75,7 +75,7 @@ blocks:
         - name: "jruby-9.1.12.0"
           commands:
             - checkout
-            - sem-version jruby 9.1.12.0
+            - sem-version ruby jruby-9.1.12.0
             - cache restore
             - bundle install
             - cache store
@@ -83,7 +83,7 @@ blocks:
         - name: "jruby-9.2.0.0"
           commands:
             - checkout
-            - sem-version jruby 9.2.0.0
+            - sem-version ruby jruby-9.2.0.0
             - cache restore
             - bundle install
             - cache store
