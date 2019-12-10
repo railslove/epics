@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/railslove/epics.svg?branch=master)](https://travis-ci.org/railslove/epics)
+[![Build Status](https://railslove.semaphoreci.com/badges/epics/branches/master.svg?style=shields)](https://railslove.semaphoreci.com/branches/c29225c5-5b7e-4a90-8ac8-22d1aa28efcf)
 [![Gem Version](https://badge.fury.io/rb/epics.svg)](http://badge.fury.io/rb/epics)
 
 # Epics
@@ -31,10 +31,10 @@ bank.
 
 Once the paperwork is done, your bank should provide you with:
 
-* _a_ URL to their EBICS Server
-* _a_ HOST ID
-* _a_ PARTNER ID
-* _n_ User IDs (depends on your bank and needs)
+- _a_ URL to their EBICS Server
+- _a_ HOST ID
+- _a_ PARTNER ID
+- _n_ User IDs (depends on your bank and needs)
 
 Take these parameters and start setting up an UserID (repeat this for every user you want to initialize):
 
@@ -49,7 +49,7 @@ e.save_keys("/home/epics/my.key")
 # or store the json elsewhere, but store it! for gods sake :D
 ```
 
-It is really __important__ to keep your keys around, once your user has been initialized
+It is really **important** to keep your keys around, once your user has been initialized
 you'll have to start over when you loose the keys!
 
 Submit the keys to your bank:
@@ -91,15 +91,13 @@ e.HAA
 
 To get a list of all supported order types.
 
-
 ## Need help? Having questions?
 
 We have many years of experience in developing innovative applications for the finance sector and
 integrating applications with financial institutions. - you might want to have a look at our
 [portfolio](http://www.railslove.com/portfolio)
-__If you need help we are happy to provide consulting or development services. Contact us:
-[team@railslove.com](mailto:team@railslove.com)__
-
+**If you need help we are happy to provide consulting or development services. Contact us:
+[team@railslove.com](mailto:team@railslove.com)**
 
 ## Usage
 
@@ -115,27 +113,26 @@ keys = File.read('/tmp/my.key')
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
 ```
 
-
 ## Features
 
 ### Initialization
 
-* INI (Sends the public key of the electronic signature.)
-* HIA (Sends the public authentication (X002) and encryption (E002) keys.)
+- INI (Sends the public key of the electronic signature.)
+- HIA (Sends the public authentication (X002) and encryption (E002) keys.)
 
 ### Downloads
 
 Currently this EPICS implementation supports the following order types:
 
-* HPB (fetch your bank's public keys)
-* STA (statements in MT940 format)
-* HAA (available order types)
-* HTD (user properties and settings)
-* HPD (the available bank parameters)
-* PTK (customer usage report in text format)
-* HAC (customer usage report in xml format)
-* VMK (customer usage report in xml format)
-* ... more coming soon
+- HPB (fetch your bank's public keys)
+- STA (statements in MT940 format)
+- HAA (available order types)
+- HTD (user properties and settings)
+- HPD (the available bank parameters)
+- PTK (customer usage report in text format)
+- HAC (customer usage report in xml format)
+- VMK (customer usage report in xml format)
+- ... more coming soon
 
 Example:
 
@@ -163,11 +160,11 @@ puts e.STA('2014-09-01', '2014-09-11')
 
 ### Uploads
 
-* CD1 (Uploads a SEPA Direct Debit document of type COR1)
-* CDB (Uploads a SEPA Direct Debit document of type B2B)
-* CDD (Uploads a SEPA Direct Debit document of type CORE)
-* CCT (Uploads a SEPA Credit document)
-* ... more coming soon
+- CD1 (Uploads a SEPA Direct Debit document of type COR1)
+- CDB (Uploads a SEPA Direct Debit document of type B2B)
+- CDD (Uploads a SEPA Direct Debit document of type CORE)
+- CCT (Uploads a SEPA Credit document)
+- ... more coming soon
 
 Example:
 
@@ -185,21 +182,18 @@ puts e.CD1(File.read("/where/the/xml/is/stored.xml"))
 Once you have a client, go ahead and start playing! There are 3 convenience methods
 that are hiding some strange names from you:
 
-* debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
-* credit( _xml_ ) (submits a pain.001.003.03 document)
-* statements( _from_, _to_ ) (fetches an account statement via STA)
+- debit( _xml_ ) (submits a PAIN.008.003.02 document via CDD)
+- credit( _xml_ ) (submits a pain.001.003.03 document)
+- statements( _from_, _to_ ) (fetches an account statement via STA)
 
 If you need more sophisticated EBICS order types, please read the next section
 about the supported functionalities.
-
 
 ## Issues and Feature Requests
 
 [Railslove](http://railslove.com) is commited to provide the best developer tools for integrating
 with financial institutions. Epics is one of our many tools and services.
 If you are missing some features or something is not working as expected please create an issue.
-
-
 
 ## Supported Banks
 
@@ -210,25 +204,24 @@ what order types are available.
 Besides EBCIS being a standard, some server implementations are slighty different.
 But most banks use the same EBICS server implementations. Commonly used and supported by Epics are:
 
-* Business-Logics EBICS, Banking-Server
-* Travic Corporate
+- Business-Logics EBICS, Banking-Server
+- Travic Corporate
 
 Used for example by the following tested institutions:
 
-* Handelsbank
-* Deutsche Bank
-* Commerzbank
-* Kreissparkasse Mayen
-* Postbank
-* Sozialbank
-* Sparkassen
-* Volksbanken Raiffeisenbanken
-* Hypo Vereinsbank
-* BAWAG P.S.K. (AT)
-* Bank Frick (LI)
+- Handelsbank
+- Deutsche Bank
+- Commerzbank
+- Kreissparkasse Mayen
+- Postbank
+- Sozialbank
+- Sparkassen
+- Volksbanken Raiffeisenbanken
+- Hypo Vereinsbank
+- BAWAG P.S.K. (AT)
+- Bank Frick (LI)
 
 Is Epics working with your institution? Please help us to grow this list of supported banks:
-
 
 ## Development
 
@@ -237,6 +230,7 @@ To do so, it's sufficient to define `http_proxy` in your environment.
 Also you may want to disable SSL verification - simply set `EPICS_VERIFY_SSL` to `"false"`.
 
 For example:
+
 ```
 http_proxy=localhost:8080
 EPICS_VERIFY_SSL=false
@@ -244,20 +238,19 @@ EPICS_VERIFY_SSL=false
 
 ## Links
 
-* [ebics.de](http://www.ebics.de/)
-* [EBICS specification](http://www.ebics.de/index.php?id=30)
-* [Common Integrative Implementation Guide to Supplement the EBICS Specification (pdf)](http://www.ebics.de/fileadmin/unsecured/specification/implementation_guide_DE/EBICS_Common_IG_basiert_auf_EBICS_2.5.pdf)
-* [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
-
+- [ebics.de](http://www.ebics.de/)
+- [EBICS specification](http://www.ebics.de/index.php?id=30)
+- [Common Integrative Implementation Guide to Supplement the EBICS Specification (pdf)](http://www.ebics.de/fileadmin/unsecured/specification/implementation_guide_DE/EBICS_Common_IG_basiert_auf_EBICS_2.5.pdf)
+- [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
 
 ## Contributing
 
 0. Contact team@railslove.com for information about the CLA
 1. Fork it ( https://github.com/[my-github-username]/epics/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+1. Create your feature branch (`git checkout -b my-new-feature`)
+1. Commit your changes (`git commit -am 'Add some feature'`)
+1. Push to the branch (`git push origin my-new-feature`)
+1. Create a new Pull Request
 
 ## Contribution Credits
 
