@@ -21,7 +21,6 @@ blocks:
             - checkout
             - sem-version ruby 2.0.0-p648
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -30,7 +29,6 @@ blocks:
             - checkout
             - sem-version ruby 2.1.10
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -39,7 +37,6 @@ blocks:
             - checkout
             - sem-version ruby 2.2.10
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -48,7 +45,6 @@ blocks:
             - checkout
             - sem-version ruby 2.3
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -57,7 +53,6 @@ blocks:
             - checkout
             - sem-version ruby 2.4
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -66,7 +61,6 @@ blocks:
             - checkout
             - sem-version ruby 2.5
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
@@ -75,7 +69,6 @@ blocks:
             - checkout
             - sem-version ruby 2.6
             - cache restore
-            - gem install bundler
             - bundle install
             - cache store
             - bundle exec rspec
