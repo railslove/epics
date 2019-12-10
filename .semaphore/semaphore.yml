@@ -18,46 +18,64 @@ blocks:
       jobs:
         - name: "2.0.0-p598"
           commands:
+            - rbenv install -s 2.0.0-p598
             - rbenv global 2.0.0-p598
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.1.10"
           commands:
+            - rbenv install -s 2.1.10
             - rbenv global 2.1.10
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.2.10"
           commands:
+            - rbenv install -s 2.2.10
             - rbenv global 2.2.10
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.3.8"
           commands:
+            - rbenv install -s 2.3.8
             - rbenv global 2.3.8
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.4.9"
           commands:
+            - rbenv install -s 2.4.9
             - rbenv global 2.4.9
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.5.7"
           commands:
+            - rbenv install -s 2.5.7
             - rbenv global 2.5.7
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "2.6.5"
           commands:
+            - rbenv install -s 2.6.5
             - rbenv global 2.6.5
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "jruby-9.1.17.0"
           commands:
+            - rbenv install -s jruby-9.1.17.0
             - rbenv global jruby-9.1.17.0
+            - gem install bundler
             - bundle install
             - bundle exec rspec
         - name: "jruby-9.2.9.0"
           commands:
+            - rbenv install -s jruby-9.2.9.0
             - rbenv global jruby-9.2.9.0
+            - gem install bundler
             - bundle install
             - bundle exec rspec
