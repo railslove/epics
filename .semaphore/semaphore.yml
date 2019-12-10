@@ -1,0 +1,82 @@
+version: v1.0
+name: Parallel
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Spec versions
+    task:
+      jobs:
+        - name: '2.0'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.0
+            - bundle install
+            - rspec
+        - name: '2.1'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.1
+            - bundle install
+            - rspec
+        - name: '2.2'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.2
+            - bundle install
+            - rspec
+        - name: '2.3'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.3
+            - bundle install
+            - rspec
+        - name: '2.4'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.4
+            - bundle install
+            - rspec
+        - name: '2.5'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.5
+            - bundle install
+            - rspec
+        - name: '2.6'
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global 2.6
+            - bundle install
+            - rspec
+        - name: jruby-9.1
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global jruby-9.1.15.0
+            - bundle install
+            - rspec
+        - name: jruby-9.2
+          commands:
+            - checkout
+            - ls
+            - rm -f .rbenv-version .ruby-version
+            - rbenv global jruby-9.2.0.0
+            - bundle install
+            - rspec
