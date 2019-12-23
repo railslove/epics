@@ -163,6 +163,11 @@ class Epics::Client
     download(Epics::STA, from, to)
   end
 
+  def FDL(from = nil, to = nil)
+    puts "FDL##f"
+    download(Epics::FDL, from, to)
+  end
+
   def VMK(from = nil, to = nil)
     download(Epics::VMK, from, to)
   end
@@ -228,7 +233,9 @@ class Epics::Client
 
   def download(order_type, *args)
     document = order_type.new(self, *args)
+    puts document.to_xml
     res = post(url, document.to_xml).body
+    puts res.to_s
     document.transaction_id = res.transaction_id
 
     if res.segmented? && res.last_segment?

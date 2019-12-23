@@ -8,6 +8,7 @@ class Epics::ParseEbics < Faraday::Middleware
 
   def call(env)
     @app.call(env).on_complete do |response|
+      puts response
       response[:body] = ::Epics::Response.new(@client, response[:body])
       raise Epics::Error::TechnicalError, response[:body].technical_code if response[:body].technical_error?
       raise Epics::Error::BusinessError, response[:body].business_code if response[:body].business_error?
@@ -15,6 +16,7 @@ class Epics::ParseEbics < Faraday::Middleware
   rescue Epics::Error::TechnicalError, Epics::Error::BusinessError
     raise # re-raise as otherwise they would be swallowed by the following rescue
   rescue StandardError => e
+    puts e
     raise Epics::Error::UnknownError, e
   end
 end
