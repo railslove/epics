@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   if RUBY_VERSION < '2.1'
     spec.add_dependency 'nokogiri', '<= 1.10.7'
   else
-    spec.add_dependency 'nokogiri', '>= 1.8.5'
+    spec.add_dependency 'nokogiri', '>= 1.10.7'
   end
 
   spec.add_dependency 'faraday'
