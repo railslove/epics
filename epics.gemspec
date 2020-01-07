@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.post_install_message += "\e[32m" + ('*' * 60) + "\n\e[0m"
 
   if RUBY_VERSION < '2.1'
-    spec.add_dependency 'nokogiri', '< 1.7.0'
+    spec.add_dependency 'nokogiri', '<= 1.10.7'
   else
     spec.add_dependency 'nokogiri', '>= 1.8.5'
   end
