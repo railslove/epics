@@ -1,10 +1,9 @@
 class Epics::FDL < Epics::GenericRequest
-  attr_accessor :from, :to
+  attr_accessor :file_format
 
-  def initialize(client, from = nil, to = nil)
+  def initialize(client, file_format)
     super(client)
-    self.from = from
-    self.to = to
+    self.file_format = file_format
   end
 
 
@@ -18,19 +17,12 @@ class Epics::FDL < Epics::GenericRequest
           xml.PartnerID partner_id
           xml.UserID user_id
           xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
-          #xml.SystemID "CAL001"
-          #xml.DownloadDateRangeStart from
-          #xml.DownloadDateRangeEnd to
           xml.OrderDetails {
             xml.OrderType 'FDL'
             xml.OrderID "A00A"
             xml.OrderAttribute "DZHNN"
             xml.FDLOrderParams {
-              xml.DateRange {
-                xml.Start from
-                xml.End to
-              }
-              xml.FileFormat "camt.xxx.cfonb120.stm.0by"
+              xml.FileFormat file_format
             }
           }
           xml.BankPubKeyDigests {
