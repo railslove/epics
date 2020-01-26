@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency 'faraday'
-  spec.add_dependency 'rubyzip', '>= 1.2.1'
+  spec.add_dependency 'rubyzip', '2.1.0'
 
   spec.add_development_dependency 'bundler', '>= 1.6.2'
   spec.add_development_dependency 'equivalent-xml'
