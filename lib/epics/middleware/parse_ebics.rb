@@ -15,7 +15,6 @@ class Epics::ParseEbics < Faraday::Middleware
   rescue Epics::Error::TechnicalError, Epics::Error::BusinessError
     raise # re-raise as otherwise they would be swallowed by the following rescue
   rescue StandardError => e
-    puts e
     raise Epics::Error::UnknownError, e
   end
 end
