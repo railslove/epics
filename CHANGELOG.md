@@ -1,3 +1,8 @@
+### 1.8.0
+
+- [HOUSEKEEPING] updates faraday and rubyzip
+- [HOUSEKEEPING] as a result: bump required ruby version to 2.4+
+
 ### 1.7.2
 
 - [FEATURE] adds XCT order type (thanks to @punkle64)
