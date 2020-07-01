@@ -1,3 +1,6 @@
+### 1.8.1
+- [BUGFIX] Remove masking of transport client errors
+
 ### 1.8.0
 
 - [HOUSEKEEPING] updates faraday and rubyzip
