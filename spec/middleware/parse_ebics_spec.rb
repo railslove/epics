@@ -23,17 +23,13 @@ RSpec.describe Epics::ParseEbics do
     expect(subject.post('/ok').body).to be_kind_of(Epics::Response)
   end
 
-  it 'will handle a timeout with raising an Epics::Error::TechnicalError' do
-    expect { subject.post('/timeout') }.to raise_error(Epics::Error::UnknownError, 'timeout')
-  end
-
   context 'failures' do
-    it 'will handle a timeout with raising an Epics::Error::TechnicalError' do
-      expect { subject.post('/timeout') }.to raise_error(Epics::Error::UnknownError, 'timeout')
+    it 'will raise a timeout correctly' do
+      expect { subject.post('/timeout') }.to raise_error(Faraday::TimeoutError, 'timeout')
     end
 
-    it 'will handle a no connection error with raising an Epics::Error::TechnicalError' do
-      expect { subject.post('/no_connection') }.to raise_error(Epics::Error::UnknownError, 'peer has finished all lan parties and gone home')
+    it 'will properly raise non-epics errors' do
+      expect { subject.post('/no_connection') }.to raise_error(Faraday::ConnectionFailed, 'peer has finished all lan parties and gone home')
     end
   end
 end
