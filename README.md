@@ -220,6 +220,7 @@ Used for example by the following tested institutions:
 - Hypo Vereinsbank
 - BAWAG P.S.K. (AT)
 - Bank Frick (LI)
+- BNP (FDL order type only)
 
 Is Epics working with your institution? Please help us to grow this list of supported banks:
 
