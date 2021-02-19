@@ -159,6 +159,10 @@ class Epics::Client
     upload(Epics::CCS, document)
   end
 
+  def XIP(document)
+    upload(Epics::XIP, document)
+  end
+
   def XCT(document)
     upload(Epics::XCT, document)
   end
