@@ -29,12 +29,15 @@ class Epics::Key
     self.key.e.to_s(16)
   end
 
-  def sign(msg, salt = OpenSSL::Random.random_bytes(32) )
-    Base64.encode64(mod_pow(OpenSSL::BN.new(emsa_pss(msg, salt).to_s, 2), self.key.d, self.key.n).to_s(2)).gsub("\n", "")
-  end
-
-  def recover(msg)
-    mod_pow(OpenSSL::BN.new(msg.to_s, 2), self.key.e, self.key.n).to_s(2)
+  def sign(msg)
+    return Base64.encode64(
+             key.sign_pss(
+               'SHA256',
+               msg,
+               salt_length: :digest,
+               mgf1_hash:   'SHA256',
+             ),
+           ).gsub("\n", '')
   end
 
   def digester
