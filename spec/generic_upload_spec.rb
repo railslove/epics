@@ -28,7 +28,7 @@ RSpec.describe Epics::GenericUploadRequest do
       verification_result = key.verify_pss(
                               'SHA256',
                               Base64.decode64(subject.signature_value),
-                              document,
+                              OpenSSL::Digest::SHA256.new.digest(document),
                               salt_length: :digest,
                               mgf1_hash:   'SHA256',
                             )
