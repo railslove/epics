@@ -13,8 +13,8 @@ RSpec.describe Epics::Key do
   describe '#sign' do
     let(:dsi) { OpenSSL::Digest::SHA256.new.digest("ruby is great") }
 
-    it 'will be compliant with openssl' do
-      signed_digest = subject.sign( dsi)
+    it 'will generated a digest that can be verified with openssl key.verify_pss' do
+      signed_digest = subject.sign(dsi)
 
       key = subject.key
 
