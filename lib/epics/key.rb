@@ -30,14 +30,14 @@ class Epics::Key
   end
 
   def sign(msg)
-    return Base64.encode64(
-             key.sign_pss(
-               'SHA256',
-               msg,
-               salt_length: :digest,
-               mgf1_hash:   'SHA256',
-             ),
-           ).gsub("\n", '')
+    Base64.encode64(
+      key.sign_pss(
+        'SHA256',
+        msg,
+        salt_length: :digest,
+        mgf1_hash:   'SHA256',
+      ),
+    ).gsub("\n", '')
   end
 
   def digester
