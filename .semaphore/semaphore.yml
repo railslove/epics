@@ -16,26 +16,26 @@ blocks:
   - name: Spec versions
     task:
       jobs:
-        - name: "2.4"
-          commands:
-            - checkout
-            - sem-version ruby 2.4
-            - cache restore
-            - bundle install
-            - cache store
-            - bundle exec rspec
-        - name: "2.5"
-          commands:
-            - checkout
-            - sem-version ruby 2.5
-            - cache restore
-            - bundle install
-            - cache store
-            - bundle exec rspec
         - name: "2.6"
           commands:
             - checkout
             - sem-version ruby 2.6
+            - cache restore
+            - bundle install
+            - cache store
+            - bundle exec rspec
+        - name: "2.7"
+          commands:
+            - checkout
+            - sem-version ruby 2.7
+            - cache restore
+            - bundle install
+            - cache store
+            - bundle exec rspec
+        - name: "3.0"
+          commands:
+            - checkout
+            - sem-version ruby 3.0
             - cache restore
             - bundle install
             - cache store
@@ -49,3 +49,13 @@ blocks:
             - bundle install
             - cache store
             - bundle exec rspec
+        - name: "jruby-9.3.0.0"
+          commands:
+            - checkout
+            - sem-version ruby jruby-9.3.0.0
+            - cache restore
+            - gem install bundler
+            - bundle install
+            - cache store
+            - bundle exec rspec
+
