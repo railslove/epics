@@ -159,6 +159,10 @@ class Epics::Client
     upload(Epics::XCT, document)
   end
 
+  def XE3(document)
+    upload(Epics::XE3, document)
+  end
+
   def STA(from = nil, to = nil)
     download(Epics::STA, from, to)
   end
