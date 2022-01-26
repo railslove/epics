@@ -244,6 +244,7 @@ EPICS_VERIFY_SSL=false
 - [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
 
 ## Contributing
+Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/master/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/). 
 
 0. Contact team@railslove.com for information about the CLA
 1. Fork it ( https://github.com/[my-github-username]/epics/fork )
