@@ -1,6 +1,7 @@
 RSpec.describe Epics::GenericUploadRequest do
   let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
-  subject { described_class.new(client, "\x01" * 12) }
+  let(:document) { "\x01" * 12 }
+  subject { described_class.new(client, document) }
 
   describe '#pad' do
 
@@ -22,7 +23,17 @@ RSpec.describe Epics::GenericUploadRequest do
     before { allow(OpenSSL::Random).to receive(:random_bytes).with(32).and_return(Base64.strict_decode64("7wtROfiX4tyN60cygJUSsHkhzxX1RVJa8vGNYnflvKc=")) } # digest requires 32 bytes
 
     it 'will be the signed document' do
-      expect(subject.signature_value).to eq("BQBMyxGHYoAbbmbMJRFbGrvUNinY15+qeeRLF708VL+tuENnbJMO6xHLWxU1rksOnu4xDzxfua9b3IxIaxLyTTFDuVi6bbu3sBslhIt2frdigo0xBL14KUJQ/pYiMj+2pfNYhtVxzamrnvgPSLNAEn36JykK2d347chT87HlZ7CAGNBS7lJHAzRP1v7Hkc+kKttkkWCpOGk06R6FUCxxVKXmQketMEl/scsMyJ3JtBe/EcjEZdDe5WcqZYUu5ARrfEiAeyutVRZnu17c3nKwkmWl7UqFAwp16cS8IPNL4i5FGCytgKl/kyaoxaE/P1lrGOkHcCTsSR0bAbARhndfdQ==")
+      key = subject.client.a.key
+
+      verification_result = key.verify_pss(
+                              'SHA256',
+                              Base64.decode64(subject.signature_value),
+                              OpenSSL::Digest::SHA256.new.digest(document),
+                              salt_length: :digest,
+                              mgf1_hash:   'SHA256',
+                            )
+
+      expect(verification_result).to eq(true)
     end
   end
 

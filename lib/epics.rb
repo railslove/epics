@@ -10,7 +10,6 @@ require 'securerandom'
 require 'time'
 require "epics/version"
 require "epics/key"
-require "epics/mgf"
 require "epics/response"
 require "epics/error"
 require "epics/middleware/xmlsig"

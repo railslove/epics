@@ -308,7 +308,7 @@ class Epics::Error < StandardError
       },
       "091301" => {
         "symbol" => "EBICS_SIGNATURE_VERIFICATION_FAILED",
-        "short_text" => "Verification of the ES has failed In the case of asynchronouslyimplemented orders, the error can occur during preliminary verification."
+        "short_text" => "Verification of the ES has failed In the case of asynchronously implemented orders, the error can occur during preliminary verification."
       },
       "091302" => {
         "symbol" => "EBICS_ACCOUNT_AUTHORISATION_FAILED",
