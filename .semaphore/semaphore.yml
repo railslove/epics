@@ -40,19 +40,10 @@ blocks:
             - bundle install
             - cache store
             - bundle exec rspec
-        - name: "jruby-9.2.0.0"
+        - name: "jruby-9.3.4.0"
           commands:
             - checkout
-            - sem-version ruby jruby-9.2.0.0
-            - cache restore
-            - gem install bundler
-            - bundle install
-            - cache store
-            - bundle exec rspec
-        - name: "jruby-9.3.0.0"
-          commands:
-            - checkout
-            - sem-version ruby jruby-9.3.0.0
+            - sem-version ruby jruby-9.3.4.0
             - cache restore
             - gem install bundler
             - bundle install
