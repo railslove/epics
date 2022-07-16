@@ -143,10 +143,6 @@ class Epics::Client
     upload(Epics::XDS, document)
   end
 
-  def CDZ(document)
-    upload(Epics::CDZ, document)
-  end
-
   def CCT(document)
     upload(Epics::CCT, document)
   end
@@ -165,6 +161,10 @@ class Epics::Client
 
   def VMK(from = nil, to = nil)
     download(Epics::VMK, from, to)
+  end
+
+  def CDZ(from, to)
+    download_and_unzip(Epics::CDZ, from, to)
   end
 
   def C52(from, to)
