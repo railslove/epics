@@ -265,14 +265,16 @@ class Epics::Client
     JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
   end
 
-  def cipher
-    @cipher ||= OpenSSL::Cipher.new("aes-256-cbc")
+  def new_cipher
+    # Re-using the cipher between keys has weird behaviours with openssl3
+    # Using a fresh key instead of memoizing it on the client simplifies things
+    OpenSSL::Cipher.new('aes-256-cbc')
   end
 
   def encrypt(data)
     salt = OpenSSL::Random.random_bytes(8)
 
-    setup_cipher(:encrypt, self.passphrase, salt)
+    cipher = setup_cipher(:encrypt, self.passphrase, salt)
     Base64.strict_encode64([salt, cipher.update(data) + cipher.final].join)
   end
 
@@ -281,13 +283,15 @@ class Epics::Client
     salt = data[0..7]
     data = data[8..-1]
 
-    setup_cipher(:decrypt, self.passphrase, salt)
+    cipher = setup_cipher(:decrypt, self.passphrase, salt)
     cipher.update(data) + cipher.final
   end
 
   def setup_cipher(method, passphrase, salt)
+    cipher = new_cipher
     cipher.send(method)
     cipher.key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(passphrase, salt, 1, cipher.key_len)
+    cipher
   end
 
   def verify_ssl?
