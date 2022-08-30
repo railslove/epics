@@ -1,4 +1,5 @@
 ### 2.0.0
+- [BUGFIX] Add Openssl 3.0 support
 - [BUGFIX] Update CDZ to download data, not upload it
 - [BUGFIX] Support signature for keys later than 2048 bit
 - [HOUSEKEEPING] Open rubyzip dependency to allow newer versions and update it
