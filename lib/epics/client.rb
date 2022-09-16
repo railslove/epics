@@ -147,8 +147,20 @@ class Epics::Client
     upload(Epics::CCT, document)
   end
 
+  def CCU(document)
+    upload(Epics::CCU, document)
+  end
+
   def CCS(document)
     upload(Epics::CCS, document)
+  end
+
+  def XIP(document)
+    upload(Epics::XIP, document)
+  end
+
+  def CIP(document)
+    upload(Epics::CIP, document)
   end
 
   def XCT(document)
@@ -177,6 +189,14 @@ class Epics::Client
 
   def C54(from, to)
     download_and_unzip(Epics::C54, from, to)
+  end
+
+  def CIZ(from, to)
+    download_and_unzip(Epics::CIZ, from, to)
+  end
+
+  def CRZ(from, to)
+    download_and_unzip(Epics::CRZ, from, to)
   end
 
   def HAA
