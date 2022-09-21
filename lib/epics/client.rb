@@ -163,8 +163,12 @@ class Epics::Client
     download(Epics::VMK, from, to)
   end
 
-  def CDZ(from, to)
+  def CDZ(from = nil, to = nil)
     download_and_unzip(Epics::CDZ, from, to)
+  end
+
+  def CRZ(from = nil, to = nil)
+    download_and_unzip(Epics::CRZ, from, to)
   end
 
   def C52(from, to)

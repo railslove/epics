@@ -1,4 +1,4 @@
-class Epics::CDZ < Epics::GenericRequest
+class Epics::CRZ < Epics::GenericRequest
   attr_accessor :from, :to
 
   def initialize(client, from = nil, to = nil)
@@ -18,7 +18,7 @@ class Epics::CDZ < Epics::GenericRequest
           xml.UserID user_id
           xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
           xml.OrderDetails {
-            xml.OrderType 'CDZ'
+            xml.OrderType 'CRZ'
             xml.OrderAttribute 'DZHNN'
             if !!from && !!to
               xml.StandardOrderParams {
@@ -30,7 +30,7 @@ class Epics::CDZ < Epics::GenericRequest
             else
               xml.StandardOrderParams
             end
-          }  
+          }
           xml.BankPubKeyDigests {
             xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
             xml.Encryption(client.bank_e.public_digest, Version: 'E002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256" )
