@@ -6,6 +6,8 @@
 - [HOUSEKEEPING] Update supported ruby versions to 2.6+
 - [HOUSEKEEPING] Update faraday, nokogiri, and development dependencies
 - [HOUSEKEEPING] Remove JRuby test execution due to failing tests - needs to be re-added if required
+- [ENHANCEMENT] Adds CRZ order type
+- [ENHANCEMENT] Make date period optional for CDZ order type
 
 ### 1.8.1
 - [BUGFIX] Remove masking of transport client errors
