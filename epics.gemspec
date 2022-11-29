@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
       STA HAA HTD HPD PKT HAC HKD C52 C53 C54
 
     And the following upload orders:
-      CD1 CDD CCT CDB CDS CCS CDZ
+      CD1 CDD CCT CDB CDS CCS CDZ CRZ
   description
 
   spec.homepage      = 'https://github.com/railslove/epics'
@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.post_install_message += "\e[32m" + ('*' * 60) + "\n\e[0m"
 
   spec.add_dependency 'faraday',  '>= 1.10.0'
-  spec.add_dependency 'nokogiri', '>= 1.13.6'
+  spec.add_dependency 'nokogiri', '>= 1.13.9'
   spec.add_dependency 'rubyzip',  '>= 2.3.2'
 
   spec.add_development_dependency 'bundler', '>= 1.17.3'

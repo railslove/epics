@@ -1,3 +1,14 @@
+### 2.0.0
+- [BUGFIX] Add Openssl 3.0 support
+- [BUGFIX] Update CDZ to download data, not upload it
+- [BUGFIX] Support signature for keys later than 2048 bit
+- [HOUSEKEEPING] Open rubyzip dependency to allow newer versions and update it
+- [HOUSEKEEPING] Update supported ruby versions to 2.6+
+- [HOUSEKEEPING] Update faraday, nokogiri, and development dependencies
+- [HOUSEKEEPING] Remove JRuby test execution due to failing tests - needs to be re-added if required
+- [ENHANCEMENT] Adds CRZ order type
+- [ENHANCEMENT] Make date period optional for CDZ order type
+
 ### 1.8.1
 - [BUGFIX] Remove masking of transport client errors
 
