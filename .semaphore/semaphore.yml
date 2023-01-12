@@ -40,3 +40,19 @@ blocks:
             - bundle install
             - cache store
             - bundle exec rspec
+        - name: "3.1"
+          commands:
+            - checkout
+            - sem-version ruby 3.1
+            - cache restore
+            - bundle install
+            - cache store
+            - bundle exec rspec
+        - name: "3.2"
+          commands:
+            - checkout
+            - sem-version ruby 3.2
+            - cache restore
+            - bundle install
+            - cache store
+            - bundle exec rspec
