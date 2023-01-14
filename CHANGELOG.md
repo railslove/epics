@@ -1,3 +1,9 @@
+### 2.1.0
+
+- [HOUSEKEEPING] updates Nokogiri dependencies
+- [HOUSEKEEPING] updates Bundler dependency
+- [HOUSEKEEPING] updates Gemfile bundler version
+
 ### 2.0.0
 - [BUGFIX] Add Openssl 3.0 support
 - [BUGFIX] Update CDZ to download data, not upload it
@@ -6,9 +12,6 @@
 - [HOUSEKEEPING] Update supported ruby versions to 2.6+
 - [HOUSEKEEPING] Update faraday, nokogiri, and development dependencies
 - [HOUSEKEEPING] Remove JRuby test execution due to failing tests - needs to be re-added if required
-- [HOUSEKEEPING] updates Nokogiri dependencies
-- [HOUSEKEEPING] updates Bundler dependency
-- [HOUSEKEEPING] updates Gemfile bundler version
 - [ENHANCEMENT] Adds CRZ order type
 - [ENHANCEMENT] Make date period optional for CDZ order type
 
