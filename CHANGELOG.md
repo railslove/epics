@@ -3,6 +3,7 @@
 - [HOUSEKEEPING] updates Nokogiri dependencies
 - [HOUSEKEEPING] updates Bundler dependency
 - [HOUSEKEEPING] updates Gemfile bundler version
+- [HOUSEKEEPING] Bump ruby required version from 2.6 to 2.7
 
 ### 2.0.0
 - [BUGFIX] Add Openssl 3.0 support
