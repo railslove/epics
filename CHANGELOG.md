@@ -6,6 +6,9 @@
 - [HOUSEKEEPING] Update supported ruby versions to 2.6+
 - [HOUSEKEEPING] Update faraday, nokogiri, and development dependencies
 - [HOUSEKEEPING] Remove JRuby test execution due to failing tests - needs to be re-added if required
+- [HOUSEKEEPING] updates Nokogiri dependencies
+- [HOUSEKEEPING] updates Bundler dependency
+- [HOUSEKEEPING] updates Gemfile bundler version
 - [ENHANCEMENT] Adds CRZ order type
 - [ENHANCEMENT] Make date period optional for CDZ order type
 

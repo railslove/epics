@@ -41,10 +41,10 @@ Gem::Specification.new do |spec|
   spec.post_install_message += "\e[32m" + ('*' * 60) + "\n\e[0m"
 
   spec.add_dependency 'faraday',  '>= 1.10.0'
-  spec.add_dependency 'nokogiri', '>= 1.13.9'
+  spec.add_dependency 'nokogiri', '>= 1.14.0'
   spec.add_dependency 'rubyzip',  '>= 2.3.2'
 
-  spec.add_development_dependency 'bundler', '>= 1.17.3'
+  spec.add_development_dependency 'bundler', '>= 2.4.2'
   spec.add_development_dependency 'equivalent-xml'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 13.0'
