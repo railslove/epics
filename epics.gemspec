@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'nokogiri', '>= 1.14.0'
   spec.add_dependency 'rubyzip',  '>= 2.3.2'
 
-  spec.add_development_dependency 'bundler', '>= 2.4.2'
+  spec.add_development_dependency 'bundler', '>= 2.4.3'
   spec.add_development_dependency 'equivalent-xml'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 13.0'
