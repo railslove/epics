@@ -105,13 +105,11 @@ class Epics::Client
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
-      bank   = OpenSSL::PKey::RSA.new
-      if bank.respond_to?(:set_key)
-        bank.set_key(OpenSSL::BN.new(modulus, 2), OpenSSL::BN.new(exponent, 2), nil)
-      else
-        bank.n = OpenSSL::BN.new(modulus, 2)
-        bank.e = OpenSSL::BN.new(exponent, 2)
-      end
+      sequence = []
+      sequence << OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(modulus, 2))
+      sequence << OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(exponent, 2))
+
+      bank = OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
 
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
