@@ -1,13 +1,12 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale
   attr_writer :iban, :bic, :name
-  attr_accessor :locale
 
   def_delegators :connection, :post
 
-  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id)
+  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics.locale)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
     self.keys = extract_keys if keys_content
@@ -15,7 +14,7 @@ class Epics::Client
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
-    self.locale = :de
+    self.locale = locale
   end
 
   def inspect

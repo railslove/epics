@@ -2,9 +2,6 @@ class Epics::HeaderRequest
   extend Forwardable
   attr_accessor :client
 
-  PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
-  PRODUCT_LANG = 'de'
-
   def initialize(client)
     self.client = client
   end
@@ -22,13 +19,14 @@ class Epics::HeaderRequest
           xml.Timestamp options[:timestamp] if options[:timestamp]
           xml.PartnerID partner_id
           xml.UserID user_id
-          xml.Product(PRODUCT_NAME, 'Language' => PRODUCT_LANG)
+          xml.Product(Epics.product_name, 'Language' => client.locale)
           xml.OrderDetails {
             xml.OrderType options[:order_type]
             xml.OrderAttribute options[:order_attribute]
             xml.StandardOrderParams {
               build_attributes(xml, options[:order_params])
             } if options[:order_params]
+            build_attributes(xml, options[:custom_order_params]) if options[:custom_order_params]
           }
           xml.BankPubKeyDigests {
             xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
