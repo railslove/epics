@@ -1,21 +1,21 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :keys_certs
   attr_writer :iban, :bic, :name
-  attr_accessor :locale
 
   def_delegators :connection, :post
 
-  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id)
+  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics.locale)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
+    self.keys_certs = JSON.parse(self.keys_content) if keys_content
     self.passphrase = passphrase
     self.keys = extract_keys if keys_content
     self.url  = url
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
-    self.locale = :de
+    self.locale = locale
   end
 
   def inspect
@@ -222,6 +222,10 @@ class Epics::Client
     download_and_unzip(Epics::Z54, from: from, to: to)
   end
 
+  def FDL(format)
+    download(Epics::FDL, format)
+  end
+
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
@@ -257,6 +261,10 @@ class Epics::Client
 
   def save_keys(path)
     File.write(path, dump_keys)
+  end
+
+  def dump_keys
+    JSON.dump(keys.each_with_object({}) { |(k, v), m| m[k] = encrypt(v.key.to_pem) })
   end
 
   private
@@ -306,10 +314,6 @@ class Epics::Client
     JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
-  end
-
-  def dump_keys
-    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
   end
 
   def new_cipher
