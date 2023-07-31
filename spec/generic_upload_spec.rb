@@ -46,4 +46,13 @@ RSpec.describe Epics::GenericUploadRequest do
     end
 
   end
+
+  describe '#encrypted_order_data' do
+    it 'returns the same data every time' do
+      data_1 = subject.encrypted_order_data
+      data_2 = subject.encrypted_order_data
+
+      expect(data_1).to eq(data_2)
+    end
+  end
 end

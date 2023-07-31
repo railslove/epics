@@ -1,15 +1,17 @@
 class Epics::GenericUploadRequest < Epics::GenericRequest
   attr_accessor :key
+  attr_accessor :iv
   attr_accessor :document
 
   def initialize(client, document)
     super(client)
     self.document = document
-    self.key ||= cipher.random_key
+    self.key = cipher.random_key
+    self.iv = 0.chr * cipher.iv_len
   end
 
   def cipher
-    @cipher ||= OpenSSL::Cipher.new("aes-128-cbc")
+    @cipher ||= OpenSSL::Cipher.new("aes-128-cbc").tap { |cipher| cipher.encrypt }
   end
 
   def digester
@@ -49,9 +51,9 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
 
   def encrypt(d)
     cipher.reset
-    cipher.encrypt
     cipher.padding = 0
     cipher.key = self.key
+    cipher.iv = self.iv
     (cipher.update(pad(d)) + cipher.final)
   end
 
