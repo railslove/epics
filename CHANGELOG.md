@@ -1,3 +1,7 @@
+### 2.1.2
+
+- [BUGFIX] Fix order data encryption for OpenSSL 3
+
 ### 2.1.1
 
 - [HOUSEKEEPING] update Bank public key initialization for OpenSSL 3
