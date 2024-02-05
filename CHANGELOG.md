@@ -1,3 +1,8 @@
+### Unreleased
+
+- [HOUSEKEEPING] updates nokogiri dependency
+- [HOUSEKEEPING] updates rexml dependency
+
 ### 2.1.2
 
 - [BUGFIX] Fix order data encryption for OpenSSL 3
