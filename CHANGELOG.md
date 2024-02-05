@@ -2,6 +2,7 @@
 
 - [HOUSEKEEPING] updates nokogiri dependency
 - [HOUSEKEEPING] updates rexml dependency
+- [HOUSEKEEPING] adds Ruby 3.3 to CI
 
 ### 2.1.2
 
