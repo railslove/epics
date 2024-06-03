@@ -1,5 +1,6 @@
 ### Unreleased
 
+- [ENHANCEMENT]  Adds C2S order tyoe
 - [HOUSEKEEPING] updates nokogiri dependency
 - [HOUSEKEEPING] updates rexml dependency
 - [HOUSEKEEPING] adds Ruby 3.3 to CI

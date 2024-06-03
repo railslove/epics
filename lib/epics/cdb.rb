@@ -1,4 +1,12 @@
 class Epics::CDB < Epics::GenericUploadRequest
+  def order_attribute
+    'OZHNN'
+  end
+
+  def order_type
+    'CDB'
+  end
+
   def header
     Nokogiri::XML::Builder.new do |xml|
       xml.header(authenticate: true) {
@@ -10,8 +18,8 @@ class Epics::CDB < Epics::GenericUploadRequest
           xml.UserID user_id
           xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
           xml.OrderDetails {
-            xml.OrderType 'CDB'
-            xml.OrderAttribute 'OZHNN'
+            xml.OrderType order_type
+            xml.OrderAttribute order_attribute
             xml.StandardOrderParams
           }
           xml.BankPubKeyDigests {
