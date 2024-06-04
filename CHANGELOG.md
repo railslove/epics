@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 2.2.0
+
 - [ENHANCEMENT]  Adds C2S order tyoe
 - [HOUSEKEEPING] updates nokogiri dependency
 - [HOUSEKEEPING] updates rexml dependency
