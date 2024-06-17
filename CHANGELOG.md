@@ -1,8 +1,10 @@
 ### Unreleased
 
+- [ENHANCEMENT]  Adds Z54 order type (C54 for swiss banks)
+
 ### 2.2.0
 
-- [ENHANCEMENT]  Adds C2S order tyoe
+- [ENHANCEMENT]  Adds C2S order type
 - [HOUSEKEEPING] updates nokogiri dependency
 - [HOUSEKEEPING] updates rexml dependency
 - [HOUSEKEEPING] adds Ruby 3.3 to CI
