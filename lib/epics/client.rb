@@ -185,6 +185,18 @@ class Epics::Client
     download_and_unzip(Epics::C54, from, to)
   end
 
+  def Z52(from, to)
+    download_and_unzip(Epics::Z52, from, to)
+  end
+
+  def Z53(from, to)
+    download_and_unzip(Epics::Z53, from, to)
+  end
+
+  def Z54(from, to)
+    download_and_unzip(Epics::Z54, from, to)
+  end
+
   def HAA
     Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
   end
