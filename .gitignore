@@ -7,8 +7,6 @@
 /pkg/
 /spec/reports/
 /tmp/
-#Rubymine
-/.idea/
 *.bundle
 *.so
 *.o
