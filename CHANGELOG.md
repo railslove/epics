@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 2.3.0
+
 - [ENHANCEMENT]  Adds Z52, Z53, Z54 order type (C52, C53, C54 for swiss banks)
 
 ### 2.2.0
