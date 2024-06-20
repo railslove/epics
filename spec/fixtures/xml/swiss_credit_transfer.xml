@@ -41,7 +41,7 @@
           <EndToEndId>NOTPROVIDED</EndToEndId>
         </PmtId>
         <Amt>
-          <InstdAmt Ccy="EUR">102.50</InstdAmt>
+          <InstdAmt Ccy="CHR">102.50</InstdAmt>
         </Amt>
         <CdtrAgt>
           <FinInstnId>
