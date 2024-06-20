@@ -137,6 +137,14 @@ class Epics::Client
     upload(Epics::CDD, document)
   end
 
+  def XE2(document)
+    upload(Epics::XE2, document)
+  end
+
+  def XE3(document)
+    upload(Epics::XE3, document)
+  end
+
   def CDS(document)
     upload(Epics::CDS, document)
   end
