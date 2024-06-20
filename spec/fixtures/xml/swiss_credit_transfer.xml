@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<Document xmlns="http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.six-interbank-clearing.com/de/pain.001.001.03.ch.02.xsd pain.001.001.03.ch.02.xsd">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>SPS-KING/7c332aeb9ec40d29232691</MsgId>
+      <CreDtTm>2024-06-20T17:27:56+02:00</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>102.50</CtrlSum>
+      <InitgPty>
+        <Nm>Schuldner GmbH</Nm>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>SPS-KING/7c332aeb9ec40d29232691/1</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <BtchBookg>false</BtchBookg>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>102.50</CtrlSum>
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+      </PmtTpInf>
+      <ReqdExctnDt>1999-01-01</ReqdExctnDt>
+      <Dbtr>
+        <Nm>Schuldner GmbH</Nm>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <IBAN>CH5481230000001998736</IBAN>
+        </Id>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <BIC>RAIFCH22</BIC>
+        </FinInstnId>
+      </DbtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>NOTPROVIDED</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">102.50</InstdAmt>
+        </Amt>
+        <CdtrAgt>
+          <FinInstnId>
+            <BIC>CRESCHZZ80A</BIC>
+          </FinInstnId>
+        </CdtrAgt>
+        <Cdtr>
+          <Nm>Contoso AG</Nm>
+          <PstlAdr>
+            <StrtNm>Mustergasse</StrtNm>
+            <BldgNb>123a</BldgNb>
+            <PstCd>1234</PstCd>
+            <TwnNm>Musterstadt</TwnNm>
+            <Ctry>CH</Ctry>
+          </PstlAdr>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>CH9300762011623852957</IBAN>
+          </Id>
+        </CdtrAcct>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>
