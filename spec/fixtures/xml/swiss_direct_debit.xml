@@ -7,7 +7,7 @@
       <NbOfTxs>1</NbOfTxs>
       <CtrlSum>39.99</CtrlSum>
       <InitgPty>
-        <Nm>Gl&#xE4;ubiger GmbH</Nm>
+        <Nm>Glaubiger GmbH</Nm>
         <Id>
           <OrgId>
             <Othr>
@@ -30,7 +30,7 @@
       </PmtTpInf>
       <ReqdColltnDt>1999-01-01</ReqdColltnDt>
       <Cdtr>
-        <Nm>Gl&#xE4;ubiger GmbH</Nm>
+        <Nm>Glaubiger GmbH</Nm>
       </Cdtr>
       <CdtrAcct>
         <Id>
@@ -73,7 +73,7 @@
           </FinInstnId>
         </DbtrAgt>
         <Dbtr>
-          <Nm>Zahlemann &amp; S&#xF6;hne GbR</Nm>
+          <Nm>Zahlemann Soehne GbR</Nm>
           <PstlAdr>
             <StrtNm>Mustergasse</StrtNm>
             <PstCd>1234</PstCd>
