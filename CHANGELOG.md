@@ -1,5 +1,9 @@
 ### Unreleased
 
+### 2.4.0
+
+- [ENHANCEMENT]  Adds XE2 and XE3 order type (CCT and CDD for swiss banks)
+
 ### 2.3.0
 
 - [ENHANCEMENT]  Adds Z52, Z53, Z54 order type (C52, C53, C54 for swiss banks)
