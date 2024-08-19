@@ -27,6 +27,14 @@ class Epics::GenericRequest
     end.doc.root
   end
 
+  def header
+    builder = Epics::HeaderBuilder.new(client)
+    builder.nonce = nonce
+    builder.timestamp = timestamp
+    yield builder if block_given?
+    builder.build
+  end
+
   def auth_signature
     Nokogiri::XML::Builder.new do |xml|
       xml.AuthSignature{
