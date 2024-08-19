@@ -4,22 +4,14 @@ class Epics::HIA < Epics::GenericRequest
   end
 
   def header
-    Nokogiri::XML::Builder.new do |xml|
-      xml.header(authenticate: true) {
-        xml.static {
-          xml.HostID host_id
-          xml.PartnerID partner_id
-          xml.UserID user_id
-          xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
-          xml.OrderDetails {
-            xml.OrderType 'HIA'
-            xml.OrderAttribute 'DZNNN'
-          }
-          xml.SecurityMedium '0000'
-        }
-        xml.mutable ''
-      }
-    end.doc.root
+    super do |builder|
+      builder.nonce = nil
+      builder.timestamp = nil
+      builder.order_type = 'HIA'
+      builder.order_attribute = 'DZNNN'
+      builder.with_pubkey_digests = false
+      builder.mutable = ''
+    end
   end
 
   def body

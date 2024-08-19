@@ -1,30 +1,10 @@
 class Epics::AZV < Epics::GenericUploadRequest
   def header
-    Nokogiri::XML::Builder.new do |xml|
-      xml.header(authenticate: true) {
-        xml.static {
-          xml.HostID host_id
-          xml.Nonce nonce
-          xml.Timestamp timestamp
-          xml.PartnerID partner_id
-          xml.UserID user_id
-          xml.Product("EPICS - a ruby ebics kernel", 'Language' => 'de')
-          xml.OrderDetails {
-            xml.OrderType 'CD1'
-            xml.OrderAttribute 'OZHNN'
-            xml.StandardOrderParams
-          }
-          xml.BankPubKeyDigests {
-            xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
-            xml.Encryption(client.bank_e.public_digest, Version: 'E002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256" )
-          }
-          xml.SecurityMedium '0000'
-          xml.NumSegments 1
-        }
-        xml.mutable {
-          xml.TransactionPhase 'Initialisation'
-        }
-      }
-    end.doc.root
+    super do |builder|
+      builder.order_type = 'CD1'
+      builder.order_attribute = 'OZHNN'
+      builder.order_params = ''
+      builder.num_segment = 1
+    end
   end
 end
