@@ -4,7 +4,7 @@ class Epics::HIA < Epics::GenericRequest
   end
 
   def header
-    client.header_builder.build(
+    client.header_request.build(
       order_type: 'HIA',
       order_attribute: 'DZNNN',
       order_params: false,
