@@ -4,12 +4,14 @@ class Epics::HPB < Epics::GenericRequest
   end
 
   def header
-    super do |builder|
-      builder.order_type = 'HPB'
-      builder.order_attribute = 'DZHNN'
-      builder.order_params = nil
-      builder.with_bank_pubkey_digests = false
-      builder.mutable = ->(xml) {}
-    end
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'HPB',
+      order_attribute: 'DZHNN',
+      order_params: false,
+      with_bank_pubkey_digests: false,
+      mutable: ->(xml) {}
+    )
   end
 end

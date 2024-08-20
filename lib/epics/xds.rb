@@ -1,9 +1,11 @@
 class Epics::XDS < Epics::GenericUploadRequest
   def header
-    super do |builder|
-      builder.order_type = 'XDS'
-      builder.order_attribute = 'OZHNN'
-      builder.num_segments = 1
-    end
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'XDS',
+      order_attribute: 'OZHNN',
+      num_segments: 1
+    )
   end
 end
