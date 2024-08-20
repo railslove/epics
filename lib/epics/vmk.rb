@@ -11,8 +11,6 @@ class Epics::VMK < Epics::GenericRequest
             xml.End options[:to]
           }
         }
-      else
-        builder.order_params = ''
       end
     end
   end

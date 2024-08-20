@@ -9,8 +9,9 @@ class Epics::INI < Epics::GenericRequest
       builder.timestamp = nil
       builder.order_type = 'INI'
       builder.order_attribute = 'DZNNN'
-      builder.with_pubkey_digests = false
-      builder.mutable = ''
+      builder.order_params = nil
+      builder.with_bank_pubkey_digests = false
+      builder.mutable = ->(xml) {}
     end
   end
 
