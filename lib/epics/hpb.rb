@@ -7,8 +7,9 @@ class Epics::HPB < Epics::GenericRequest
     super do |builder|
       builder.order_type = 'HPB'
       builder.order_attribute = 'DZHNN'
-      builder.with_pubkey_digests = false
-      builder.mutable = ''
+      builder.order_params = nil
+      builder.with_bank_pubkey_digests = false
+      builder.mutable = ->(xml) {}
     end
   end
 end
