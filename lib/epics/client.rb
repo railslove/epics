@@ -87,7 +87,7 @@ class Epics::Client
   end
 
   def statements(from, to, type = :STA)
-    self.public_send(type, from, to)
+    self.public_send(type, from: from, to: to)
   end
 
   def HIA
@@ -166,43 +166,43 @@ class Epics::Client
   end
 
   def STA(from = nil, to = nil)
-    download(Epics::STA, from, to)
+    download(Epics::STA, from: from, to: to)
   end
 
   def VMK(from = nil, to = nil)
-    download(Epics::VMK, from, to)
+    download(Epics::VMK, from: from, to: to)
   end
 
   def CDZ(from = nil, to = nil)
-    download_and_unzip(Epics::CDZ, from, to)
+    download_and_unzip(Epics::CDZ, from: from, to: to)
   end
 
   def CRZ(from = nil, to = nil)
-    download_and_unzip(Epics::CRZ, from, to)
+    download_and_unzip(Epics::CRZ, from: from, to: to)
   end
 
   def C52(from, to)
-    download_and_unzip(Epics::C52, from, to)
+    download_and_unzip(Epics::C52, from: from, to: to)
   end
 
   def C53(from, to)
-    download_and_unzip(Epics::C53, from, to)
+    download_and_unzip(Epics::C53, from: from, to: to)
   end
 
   def C54(from, to)
-    download_and_unzip(Epics::C54, from, to)
+    download_and_unzip(Epics::C54, from: from, to: to)
   end
 
   def Z52(from, to)
-    download_and_unzip(Epics::Z52, from, to)
+    download_and_unzip(Epics::Z52, from: from, to: to)
   end
 
   def Z53(from, to)
-    download_and_unzip(Epics::Z53, from, to)
+    download_and_unzip(Epics::Z53, from: from, to: to)
   end
 
   def Z54(from, to)
-    download_and_unzip(Epics::Z54, from, to)
+    download_and_unzip(Epics::Z54, from: from, to: to)
   end
 
   def HAA
@@ -227,11 +227,11 @@ class Epics::Client
   end
 
   def PTK(from, to)
-    download(Epics::PTK, from, to)
+    download(Epics::PTK, from: from, to: to)
   end
 
   def HAC(from = nil, to = nil)
-    download(Epics::HAC, from, to)
+    download(Epics::HAC, from: from, to: to)
   end
 
   def save_keys(path)
@@ -252,8 +252,8 @@ class Epics::Client
     return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
   end
 
-  def download(order_type, *args)
-    document = order_type.new(self, *args)
+  def download(order_type, *args, **options)
+    document = order_type.new(self, *args, **options)
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
 
@@ -264,9 +264,9 @@ class Epics::Client
     res.order_data
   end
 
-  def download_and_unzip(order_type, *args)
+  def download_and_unzip(order_type, *args, **options)
     [].tap do |entries|
-      Zip::File.open_buffer(StringIO.new(download(order_type, *args))).each do |zipfile|
+      Zip::File.open_buffer(StringIO.new(download(order_type, *args, **options))).each do |zipfile|
         entries << zipfile.get_input_stream.read
       end
     end

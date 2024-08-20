@@ -3,8 +3,8 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   attr_accessor :iv
   attr_accessor :document
 
-  def initialize(client, document)
-    super(client)
+  def initialize(client, document, **options)
+    super(client, **options)
     self.document = document
     self.key = cipher.random_key
     self.iv = 0.chr * cipher.iv_len

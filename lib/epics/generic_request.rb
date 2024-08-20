@@ -1,10 +1,11 @@
 class Epics::GenericRequest
   extend Forwardable
-  attr_accessor :client
+  attr_reader :client, :options
   attr_accessor :transaction_id
 
-  def initialize(client)
-    self.client = client
+  def initialize(client, **options)
+    @client = client
+    @options = options
   end
 
   def nonce

@@ -1,22 +1,14 @@
 class Epics::CDZ < Epics::GenericRequest
-  attr_accessor :from, :to
-
-  def initialize(client, from = nil, to = nil)
-    super(client)
-    self.from = from
-    self.to = to
-  end
-
   def header
     super do |builder|
       builder.order_type = 'CDZ'
       builder.order_attribute = 'DZHNN'
 
-      if !!from && !!to
+      if !!options[:from] && !!options[:to]
         builder.order_params = ->(xml) {
           xml.DateRange {
-            xml.Start from
-            xml.End to
+            xml.Start options[:from]
+            xml.End options[:to]
           }
         }
       else
