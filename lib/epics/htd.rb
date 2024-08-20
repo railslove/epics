@@ -1,8 +1,10 @@
 class Epics::HTD < Epics::GenericRequest
   def header
-    super do |builder|
-      builder.order_type = 'HTD'
-      builder.order_attribute = 'DZHNN'
-    end
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'HTD',
+      order_attribute: 'DZHNN'
+    )
   end
 end

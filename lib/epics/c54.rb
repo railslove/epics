@@ -1,14 +1,16 @@
 class Epics::C54 < Epics::GenericRequest
   def header
-    super do |builder|
-      builder.order_type = 'C54'
-      builder.order_attribute = 'DZHNN'
-      builder.order_params = ->(xml) {
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'C54',
+      order_attribute: 'DZHNN',
+      order_params: ->(xml) {
         xml.DateRange {
           xml.Start options[:from]
           xml.End options[:to]
         }
       }
-    end
+    )
   end
 end

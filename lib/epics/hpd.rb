@@ -1,8 +1,10 @@
 class Epics::HPD < Epics::GenericRequest
   def header
-    super do |builder|
-      builder.order_type = 'HPD'
-      builder.order_attribute = 'DZHNN'
-    end
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'HPD',
+      order_attribute: 'DZHNN'
+    )
   end
 end

@@ -3,18 +3,17 @@ class Epics::HAC < Epics::GenericRequest
   # most applications not not have to specify a date range, but can simply fetch the status and
   # be done
   def header
-    super do |builder|
-      builder.order_type = 'HAC'
-      builder.order_attribute = 'DZHNN'
-
-      if !!options[:from] && !!options[:to]
-        builder.order_params = ->(xml) {
-          xml.DateRange {
-            xml.Start options[:from]
-            xml.End options[:to]
-          }
-        }
-      end
-    end
+    client.header_builder.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'HAC',
+      order_attribute: 'DZHNN',
+      order_params: ->(xml) {
+        xml.DateRange {
+          xml.Start options[:from]
+          xml.End options[:to]
+        } if !!options[:from] && !!options[:to]
+      }
+    )
   end
 end

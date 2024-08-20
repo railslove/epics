@@ -4,15 +4,13 @@ class Epics::INI < Epics::GenericRequest
   end
 
   def header
-    super do |builder|
-      builder.nonce = nil
-      builder.timestamp = nil
-      builder.order_type = 'INI'
-      builder.order_attribute = 'DZNNN'
-      builder.order_params = nil
-      builder.with_bank_pubkey_digests = false
-      builder.mutable = ->(xml) {}
-    end
+    client.header_builder.build(
+      order_type: 'INI',
+      order_attribute: 'DZNNN',
+      order_params: false,
+      with_bank_pubkey_digests: false,
+      mutable: ->(xml) {}
+    )
   end
 
   def body

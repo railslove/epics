@@ -29,11 +29,7 @@ class Epics::GenericRequest
   end
 
   def header
-    builder = Epics::HeaderBuilder.new(client)
-    builder.nonce = nonce
-    builder.timestamp = timestamp
-    yield builder if block_given?
-    builder.build
+    raise NotImplementedError
   end
 
   def auth_signature

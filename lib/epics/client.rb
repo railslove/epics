@@ -78,6 +78,10 @@ class Epics::Client
     path
   end
 
+  def header_builder
+    @header_builder ||= Epics::HeaderBuilder.new(self)
+  end
+
   def credit(document)
     self.CCT(document)
   end
