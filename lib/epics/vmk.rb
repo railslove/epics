@@ -1,7 +1,7 @@
 class Epics::VMK < Epics::GenericRequest
   def header
     if !!options[:from] && !!options[:to]
-      client.header_builder.build(
+      client.header_request.build(
         nonce: nonce,
         timestamp: timestamp,
         order_type: 'VMK',
@@ -14,7 +14,7 @@ class Epics::VMK < Epics::GenericRequest
         }
       )
     else
-      client.header_builder.build(
+      client.header_request.build(
         nonce: nonce,
         timestamp: timestamp,
         order_type: 'VMK',

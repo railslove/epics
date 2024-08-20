@@ -1,7 +1,7 @@
 class Epics::PTK < Epics::GenericRequest
   def header
     if !!options[:from] && !!options[:to]
-      client.header_builder.build(
+      client.header_request.build(
         nonce: nonce,
         timestamp: timestamp,
         order_type: 'PTK',
@@ -14,7 +14,7 @@ class Epics::PTK < Epics::GenericRequest
         }
       )
     else
-      client.header_builder.build(
+      client.header_request.build(
         nonce: nonce,
         timestamp: timestamp,
         order_type: 'PTK',

@@ -1,4 +1,4 @@
-class Epics::HeaderBuilder
+class Epics::HeaderRequest
   extend Forwardable
   attr_accessor :client
 

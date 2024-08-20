@@ -1,6 +1,6 @@
 class Epics::B2B < Epics::GenericUploadRequest
   def header
-    client.header_builder.build(
+    client.header_request.build(
       nonce: nonce,
       timestamp: timestamp,
       order_type: 'B2B',

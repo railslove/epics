@@ -4,7 +4,7 @@ class Epics::INI < Epics::GenericRequest
   end
 
   def header
-    client.header_builder.build(
+    client.header_request.build(
       order_type: 'INI',
       order_attribute: 'DZNNN',
       order_params: false,

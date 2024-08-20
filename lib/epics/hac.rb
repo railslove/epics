@@ -3,7 +3,7 @@ class Epics::HAC < Epics::GenericRequest
   # most applications not not have to specify a date range, but can simply fetch the status and
   # be done
   def header
-    client.header_builder.build(
+    client.header_request.build(
       nonce: nonce,
       timestamp: timestamp,
       order_type: 'HAC',
