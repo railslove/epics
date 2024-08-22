@@ -6,7 +6,7 @@
 EPICS is a ruby implementation of the [EBICS](https://www.ebics.org/) (Electronic Banking Internet
 Communication Standard).
 
-It supports EBICS 2.5.
+It supports EBICS 2.4 and 2.5.
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types

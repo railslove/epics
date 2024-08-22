@@ -23,8 +23,8 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
       xml.body {
         xml.DataTransfer {
           xml.DataEncryptionInfo(authenticate: true) {
-            xml.EncryptionPubKeyDigest(client.bank_e.public_digest, Version: 'E002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
-            xml.TransactionKey Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
+            xml.EncryptionPubKeyDigest(client.bank_encryption_key.public_digest, Version: client.encryption_version, Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
+            xml.TransactionKey Base64.encode64(client.bank_encryption_key.key.public_encrypt(self.key)).gsub(/\n/,'')
           }
           xml.SignatureData(encrypted_order_signature, authenticate: true)
         }
@@ -36,7 +36,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
     Nokogiri::XML::Builder.new do |xml|
       xml.UserSignatureData('xmlns' => 'http://www.ebics.org/S001', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') {
         xml.OrderSignatureData {
-          xml.SignatureVersion "A006"
+          xml.SignatureVersion client.signature_version
           xml.SignatureValue signature_value
           xml.PartnerID partner_id
           xml.UserID user_id
@@ -46,7 +46,7 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def signature_value
-    client.a.sign( digester.digest(document.gsub(/\n|\r/, "")) )
+    client.signature_key.sign( digester.digest(document.gsub(/\n|\r/, "")) )
   end
 
   def encrypt(d)
