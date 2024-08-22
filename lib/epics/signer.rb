@@ -20,7 +20,7 @@ class Epics::Signer
     signature_value_node = doc.xpath("//ds:SignatureValue").first
 
     if signature_node
-      signature_value_node.content = Base64.encode64(client.x.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
+      signature_value_node.content = Base64.encode64(client.authentication_key.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
     end
 
     doc

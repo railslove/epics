@@ -12,7 +12,7 @@ class Epics::Response
   end
 
   def technical_code
-    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").text
+    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:ReturnCode", xmlns: client.urn_schema).text
   end
 
   def business_error?
@@ -20,7 +20,7 @@ class Epics::Response
   end
 
   def business_code
-    doc.xpath("//xmlns:body/xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").text
+    doc.xpath("//xmlns:body/xmlns:ReturnCode", xmlns: client.urn_schema).text
   end
 
   def ok?
@@ -28,29 +28,29 @@ class Epics::Response
   end
 
   def last_segment?
-    !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']", xmlns: "urn:org:ebics:H004")
+    !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']", xmlns: client.urn_schema)
   end
 
   def segmented?
-    !!doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber", xmlns: "urn:org:ebics:H004")
+    !!doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber", xmlns: client.urn_schema)
   end
 
   def return_code
-    doc.xpath("//xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").last.content
+    doc.xpath("//xmlns:ReturnCode", xmlns: client.urn_schema).last.content
   rescue NoMethodError
     nil
   end
 
   def report_text
-    doc.xpath("//xmlns:ReportText", xmlns: "urn:org:ebics:H004").first.content
+    doc.xpath("//xmlns:ReportText", xmlns: client.urn_schema).first.content
   end
 
   def transaction_id
-    doc.xpath("//xmlns:header/xmlns:static/xmlns:TransactionID", xmlns: 'urn:org:ebics:H004').text
+    doc.xpath("//xmlns:header/xmlns:static/xmlns:TransactionID", xmlns: client.urn_schema).text
   end
 
   def order_id
-    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:OrderID", xmlns: "urn:org:ebics:H004").text
+    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:OrderID", xmlns: client.urn_schema).text
   end
 
   def digest_valid?
@@ -66,17 +66,17 @@ class Epics::Response
     signature = doc.xpath("//ds:SignedInfo", ds: "http://www.w3.org/2000/09/xmldsig#").first.canonicalize
     signature_value = doc.xpath("//ds:SignatureValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
 
-    client.bank_x.key.verify(digester, Base64.decode64(signature_value.content), signature)
+    client.bank_authentication_key.key.verify(digester, Base64.decode64(signature_value.content), signature)
   end
 
   def public_digest_valid?
-    encryption_pub_key_digest = doc.xpath("//xmlns:EncryptionPubKeyDigest", xmlns: 'urn:org:ebics:H004').first
+    encryption_pub_key_digest = doc.xpath("//xmlns:EncryptionPubKeyDigest", xmlns: client.urn_schema).first
 
-    client.e.public_digest == encryption_pub_key_digest.content
+    client.encryption_key.public_digest == encryption_pub_key_digest.content
   end
 
   def order_data
-    order_data_encrypted = Base64.decode64(doc.xpath("//xmlns:OrderData", xmlns: 'urn:org:ebics:H004').first.content)
+    order_data_encrypted = Base64.decode64(doc.xpath("//xmlns:OrderData", xmlns: client.urn_schema).first.content)
 
     data = (cipher.update(order_data_encrypted) + cipher.final)
 
@@ -93,9 +93,9 @@ class Epics::Response
   end
 
   def transaction_key
-    transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey", xmlns: 'urn:org:ebics:H004').first.content)
+    transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey", xmlns: client.urn_schema).first.content)
 
-    @transaction_key ||= client.e.key.private_decrypt(transaction_key_encrypted)
+    @transaction_key ||= client.encryption_key.key.private_decrypt(transaction_key_encrypted)
   end
 
   def digester
