@@ -5,7 +5,9 @@ class Epics::XE3 < Epics::GenericUploadRequest
       timestamp: timestamp,
       order_type: 'XE3',
       order_attribute: 'OZHNN',
-      num_segments: 1
+      order_params: {},
+      num_segments: 1,
+      mutable: { TransactionPhase: 'Initialisation' }
     )
   end
 end

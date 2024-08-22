@@ -7,9 +7,8 @@ class Epics::INI < Epics::GenericRequest
     client.header_request.build(
       order_type: 'INI',
       order_attribute: 'DZNNN',
-      order_params: false,
       with_bank_pubkey_digests: false,
-      mutable: ->(xml) {}
+      mutable: {},
     )
   end
 

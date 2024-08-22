@@ -5,7 +5,9 @@ class Epics::B2B < Epics::GenericUploadRequest
       timestamp: timestamp,
       order_type: 'B2B',
       order_attribute: 'OZHNN',
-      num_segments: 1
+      order_params: {},
+      num_segments: 1,
+      mutable: { TransactionPhase: 'Initialisation' }
     )
   end
 end
