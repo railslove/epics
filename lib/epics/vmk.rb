@@ -1,25 +1,16 @@
 class Epics::VMK < Epics::GenericRequest
   def header
-    if !!options[:from] && !!options[:to]
-      client.header_request.build(
-        nonce: nonce,
-        timestamp: timestamp,
-        order_type: 'VMK',
-        order_attribute: 'DZHNN',
-        order_params: ->(xml) {
-          xml.DateRange {
-            xml.Start options[:from]
-            xml.End options[:to]
-          }
-        }
-      )
-    else
-      client.header_request.build(
-        nonce: nonce,
-        timestamp: timestamp,
-        order_type: 'VMK',
-        order_attribute: 'DZHNN',
-        )
-    end
+    client.header_request.build(
+      nonce: nonce,
+      timestamp: timestamp,
+      order_type: 'VMK',
+      order_attribute: 'DZHNN',
+      order_params: ->(xml) {
+        xml.DateRange {
+          xml.Start options[:from]
+          xml.End options[:to]
+        } if !!options[:from] && !!options[:to]
+      }
+    )
   end
 end
