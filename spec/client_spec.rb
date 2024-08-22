@@ -52,33 +52,33 @@ RSpec.describe Epics::Client do
     end
   end
 
-  describe '#e' do
+  describe '#encryption_key' do
     it 'the encryption key' do
-      expect(subject.e.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
+      expect(subject.encryption_key.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
     end
   end
 
-  describe '#x' do
-    it 'the signing key' do
-      expect(subject.x.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
-    end
-  end
-
-  describe '#a' do
+  describe '#authentication_key' do
     it 'the authentication key' do
-      expect(subject.a.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+      expect(subject.authentication_key.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
     end
   end
 
-  describe '#bank_e' do
+  describe '#signature_key' do
+    it 'the signing key' do
+      expect(subject.signature_key.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+    end
+  end
+
+  describe '#bank_encryption_key' do
     it 'the banks encryption key' do
-      expect(subject.bank_e.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_encryption_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
     end
   end
 
-  describe '#bank_x' do
+  describe '#bank_authentication_key' do
     it 'the banks signing key' do
-      expect(subject.bank_x.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_authentication_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
     end
   end
 

@@ -36,8 +36,8 @@ class Epics::Key
         msg,
         salt_length: :digest,
         mgf1_hash:   'SHA256',
-      ),
-    ).gsub("\n", '')
+        ),
+      ).gsub("\n", '')
   end
 
   def digester

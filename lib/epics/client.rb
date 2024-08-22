@@ -1,10 +1,18 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name, :current_order_id
+  attr_reader :version
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
+
+  VERSION_H3 = 'H003'
+  VERSION_H4 = 'H004'
+
+  VERSIONS = [VERSION_H3, VERSION_H4]
+
+  USER_AGENT = "EPICS v#{Epics::VERSION}"
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics::DEFAULT_LOCALE, product_name: Epics::DEFAULT_PRODUCT_NAME)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
@@ -16,6 +24,25 @@ class Epics::Client
     self.partner_id = partner_id
     self.locale = locale
     self.product_name = product_name
+    self.current_order_id = 0
+    self.version = VERSION_H4
+
+    yield self if block_given?
+  end
+
+  def version=(version)
+    raise ArgumentError, "Unsupported version: #{version}" unless VERSIONS.include?(version)
+
+    @version = version
+  end
+
+  def urn_schema
+    case version
+    when VERSION_H3
+      "http://www.ebics.org/#{version}"
+    when VERSION_H4
+      "urn:org:ebics:#{version}"
+    end
   end
 
   def inspect
@@ -25,24 +52,41 @@ class Epics::Client
      @partner_id=\"#{self.partner_id}\""
   end
 
-  def e
-    keys["E002"]
+  def next_order_id
+    raise 'Order ID overflow' if current_order_id >= 1679615
+    self.current_order_id += 1
   end
 
-  def a
-    keys["A006"]
+  def encryption_version
+    'E002'
   end
 
-  def x
-    keys["X002"]
+  def encryption_key
+    keys[encryption_version]
   end
 
-  def bank_e
-    keys["#{host_id.upcase}.E002"]
+  def signature_version
+    'A006'
   end
 
-  def bank_x
-    keys["#{host_id.upcase}.X002"]
+  def signature_key
+    keys[signature_version]
+  end
+
+  def authentication_version
+    'X002'
+  end
+
+  def authentication_key
+    keys[authentication_version]
+  end
+
+  def bank_encryption_key
+    keys["#{host_id.upcase}.#{encryption_version}"]
+  end
+
+  def bank_authentication_key
+    keys["#{host_id.upcase}.#{authentication_version}"]
   end
 
   def name
@@ -61,9 +105,9 @@ class Epics::Client
     @order_types ||= (self.HTD; @order_types)
   end
 
-  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
-    client = new(nil, passphrase, url, host_id, user_id, partner_id)
-    client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, &block)
+    client = new(nil, passphrase, url, host_id, user_id, partner_id, &block)
+    client.keys = [client.signature_version, client.authentication_version, client.encryption_version].each_with_object({}) do |type, memo|
       memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
     end
 
@@ -115,7 +159,7 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: "urn:org:ebics:H004").each do |node|
+    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: urn_schema).each do |node|
       type = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
@@ -130,7 +174,7 @@ class Epics::Client
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
     end
 
-    [bank_x, bank_e]
+    [bank_authentication_key, bank_encryption_key]
   end
 
   def AZV(document)
@@ -238,15 +282,15 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: urn_schema).content.split(/\s/)
   end
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text rescue nil
-      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: urn_schema).text rescue nil
+      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: urn_schema).text rescue nil
+      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: urn_schema).text rescue nil
+      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: urn_schema).map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
     end.to_xml
   end
 
@@ -278,14 +322,12 @@ class Epics::Client
 
   def upload(order_type, document)
     order = order_type.new(self, document)
-    res = post(url, order.to_xml).body
-    order.transaction_id = res.transaction_id
-
-    order_id = res.order_id
+    session = post(url, order.to_xml).body
+    order.transaction_id = session.transaction_id
 
     res = post(url, order.to_transfer_xml).body
 
-    return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
+    return res.transaction_id, [res.order_id, session.order_id].detect { |id| id.to_s.chars.any? }
   end
 
   def download(order_type, *args, **options)
@@ -309,7 +351,7 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
+    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT}, ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.use MyAdapter
