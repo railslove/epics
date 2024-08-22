@@ -5,7 +5,9 @@ class Epics::C2S < Epics::GenericUploadRequest
       timestamp: timestamp,
       order_type: 'C2S',
       order_attribute: 'DZHNN',
-      num_segments: 1
+      order_params: {},
+      num_segments: 1,
+      mutable: { TransactionPhase: 'Initialisation' }
     )
   end
 end

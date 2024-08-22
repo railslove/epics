@@ -9,9 +9,8 @@ class Epics::HPB < Epics::GenericRequest
       timestamp: timestamp,
       order_type: 'HPB',
       order_attribute: 'DZHNN',
-      order_params: false,
       with_bank_pubkey_digests: false,
-      mutable: ->(xml) {}
+      mutable: {}
     )
   end
 end

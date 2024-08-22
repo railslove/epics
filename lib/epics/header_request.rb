@@ -12,9 +12,7 @@ class Epics::HeaderRequest
   def_delegators :client, :host_id, :user_id, :partner_id
 
   def build(options = {})
-    options[:order_params] = ->(xml) {} if options[:order_params].nil?
     options[:with_bank_pubkey_digests] = true if options[:with_bank_pubkey_digests].nil?
-    options[:mutable] = ->(xml) { xml.TransactionPhase 'Initialisation' } if options[:mutable].nil?
 
     Nokogiri::XML::Builder.new do |xml|
       xml.header(authenticate: true) {
@@ -29,7 +27,7 @@ class Epics::HeaderRequest
             xml.OrderType options[:order_type]
             xml.OrderAttribute options[:order_attribute]
             xml.StandardOrderParams {
-              options[:order_params].call(xml)
+              build_attributes(xml, options[:order_params])
             } if options[:order_params]
           }
           xml.BankPubKeyDigests {
@@ -40,9 +38,23 @@ class Epics::HeaderRequest
           xml.NumSegments options[:num_segments] if options[:num_segments]
         }
         xml.mutable {
-          options[:mutable].call(xml)
+          build_attributes(xml, options[:mutable])
         } if options[:mutable]
       }
     end.doc.root
+  end
+
+  private
+
+  def build_attributes(xml, attributes)
+    attributes.each do |key, value|
+      if value.is_a?(Hash)
+        xml.send(key) {
+          build_attributes(xml, value)
+        }
+      else
+        xml.send(key, value)
+      end
+    end
   end
 end

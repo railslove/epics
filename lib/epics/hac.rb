@@ -8,12 +8,13 @@ class Epics::HAC < Epics::GenericRequest
       timestamp: timestamp,
       order_type: 'HAC',
       order_attribute: 'DZHNN',
-      order_params: ->(xml) {
-        xml.DateRange {
-          xml.Start options[:from]
-          xml.End options[:to]
-        } if !!options[:from] && !!options[:to]
-      }
+      order_params: !!options[:from] && !!options[:to] ? {
+        DateRange: {
+          Start: options[:from],
+          End: options[:to]
+        }
+      } : {},
+      mutable: { TransactionPhase: 'Initialisation' }
     )
   end
 end
