@@ -7,7 +7,7 @@ class Epics::Signer
   end
 
   def digest!
-    content_to_digest = Base64.encode64(digester.digest(doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join)).strip
+    content_to_digest = Base64.encode64(client.authentication_key.digester.digest(doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join)).strip
 
     if digest_node
       digest_node.content = content_to_digest
@@ -20,7 +20,7 @@ class Epics::Signer
     signature_value_node = doc.xpath("//ds:SignatureValue").first
 
     if signature_node
-      signature_value_node.content = Base64.encode64(client.authentication_key.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
+      signature_value_node.content = Base64.encode64(client.authentication_key.sign(signature_node.canonicalize)).gsub(/\n/,'')
     end
 
     doc
@@ -32,9 +32,5 @@ class Epics::Signer
 
   def signature_node
     @s ||= doc.xpath("//ds:SignedInfo").first
-  end
-
-  def digester
-    OpenSSL::Digest::SHA256.new
   end
 end

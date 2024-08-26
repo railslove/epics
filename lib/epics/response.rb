@@ -57,7 +57,7 @@ class Epics::Response
     authenticated = doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join
     digest_value = doc.xpath("//ds:DigestValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
 
-    digest = Base64.encode64(digester.digest(authenticated)).strip
+    digest = Base64.encode64(client.signature_key.digester.digest(authenticated)).strip
 
     digest == digest_value.content
   end
@@ -66,7 +66,7 @@ class Epics::Response
     signature = doc.xpath("//ds:SignedInfo", ds: "http://www.w3.org/2000/09/xmldsig#").first.canonicalize
     signature_value = doc.xpath("//ds:SignatureValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
 
-    client.bank_authentication_key.key.verify(digester, Base64.decode64(signature_value.content), signature)
+    client.bank_authentication_key.verify(signature_value.content, signature)
   end
 
   def public_digest_valid?
@@ -97,9 +97,4 @@ class Epics::Response
 
     @transaction_key ||= client.encryption_key.key.private_decrypt(transaction_key_encrypted)
   end
-
-  def digester
-    @digester ||= OpenSSL::Digest::SHA256.new
-  end
-
 end
