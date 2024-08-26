@@ -27,7 +27,7 @@ RSpec.describe Epics::Signer do
     end
 
     it 'can be verified with the same key' do
-      expect(client.authentication_key.key.verify(OpenSSL::Digest::SHA256.new, Base64.decode64(subject.doc.xpath("//ds:SignatureValue").first.content), subject.signature_node.canonicalize)).to be(true)
+      expect(client.authentication_key.verify(subject.doc.xpath("//ds:SignatureValue").first.content, subject.signature_node.canonicalize)).to be(true)
     end
   end
 

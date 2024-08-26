@@ -14,10 +14,6 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
     @cipher ||= OpenSSL::Cipher.new("aes-128-cbc").tap { |cipher| cipher.encrypt }
   end
 
-  def digester
-    @digester ||= OpenSSL::Digest::SHA256.new
-  end
-
   def body
     Nokogiri::XML::Builder.new do |xml|
       xml.body {
@@ -46,7 +42,9 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
   end
 
   def signature_value
-    client.signature_key.sign( digester.digest(document.gsub(/\n|\r/, "")) )
+    Base64.encode64(
+      client.signature_key.sign(client.signature_key.digester.digest(document.gsub(/\n|\r/, "")))
+    ).gsub("\n", '')
   end
 
   def encrypt(d)
