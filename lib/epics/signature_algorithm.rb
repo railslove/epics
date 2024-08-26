@@ -1,0 +1,2 @@
+module Epics::SignatureAlgorithm
+end

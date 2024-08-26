@@ -10,7 +10,11 @@ require 'faraday'
 require 'securerandom'
 require 'time'
 require "epics/version"
-require "epics/key"
+require "epics/signature_algorithm"
+require "epics/signature_algorithm/base"
+require "epics/signature_algorithm/rsa"
+require "epics/signature_algorithm/rsapss"
+require "epics/signature_algorithm/rsapkcs1"
 require "epics/response"
 require "epics/error"
 require 'epics/letter_renderer'

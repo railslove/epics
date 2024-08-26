@@ -1,12 +1,8 @@
-class Epics::Key
+class Epics::SignatureAlgorithm::Base
   attr_accessor :key
 
   def initialize(encoded_key, passphrase = nil)
-    if encoded_key.kind_of?(OpenSSL::PKey::RSA)
-      self.key = encoded_key
-    else
-      self.key = OpenSSL::PKey::RSA.new(encoded_key)
-    end
+    self.key = encoded_key
   end
 
   ###
@@ -22,26 +18,22 @@ class Epics::Key
   end
 
   def n
-    self.key.n.to_s(16)
+    raise NotImplementedError
   end
 
   def e
-    self.key.e.to_s(16)
+    raise NotImplementedError
   end
 
   def sign(msg)
-    Base64.encode64(
-      key.sign_pss(
-        'SHA256',
-        msg,
-        salt_length: :digest,
-        mgf1_hash:   'SHA256',
-        ),
-      ).gsub("\n", '')
+    raise NotImplementedError
+  end
+
+  def verify(signature, msg)
+    raise NotImplementedError
   end
 
   def digester
-    @digester ||= OpenSSL::Digest::SHA256.new
+    raise NotImplementedError
   end
-
 end
