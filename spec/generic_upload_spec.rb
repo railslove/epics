@@ -23,15 +23,7 @@ RSpec.describe Epics::GenericUploadRequest do
     before { allow(OpenSSL::Random).to receive(:random_bytes).with(32).and_return(Base64.strict_decode64("7wtROfiX4tyN60cygJUSsHkhzxX1RVJa8vGNYnflvKc=")) } # digest requires 32 bytes
 
     it 'will be the signed document' do
-      key = subject.client.signature_key.key
-
-      verification_result = key.verify_pss(
-                              'SHA256',
-                              Base64.decode64(subject.signature_value),
-                              OpenSSL::Digest::SHA256.new.digest(document),
-                              salt_length: :digest,
-                              mgf1_hash:   'SHA256',
-                            )
+      verification_result = subject.client.signature_key.verify(subject.signature_value, OpenSSL::Digest::SHA256.new.digest(document))
 
       expect(verification_result).to eq(true)
     end

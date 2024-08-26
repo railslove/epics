@@ -3,12 +3,15 @@ class Epics::Client
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name, :current_order_id
   attr_reader :version
+  attr_accessor :signature_version
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
 
   VERSION_H3 = 'H003'
   VERSION_H4 = 'H004'
+  VERSION_A5 = 'A005'
+  VERSION_A6 = 'A006'
 
   VERSIONS = [VERSION_H3, VERSION_H4]
 
@@ -26,6 +29,7 @@ class Epics::Client
     self.product_name = product_name
     self.current_order_id = 0
     self.version = VERSION_H4
+    self.signature_version = VERSION_A6
 
     yield self if block_given?
   end
@@ -63,10 +67,6 @@ class Epics::Client
 
   def encryption_key
     keys[encryption_version]
-  end
-
-  def signature_version
-    'A006'
   end
 
   def signature_key
@@ -108,7 +108,12 @@ class Epics::Client
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, &block)
     client = new(nil, passphrase, url, host_id, user_id, partner_id, &block)
     client.keys = [client.signature_version, client.authentication_version, client.encryption_version].each_with_object({}) do |type, memo|
-      memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
+      memo[type] = case type
+                   when VERSION_A6
+                     Epics::SignatureAlgorithm::RsaPss.new( OpenSSL::PKey::RSA.generate(keysize) )
+                   else
+                     Epics::SignatureAlgorithm::RsaPkcs1.new( OpenSSL::PKey::RSA.generate(keysize) )
+                   end
     end
 
     client
@@ -171,7 +176,12 @@ class Epics::Client
 
       bank = OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
 
-      self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
+      self.keys["#{host_id.upcase}.#{type}"] = case type
+                                               when VERSION_A6
+                                                 Epics::SignatureAlgorithm::RsaPss.new(bank)
+                                               else
+                                                 Epics::SignatureAlgorithm::RsaPkcs1.new(bank)
+                                               end
     end
 
     [bank_authentication_key, bank_encryption_key]
@@ -351,7 +361,7 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT}, ssl: { verify: verify_ssl? }) do |faraday|
+    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT }, ssl: { verify: verify_ssl? }) do |faraday|
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.use MyAdapter
@@ -361,7 +371,12 @@ class Epics::Client
 
   def extract_keys
     JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
-      memo[type] = Epics::Key.new(decrypt(key)) if key
+      memo[type] = case type
+                   when VERSION_A6
+                     Epics::SignatureAlgorithm::RsaPss.new(decrypt(key))
+                   else
+                     Epics::SignatureAlgorithm::RsaPkcs1.new(decrypt(key))
+                   end if key
     end
   end
 
