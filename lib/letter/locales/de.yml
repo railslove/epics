@@ -1,0 +1,17 @@
+de:
+  epics:
+    letter:
+      date: Datum
+      time: Uhrzeit
+      recipient: Empfänger
+      signature: Unterschrift
+      version: Version
+      exponent: Exponent
+      modulus: Modulus
+      hash: Hash
+      bit: '%{bit} Bit'
+      issued_in: Ausgestellt in %{city} am %{date}
+      initialization_letter:
+        a: Initialisierungsbrief für SIGNATUR-Zertifikat (INI)
+        x: Initialisierungsbrief für AUTHENTIFIZIERUNGS-Zertifikat (HIA)
+        e: Initialisierungsbrief für VERSCHLÜSSELUNGS-Zertifikat (HIA)

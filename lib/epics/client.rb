@@ -3,6 +3,7 @@ class Epics::Client
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content
   attr_writer :iban, :bic, :name
+  attr_accessor :locale
 
   def_delegators :connection, :post
 
@@ -14,6 +15,7 @@ class Epics::Client
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
+    self.locale = :de
   end
 
   def inspect
@@ -68,9 +70,12 @@ class Epics::Client
     client
   end
 
+  def letter_renderer
+    @letter_renderer ||= Epics::LetterRenderer.new(self)
+  end
+
   def ini_letter(bankname)
-    raw = File.read(File.join(File.dirname(__FILE__), '../letter/', 'ini.erb'))
-    ERB.new(raw).result(binding)
+    letter_renderer.render(bankname)
   end
 
   def save_ini_letter(bankname, path)
