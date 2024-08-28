@@ -4,62 +4,108 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta charset="UTF-8" />
     <title>EBICS ini</title>
+    <style>
+      code {
+        font-size: 0.6rem;
+        overflow-wrap: break-word;
+      }
+      .code {
+        border-style: dotted;
+        padding: 8px;
+        background-color: azure;
+      }
+      .strong {
+        font-weight: bold;
+      }
+      h2 {
+        text-align: center;
+      }
+      td {
+        min-width: 150px;
+      }
+      table {
+        display: flex;
+        justify-content: center;
+      }
+    </style>
   </head>
   <body>
     <div>
-      <h2>EBICS-Initialisierungsbrief (INI)</h2>
+      <h2><%= t('initialization_letter.a') %></h2>
       <table>
         <tr>
           <td>
-            Datum
+            <table>
+              <tr>
+                <td class="strong">
+                  <%= t('date') %> :
+                </td>
+                <td>
+                  <%= Date.today.strftime('%d.%m.%Y') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('time') %> :
+                </td>
+                <td>
+                  <%= Time.now.strftime('%H:%M:%S') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Host-ID :
+                </td>
+                <td>
+                  <%= host_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('recipient') %> :
+                </td>
+                <td>
+                  <%= bankname %>
+                </td>
+              </tr>
+            </table>
           </td>
           <td>
-            <%= Date.today.strftime("%d.%m.%Y") %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Uhrzeit
-          </td>
-          <td>
-            <%= Time.now.strftime("%H:%M:%S") %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Empfänger
-          </td>
-          <td>
-            <%= bankname %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            User-ID
-          </td>
-          <td>
-            <%= user_id %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Kunden-ID
-          </td>
-          <td>
-            <%= partner_id %>
+            <table>
+              <tr>
+                <td class="strong">
+                  User-ID :
+                </td>
+                <td>
+                  <%= user_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Partner-ID :
+                </td>
+                <td>
+                  <%= partner_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('version') %> :
+                </td>
+                <td>
+                  A006
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
-      <p>Öffentlicher Schlüssel für die elektronische Unterschrift (A006)</p>
-      <p>Exponent (<%= a.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= a.e %></code></p>
-      <p>Modulus (<%= a.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= a.n.scan(/.{2}/).join(" ") %></code></p>
-      <p>Hash (SHA-256):</p>
-      <p>
-      <code><%= Base64.decode64(a.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
-      </p>
-      <p>Ich bestätige hiermit den obigen öffentlichen Schlüssel für meine elektronische Unterschrift.</p>
+      <p><%= t('exponent') %> (<%= t('bit', bit: a.key.e.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= a.e %></code></p>
+      <p><%= t('modulus') %> (<%= t('bit', bit: a.key.n.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= a.n.scan(/.{2}/).join(' ') %></code></p>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= Base64.decode64(a.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
       <br/>
       <br/>
       <br/>
@@ -67,137 +113,171 @@
       <table>
         <tr>
           <td>
-            _________________________
-          </td>
-          <td>
-            _________________________
-          </td>
-          <td>
-            _________________________
+            <%= t('issued_in', city: '_________________________', date: '_________________________') %>
           </td>
         </tr>
         <tr>
           <td>
-            Ort/Datum
-          </td>
-          <td>
-            Name/Firma
-          </td>
-          <td>
-            Unterschrift
+            <%= t('signature') %> :
           </td>
         </tr>
       </table>
     </div>
     <div style="page-break-after:always"></div>
-    <h2>EBICS-Initialisierungsbrief (HIA) - Seite 1/2</h2>
-    <table>
-      <tr>
-        <td>
-          Datum
-        </td>
-        <td>
-          <%= Date.today.strftime("%d.%m.%Y") %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Uhrzeit
-        </td>
-        <td>
-          <%= Time.now.strftime("%H:%M:%S") %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Empfänger
-        </td>
-        <td>
-          <%= bankname %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          User-ID
-        </td>
-        <td>
-          <%= user_id %>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Kunden-ID
-        </td>
-        <td>
-          <%= partner_id %>
-        </td>
-      </tr>
-    </table>
     <div>
-      <p>Öffentlicher Authentifikationsschlüssel (X002)</p>
-      <p>Exponent (<%= x.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= x.e %></code></p>
-      <p>Modulus (<%= x.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= x.n.scan(/.{2}/).join(" ") %></code></p>
-      <p>Hash (SHA-256):</p>
-      <p>
-      <code><%= Base64.decode64(x.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code>
-      </p>
-      <p> Fortsetzung auf Seite 2 ...</p>
-      <div style="page-break-after:always"></div>
-      <h2>EBICS-Initialisierungsbrief (HIA) - Seite 2/2</h2>
+      <h2><%= t('initialization_letter.x') %></h2>
       <table>
         <tr>
           <td>
-            Datum
+            <table>
+              <tr>
+                <td class="strong">
+                  <%= t('date') %> :
+                </td>
+                <td>
+                  <%= Date.today.strftime('%d.%m.%Y') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('time') %> :
+                </td>
+                <td>
+                  <%= Time.now.strftime('%H:%M:%S') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Host-ID :
+                </td>
+                <td>
+                  <%= host_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('recipient') %> :
+                </td>
+                <td>
+                  <%= bankname %>
+                </td>
+              </tr>
+            </table>
           </td>
           <td>
-            <%= Date.today.strftime("%d.%m.%Y") %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Uhrzeit
-          </td>
-          <td>
-            <%= Time.now.strftime("%H:%M:%S") %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Empfänger
-          </td>
-          <td>
-            <%= bankname %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            User-ID
-          </td>
-          <td>
-            <%= user_id %>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Kunden-ID
-          </td>
-          <td>
-            <%= partner_id %>
+            <table>
+              <tr>
+                <td class="strong">
+                  User-ID :
+                </td>
+                <td>
+                  <%= user_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Partner-ID :
+                </td>
+                <td>
+                  <%= partner_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('version') %> :
+                </td>
+                <td>
+                  X002
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
+      <p><%= t('exponent') %> (<%= t('bit', bit: x.key.e.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= x.e %></code></p>
+      <p><%= t('modulus') %> (<%= t('bit', bit: x.key.n.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= x.n.scan(/.{2}/).join(' ') %></code></p>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= Base64.decode64(x.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
     </div>
+    <div style="page-break-after:always"></div>
     <div>
-      <p>Öffentlicher Verschlüsselungsschlüssel (E002)</p>
-      <p>Exponent (<%= e.key.e.num_bytes * 8 %> Bit):</p>
-      <p><code><%= e.e %></code></p>
-      <p>Modulus (<%= e.key.n.num_bytes * 8 %> Bit):</p>
-      <p><code><%= e.n.scan(/.{2}/).join(" ") %></code></p>
-      <p>Hash (SHA-256):</p>
-      <p><code><%= Base64.decode64(e.public_digest).unpack("H*").join.upcase.scan(/.{2}/).join(" ") %></code></p>
-      <p>Ich bestätige hiermit die obigen öffentlichen Schlüssel für meinen EBICS-Zugang.</p>
+      <h2><%= t('initialization_letter.e') %></h2>
+      <table>
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td class="strong">
+                  <%= t('date') %> :
+                </td>
+                <td>
+                  <%= Date.today.strftime('%d.%m.%Y') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('time') %> :
+                </td>
+                <td>
+                  <%= Time.now.strftime('%H:%M:%S') %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Host-ID :
+                </td>
+                <td>
+                  <%= host_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('recipient') %> :
+                </td>
+                <td>
+                  <%= bankname %>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <table>
+              <tr>
+                <td class="strong">
+                  User-ID :
+                </td>
+                <td>
+                  <%= user_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  Partner-ID :
+                </td>
+                <td>
+                  <%= partner_id %>
+                </td>
+              </tr>
+              <tr>
+                <td class="strong">
+                  <%= t('version') %> :
+                </td>
+                <td>
+                  E002
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p><%= t('exponent') %> (<%= t('bit', bit: e.key.e.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= e.e %></code></p>
+      <p><%= t('modulus') %> (<%= t('bit', bit: e.key.n.num_bytes * 8) %>) :</p>
+      <p class="code"><code><%= e.n.scan(/.{2}/).join(' ') %></code></p>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= Base64.decode64(e.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
       <br/>
       <br/>
       <br/>
@@ -205,24 +285,12 @@
       <table>
         <tr>
           <td>
-            _________________________
-          </td>
-          <td>
-            _________________________
-          </td>
-          <td>
-            _________________________
+            <%= t('issued_in', city: '_________________________', date: '_________________________') %>
           </td>
         </tr>
         <tr>
           <td>
-            Ort/Datum
-          </td>
-          <td>
-            Name/Firma
-          </td>
-          <td>
-            Unterschrift
+            <%= t('signature') %> :
           </td>
         </tr>
       </table>

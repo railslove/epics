@@ -1,6 +1,7 @@
 require 'openssl'
 require 'base64'
 require 'erb'
+require 'i18n'
 require 'json'
 require 'zlib'
 require 'zip'
@@ -12,6 +13,7 @@ require "epics/version"
 require "epics/key"
 require "epics/response"
 require "epics/error"
+require 'epics/letter_renderer'
 require "epics/middleware/xmlsig"
 require "epics/middleware/parse_ebics"
 require "epics/generic_request"
@@ -51,6 +53,8 @@ require "epics/hia"
 require "epics/ini"
 require "epics/signer"
 require "epics/client"
+
+I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml')]
 
 module Epics
 
