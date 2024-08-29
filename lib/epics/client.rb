@@ -173,6 +173,10 @@ class Epics::Client
     download(Epics::STA, from: from, to: to)
   end
 
+  def FDL(format)
+    download(Epics::FDL, format)
+  end
+
   def VMK(from = nil, to = nil)
     download(Epics::VMK, from: from, to: to)
   end
