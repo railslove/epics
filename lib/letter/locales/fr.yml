@@ -10,7 +10,8 @@ fr:
       modulus: Modulus
       hash: Hash
       bit: '%{bit} Bit'
-      issued_in: Fait à %{city} le %{date}
+      issued_in: Lieu/Date
+      name: Nom/Société
       initialization_letter:
         a: Lettre d'initialization du certificat de SIGNATURE (INI)
         x: Lettre d'initialization du certificat d'AUTHENTIFICATION (HIA)

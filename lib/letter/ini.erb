@@ -10,7 +10,8 @@
         overflow-wrap: break-word;
       }
       .code {
-        border-style: dotted;
+        border-style: solid;
+        border-width: 1px;
         padding: 8px;
         background-color: azure;
       }
@@ -27,6 +28,9 @@
         display: flex;
         justify-content: center;
       }
+      .column {
+        height: 100px;
+      }
     </style>
   </head>
   <body>
@@ -35,68 +39,72 @@
       <table>
         <tr>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  <%= t('date') %> :
-                </td>
-                <td>
-                  <%= Date.today.strftime('%d.%m.%Y') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('time') %> :
-                </td>
-                <td>
-                  <%= Time.now.strftime('%H:%M:%S') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Host-ID :
-                </td>
-                <td>
-                  <%= host_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('recipient') %> :
-                </td>
-                <td>
-                  <%= bankname %>
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    <%= t('date') %> :
+                  </td>
+                  <td>
+                    <%= Date.today.strftime('%d.%m.%Y') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('time') %> :
+                  </td>
+                  <td>
+                    <%= Time.now.strftime('%H:%M:%S') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('recipient') %> :
+                  </td>
+                  <td>
+                    <%= bankname %>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  User-ID :
-                </td>
-                <td>
-                  <%= user_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Partner-ID :
-                </td>
-                <td>
-                  <%= partner_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('version') %> :
-                </td>
-                <td>
-                  A006
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    Host-ID :
+                  </td>
+                  <td>
+                    <%= host_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    User-ID :
+                  </td>
+                  <td>
+                    <%= user_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    Partner-ID :
+                  </td>
+                  <td>
+                    <%= partner_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('version') %> :
+                  </td>
+                  <td>
+                    A006
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
       </table>
@@ -113,12 +121,24 @@
       <table>
         <tr>
           <td>
-            <%= t('issued_in', city: '_________________________', date: '_________________________') %>
+            _________________________
+          </td>
+          <td>
+            _________________________
+          </td>
+          <td>
+            _________________________
           </td>
         </tr>
         <tr>
           <td>
-            <%= t('signature') %> :
+            <%= t('issued_in') %>
+          </td>
+          <td>
+            <%= t('name') %>
+          </td>
+          <td>
+            <%= t('signature') %>
           </td>
         </tr>
       </table>
@@ -129,68 +149,72 @@
       <table>
         <tr>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  <%= t('date') %> :
-                </td>
-                <td>
-                  <%= Date.today.strftime('%d.%m.%Y') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('time') %> :
-                </td>
-                <td>
-                  <%= Time.now.strftime('%H:%M:%S') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Host-ID :
-                </td>
-                <td>
-                  <%= host_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('recipient') %> :
-                </td>
-                <td>
-                  <%= bankname %>
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    <%= t('date') %> :
+                  </td>
+                  <td>
+                    <%= Date.today.strftime('%d.%m.%Y') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('time') %> :
+                  </td>
+                  <td>
+                    <%= Time.now.strftime('%H:%M:%S') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('recipient') %> :
+                  </td>
+                  <td>
+                    <%= bankname %>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  User-ID :
-                </td>
-                <td>
-                  <%= user_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Partner-ID :
-                </td>
-                <td>
-                  <%= partner_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('version') %> :
-                </td>
-                <td>
-                  X002
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    Host-ID :
+                  </td>
+                  <td>
+                    <%= host_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    User-ID :
+                  </td>
+                  <td>
+                    <%= user_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    Partner-ID :
+                  </td>
+                  <td>
+                    <%= partner_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('version') %> :
+                  </td>
+                  <td>
+                    X002
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
       </table>
@@ -207,68 +231,72 @@
       <table>
         <tr>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  <%= t('date') %> :
-                </td>
-                <td>
-                  <%= Date.today.strftime('%d.%m.%Y') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('time') %> :
-                </td>
-                <td>
-                  <%= Time.now.strftime('%H:%M:%S') %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Host-ID :
-                </td>
-                <td>
-                  <%= host_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('recipient') %> :
-                </td>
-                <td>
-                  <%= bankname %>
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    <%= t('date') %> :
+                  </td>
+                  <td>
+                    <%= Date.today.strftime('%d.%m.%Y') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('time') %> :
+                  </td>
+                  <td>
+                    <%= Time.now.strftime('%H:%M:%S') %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('recipient') %> :
+                  </td>
+                  <td>
+                    <%= bankname %>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
           <td>
-            <table>
-              <tr>
-                <td class="strong">
-                  User-ID :
-                </td>
-                <td>
-                  <%= user_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  Partner-ID :
-                </td>
-                <td>
-                  <%= partner_id %>
-                </td>
-              </tr>
-              <tr>
-                <td class="strong">
-                  <%= t('version') %> :
-                </td>
-                <td>
-                  E002
-                </td>
-              </tr>
-            </table>
+            <div class="column">
+              <table>
+                <tr>
+                  <td class="strong">
+                    Host-ID :
+                  </td>
+                  <td>
+                    <%= host_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    User-ID :
+                  </td>
+                  <td>
+                    <%= user_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    Partner-ID :
+                  </td>
+                  <td>
+                    <%= partner_id %>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="strong">
+                    <%= t('version') %> :
+                  </td>
+                  <td>
+                    E002
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
         </tr>
       </table>
@@ -285,12 +313,24 @@
       <table>
         <tr>
           <td>
-            <%= t('issued_in', city: '_________________________', date: '_________________________') %>
+            _________________________
+          </td>
+          <td>
+            _________________________
+          </td>
+          <td>
+            _________________________
           </td>
         </tr>
         <tr>
           <td>
-            <%= t('signature') %> :
+            <%= t('issued_in') %>
+          </td>
+          <td>
+            <%= t('name') %>
+          </td>
+          <td>
+            <%= t('signature') %>
           </td>
         </tr>
       </table>
