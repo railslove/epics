@@ -12,6 +12,7 @@ fr:
       bit: '%{bit} Bit'
       issued_in: Lieu/Date
       name: Nom/Société
+      confirmation: Je confirme par la présente la clé publique ci-dessus pour ma signature électronique.
       initialization_letter:
         a: Lettre d'initialization du certificat de SIGNATURE (INI)
         x: Lettre d'initialization du certificat d'AUTHENTIFICATION (HIA)

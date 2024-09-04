@@ -12,6 +12,7 @@ en:
       bit: '%{bit} Bit'
       issued_in: Location/Date
       name: Name/Company
+      confirmation: I hearby confirm the public key above for my electronic signature.
       initialization_letter:
         a: Initialization letter for SIGNATURE certificate (INI)
         x: Initialization letter for AUTHENTICATION certificate (HIA)

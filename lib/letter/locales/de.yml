@@ -12,6 +12,7 @@ de:
       bit: '%{bit} Bit'
       issued_in: Ort/Datum
       name: Name/Firma
+      confirmation: Ich bestätige hiermit den obigen öffentlichen Schlüssel für meine elektronische Unterschrift.
       initialization_letter:
         a: Initialisierungsbrief für SIGNATUR-Zertifikat (INI)
         x: Initialisierungsbrief für AUTHENTIFIZIERUNGS-Zertifikat (HIA)

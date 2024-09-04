@@ -114,6 +114,7 @@
       <p class="code"><code><%= a.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
       <p class="code"><code><%= Base64.decode64(a.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
+      <p><%= t('confirmation') %></p>
       <br/>
       <br/>
       <br/>
@@ -306,6 +307,7 @@
       <p class="code"><code><%= e.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
       <p class="code"><code><%= Base64.decode64(e.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
+      <p><%= t('confirmation') %></p>
       <br/>
       <br/>
       <br/>
