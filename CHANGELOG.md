@@ -1,5 +1,8 @@
 ### Unreleased
 
+- [ENHANCEMENT] Request Header generation more generalized (thanks to @jplot)
+- [ENHANCEMENT] Multi language support for initialization letter (thanks to @jplot)
+
 ### 2.4.0
 
 - [ENHANCEMENT]  Adds XE2 and XE3 order type (CCT and CDD for swiss banks)
