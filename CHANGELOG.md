@@ -1,5 +1,6 @@
 ### Unreleased
 
+- [HOUSEKEEPING] Bump ruby required version from 2.7 to 3.1
 - [ENHANCEMENT] Request Header generation more generalized (thanks to @jplot)
 - [ENHANCEMENT] Multi language support for initialization letter (thanks to @jplot)
 
