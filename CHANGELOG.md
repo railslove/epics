@@ -1,5 +1,6 @@
 ### Unreleased
 
+- [HOUSEKEEPING] Bump XML dependency requirements to more recent versions
 - [HOUSEKEEPING] Bump bundler version to 2.5.19
 - [HOUSEKEEPING] Bump ruby required version from 2.7 to 3.1
 - [ENHANCEMENT] Request Header generation more generalized (thanks to @jplot)
