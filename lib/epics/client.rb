@@ -10,10 +10,11 @@ class Epics::Client
 
   VERSION_H3 = 'H003'
   VERSION_H4 = 'H004'
+  VERSION_H5 = 'H005'
   VERSION_A5 = 'A005'
   VERSION_A6 = 'A006'
 
-  VERSIONS = [VERSION_H3, VERSION_H4]
+  VERSIONS = [VERSION_H3, VERSION_H4, VERSION_H5]
 
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
@@ -44,7 +45,7 @@ class Epics::Client
     case version
     when VERSION_H3
       "http://www.ebics.org/#{version}"
-    when VERSION_H4
+    when VERSION_H4, VERSION_H5
       "urn:org:ebics:#{version}"
     end
   end
