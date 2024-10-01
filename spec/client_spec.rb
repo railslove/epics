@@ -12,11 +12,11 @@ RSpec.describe Epics::Client do
 
     it 'holds all keys, user and bank' do
       expect(subject.keys).to match(a_hash_including(
-        "E002" => be_a(Epics::Key),
-        "X002" => be_a(Epics::Key),
-        "A006" => be_a(Epics::Key),
-        "SIZBN001.E002" => be_a(Epics::Key),
-        "SIZBN001.X002" => be_a(Epics::Key)
+        "E002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+        "X002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+        "A006" => be_a(Epics::SignatureAlgorithm::RsaPss),
+        "SIZBN001.E002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+        "SIZBN001.X002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1)
       ))
     end
 
@@ -52,33 +52,33 @@ RSpec.describe Epics::Client do
     end
   end
 
-  describe '#e' do
+  describe '#encryption_key' do
     it 'the encryption key' do
-      expect(subject.e.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
+      expect(subject.encryption_key.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
     end
   end
 
-  describe '#x' do
-    it 'the signing key' do
-      expect(subject.x.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
-    end
-  end
-
-  describe '#a' do
+  describe '#authentication_key' do
     it 'the authentication key' do
-      expect(subject.a.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+      expect(subject.authentication_key.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
     end
   end
 
-  describe '#bank_e' do
+  describe '#signature_key' do
+    it 'the signing key' do
+      expect(subject.signature_key.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+    end
+  end
+
+  describe '#bank_encryption_key' do
     it 'the banks encryption key' do
-      expect(subject.bank_e.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_encryption_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
     end
   end
 
-  describe '#bank_x' do
+  describe '#bank_authentication_key' do
     it 'the banks signing key' do
-      expect(subject.bank_x.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_authentication_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
     end
   end
 
@@ -94,7 +94,7 @@ RSpec.describe Epics::Client do
 
   describe '#HPB' do
     let(:e_key) do
-      Epics::Key.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
+      Epics::SignatureAlgorithm::RsaPss.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
     end
 
     before do
@@ -103,7 +103,7 @@ RSpec.describe Epics::Client do
         .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response_ebics_ns.xml')))
     end
 
-    it { expect(subject.HPB).to match([be_a(Epics::Key), be_a(Epics::Key)]) }
+    it { expect(subject.HPB).to match([be_a(Epics::SignatureAlgorithm::RsaPkcs1), be_a(Epics::SignatureAlgorithm::RsaPkcs1)]) }
 
     it 'changes the SIZBN001.(E|X)002 keys' do
       expect { subject.HPB }.to change { subject.keys["SIZBN001.E002"] }

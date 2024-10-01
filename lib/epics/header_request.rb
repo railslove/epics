@@ -13,6 +13,7 @@ class Epics::HeaderRequest
 
   def build(options = {})
     options[:with_bank_pubkey_digests] = true if options[:with_bank_pubkey_digests].nil?
+    options[:security_medium] = 0 if options[:security_medium].nil?
 
     Nokogiri::XML::Builder.new do |xml|
       xml.header(authenticate: true) {
@@ -25,16 +26,17 @@ class Epics::HeaderRequest
           xml.Product(PRODUCT_NAME, 'Language' => PRODUCT_LANG)
           xml.OrderDetails {
             xml.OrderType options[:order_type]
+            xml.OrderID b36encode(client.next_order_id) if client.version == Epics::Client::VERSION_H3
             xml.OrderAttribute options[:order_attribute]
             xml.StandardOrderParams {
               build_attributes(xml, options[:order_params])
             } if options[:order_params]
           }
           xml.BankPubKeyDigests {
-            xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
-            xml.Encryption(client.bank_e.public_digest, Version: 'E002', Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
+            xml.Authentication(client.bank_authentication_key.public_digest, Version: client.authentication_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
+            xml.Encryption(client.bank_encryption_key.public_digest, Version: client.encryption_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
           } if options[:with_bank_pubkey_digests]
-          xml.SecurityMedium '0000'
+          xml.SecurityMedium b36encode(options[:security_medium]) if options[:security_medium]
           xml.NumSegments options[:num_segments] if options[:num_segments]
         }
         xml.mutable {
@@ -56,5 +58,9 @@ class Epics::HeaderRequest
         xml.send(key, value)
       end
     end
+  end
+
+  def b36encode(number)
+    number.to_s(36).upcase.rjust(4, '0')
   end
 end
