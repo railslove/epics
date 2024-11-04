@@ -243,6 +243,16 @@ class Epics::Client
     download(Epics::HAC, from: from, to: to)
   end
 
+  def WSS
+    download(Epics::WSS)
+  end
+
+  def CIZ
+  end
+
+  def C5N
+  end
+
   def save_keys(path)
     File.write(path, dump_keys)
   end
