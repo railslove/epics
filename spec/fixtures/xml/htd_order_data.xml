@@ -128,6 +128,12 @@
       <NumSigRequired>1</NumSigRequired>
     </OrderInfo>
     <OrderInfo>
+      <OrderType>CIP</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Instant Credit Transfer Initiation</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
       <OrderType>CD1</OrderType>
       <TransferType>Upload</TransferType>
       <Description>CD1</Description>

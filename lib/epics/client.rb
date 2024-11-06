@@ -91,6 +91,10 @@ class Epics::Client
     self.CCT(document)
   end
 
+  def inst(document)
+    self.CIP(document)
+  end
+
   def debit(document, type = :CDD)
     self.public_send(type, document)
   end
@@ -164,6 +168,10 @@ class Epics::Client
 
   def CCT(document)
     upload(Epics::CCT, document)
+  end
+
+  def CIP(document)
+    upload(Epics::CIP, document)
   end
 
   def CCS(document)

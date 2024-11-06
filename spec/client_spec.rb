@@ -88,7 +88,7 @@ RSpec.describe Epics::Client do
     end
 
     it 'extracts the accessible order types of a subscriber' do
-      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDB CDD))
+      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CIP CD1 CDB CDD))
     end
   end
 
