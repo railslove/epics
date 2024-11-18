@@ -248,9 +248,11 @@ class Epics::Client
   end
 
   def CIZ
+    download_and_unzip(Epics::CIZ, from: from, to: to)
   end
 
   def C5N
+    download_and_unzip(Epics::C5N, from: from, to: to)
   end
 
   def save_keys(path)
