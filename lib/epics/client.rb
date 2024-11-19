@@ -202,6 +202,10 @@ class Epics::Client
     download_and_unzip(Epics::C54, from: from, to: to)
   end
 
+  def C5N(from, to)
+    download_and_unzip(Epics::C5N, from: from, to: to)
+  end
+
   def Z52(from, to)
     download_and_unzip(Epics::Z52, from: from, to: to)
   end
@@ -245,14 +249,6 @@ class Epics::Client
 
   def WSS
     download(Epics::WSS)
-  end
-
-  def CIZ(from, to)
-    download_and_unzip(Epics::CIZ, from: from, to: to)
-  end
-
-  def C5N(from, to)
-    download_and_unzip(Epics::C5N, from: from, to: to)
   end
 
   def save_keys(path)
