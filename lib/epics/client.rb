@@ -247,11 +247,11 @@ class Epics::Client
     download(Epics::WSS)
   end
 
-  def CIZ
+  def CIZ(from, to)
     download_and_unzip(Epics::CIZ, from: from, to: to)
   end
 
-  def C5N
+  def C5N(from, to)
     download_and_unzip(Epics::C5N, from: from, to: to)
   end
 
