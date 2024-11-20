@@ -5,6 +5,7 @@
 - [HOUSEKEEPING] Bump ruby required version from 2.7 to 3.1
 - [ENHANCEMENT] Request Header generation more generalized (thanks to @jplot)
 - [ENHANCEMENT] Multi language support for initialization letter (thanks to @jplot)
+- [ENHANVEMENT] Added support for WSS and C5N order types (thanks to @kostja93)
 
 ### 2.4.0
 
