@@ -33,6 +33,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
+  spec.metadata['changelog_uri'] = 'https://github.com/railslove/epics/blob/master/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/railslove/epics'
+  spec.metadata['bug_tracker_uri'] = 'https://github.com/railslove/epics/issues'
+
   spec.post_install_message  = "\n\e[32m" + ('*' * 60) + "\n\e[0m"
   spec.post_install_message += "Thanks for using Epics - your epic EBICS client!\n"
   spec.post_install_message += "Epics provides a full production-tested implementation of the Electronic Banking Internet Communication Standard.\n"
