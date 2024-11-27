@@ -128,6 +128,12 @@
       <NumSigRequired>1</NumSigRequired>
     </OrderInfo>
     <OrderInfo>
+      <OrderType>CIP</OrderType>
+      <TransferType>Upload</TransferType>
+      <Description>Instant Credit Transfer Initiation</Description>
+      <NumSigRequired>1</NumSigRequired>
+    </OrderInfo>
+    <OrderInfo>
       <OrderType>CD1</OrderType>
       <TransferType>Upload</TransferType>
       <Description>CD1</Description>
@@ -153,7 +159,7 @@
       <OrderTypes>PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ</OrderTypes>
     </Permission>
     <Permission AuthorisationLevel="E">
-      <OrderTypes>INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CD1 CDB CDD</OrderTypes>
+      <OrderTypes>INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CIP CD1 CDB CDD</OrderTypes>
     </Permission>
   </UserInfo>
 </HTDResponseOrderData>

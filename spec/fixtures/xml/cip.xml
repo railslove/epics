@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09 pain.001.001.09.xsd">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>Message-ID-0815</MsgId>
+      <CreDtTm>2022-09-15T09:31:39.000Z</CreDtTm>
+      <NbOfTxs>2</NbOfTxs>
+      <CtrlSum>1122.33</CtrlSum>
+      <InitgPty>
+        <Nm>Initiator Name</Nm>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>Payment-Information-ID-0815</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <BtchBookg>true</BtchBookg>
+      <NbOfTxs>2</NbOfTxs>
+      <CtrlSum>1122.33</CtrlSum>
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+        <LclInstrm>
+          <Cd>INST</Cd>
+        </LclInstrm>
+      </PmtTpInf>
+      <ReqdExctnDt>
+        <DtTm>2022-09-16T10:00:00</DtTm>
+      </ReqdExctnDt>
+      <Dbtr>
+        <Nm>Herr Schnellzahler</Nm>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <IBAN>DE89370400440532013000</IBAN>
+        </Id>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>NOTPROVIDED</Id>
+          </Othr>
+        </FinInstnId>
+      </DbtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>OriginID1</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1022.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>John Dough</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>AT611904300234573201</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Unstructured Remittance Information</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>OriginID2</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">100.33</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Cookie Cutter</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>AT611904300234573201</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Unstructured Remittance Information</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>
