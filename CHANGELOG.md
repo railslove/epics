@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 2.6.0
+
 - [ENHANCEMENT] Adds CIP order type (instant transfers)
 - [ENHANCEMENT] Added gem metadata (thanks to @Nymuxyzo)
 
