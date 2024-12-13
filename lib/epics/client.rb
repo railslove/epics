@@ -1,7 +1,7 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :keys_certs
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :keys_certs, :locale
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
@@ -223,7 +223,7 @@ class Epics::Client
   end
 
   def FDL(format)
-    download(Epics::FDL, format)
+    download(Epics::FDL, file_format: format)
   end
 
   def HAA

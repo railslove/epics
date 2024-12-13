@@ -1,4 +1,4 @@
-class Epics
+module Epics
   class Configuration
     PARAMETERS = {
       product_name: 'EPICS - a ruby ebics kernel',

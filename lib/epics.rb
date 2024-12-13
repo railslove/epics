@@ -45,6 +45,7 @@ require "epics/cdb"
 require "epics/cdd"
 require "epics/xe2"
 require "epics/xe3"
+require "epics/fdl"
 require "epics/b2b"
 require "epics/xds"
 require "epics/cds"
@@ -64,7 +65,7 @@ module Epics
   class << self
     extend Forwardable
 
-    def_delegators :configuration, *Epics::Configuration::PARAMETERS
+    def_delegators :configuration, *Epics::Configuration::PARAMETERS.keys
 
     def configure
       yield(configuration)

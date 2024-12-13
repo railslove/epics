@@ -32,7 +32,7 @@ For default values see Epics::Configuration::PARAMETERS
 
 ```ruby
 Epics.configure do |config|
-  config.local = :fr
+  config.locale = :fr
   config.product_name = 'My Epic EBICS Client'
 end
 ```
@@ -241,7 +241,7 @@ Is Epics working with your institution? Please help us to grow this list of supp
 
 ## Development
 
-For development purposes, you may want to use a proxy server in order to have a convienent look into request and response data.
+For development purposes, you may want to use a proxy server in order to have a convenient look into request and response data.
 To do so, it's sufficient to define `http_proxy` in your environment.
 Also you may want to disable SSL verification - simply set `EPICS_VERIFY_SSL` to `"false"`.
 
@@ -260,14 +260,19 @@ EPICS_VERIFY_SSL=false
 - [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
 
 ## Contributing
-Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/master/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/). 
+Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/master/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/).
+
+After checking out the repo, run `bin/setup` to install dependencies. 
+Then, run `rspec` to run the tests. 
+You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 0. Contact team@railslove.com for information about the CLA
 1. Fork it ( https://github.com/[my-github-username]/epics/fork )
-1. Create your feature branch (`git checkout -b my-new-feature`)
-1. Commit your changes (`git commit -am 'Add some feature'`)
-1. Push to the branch (`git push origin my-new-feature`)
-1. Create a new Pull Request
+2. Run `bin/setup`
+3. Create your feature branch (`git checkout -b my-new-feature`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
 
 ## Contribution Credits
 
