@@ -8,7 +8,7 @@ class Epics::FDL < Epics::GenericRequest
       order_type: 'FDL',
       order_attribute: 'DZHNN',
       order_id: 'A00A',
-      fdl_file_format: options[:file_format],
+      custom_order_params: { FDLOrderParams: { FileFormat: options[:file_format] } },
       mutable: { TransactionPhase: 'Initialisation' }
     )
   end

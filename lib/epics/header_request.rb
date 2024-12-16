@@ -23,13 +23,10 @@ class Epics::HeaderRequest
           xml.OrderDetails {
             xml.OrderType options[:order_type]
             xml.OrderAttribute options[:order_attribute]
-            xml.OrderAttribute options[:order_id] if options[:order_id]
-            xml.FDLOrderParams {
-              xml.FileFormat options[:fdl_file_format]
-            } if options[:fdl_file_format]
             xml.StandardOrderParams {
               build_attributes(xml, options[:order_params])
             } if options[:order_params]
+            build_attributes(xml, options[:custom_order_params]) if options[:custom_order_params]
           }
           xml.BankPubKeyDigests {
             xml.Authentication(client.bank_x.public_digest, Version: 'X002', Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')

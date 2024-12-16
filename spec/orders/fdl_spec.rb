@@ -3,13 +3,13 @@ RSpec.describe Epics::FDL do
   let(:file_format) { 'camt.xxx.cfonb120.stm.Oby' }
 
   context 'with file_format' do
-    subject(:order) { described_class.new(client, format: file_format) }
+    subject(:order) { described_class.new(client, file_format: file_format) }
 
     describe '#to_xml' do
       specify { expect(order.to_xml).to be_a_valid_ebics_doc }
 
       it 'does includes a date range as standard order parameter' do
-        expect(order.to_xml).to include('<StandardOrderParams><DateRange><Start>2014-09-01</Start><End>2014-09-30</End></DateRange></StandardOrderParams>')
+        expect(order.to_xml).to include('<FDLOrderParams><FileFormat>camt.xxx.cfonb120.stm.Oby</FileFormat></FDLOrderParams>')
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe Epics::FDL do
       specify { expect(order.to_xml).to be_a_valid_ebics_doc }
 
       it 'does not include a standard order parameter' do
-        expect(order.to_xml).to include('<StandardOrderParams/>')
+        expect(order.to_xml).to include('<FDLOrderParams><FileFormat/></FDLOrderParams>')
       end
     end
 

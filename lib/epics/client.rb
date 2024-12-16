@@ -1,14 +1,13 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :keys_certs, :locale
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics.locale)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
-    self.keys_certs = JSON.parse(self.keys_content) if keys_content
     self.passphrase = passphrase
     self.keys = extract_keys if keys_content
     self.url  = url
@@ -263,10 +262,6 @@ class Epics::Client
     File.write(path, dump_keys)
   end
 
-  def dump_keys
-    JSON.dump(keys.each_with_object({}) { |(k, v), m| m[k] = encrypt(v.key.to_pem) })
-  end
-
   private
 
   def upload(order_type, document)
@@ -314,6 +309,10 @@ class Epics::Client
     JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
       memo[type] = Epics::Key.new(decrypt(key)) if key
     end
+  end
+
+  def dump_keys
+    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
   end
 
   def new_cipher
