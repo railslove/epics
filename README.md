@@ -24,19 +24,6 @@ Or install it yourself as:
 
     $ gem install epics
 
-
-## Configuration
-
-You can choose to configure some default values like this
-For default values see Epics::Configuration::PARAMETERS
-
-```ruby
-Epics.configure do |config|
-  config.locale = :fr
-  config.product_name = 'My Epic EBICS Client'
-end
-```
-
 ## Getting started
 
 In case you are new to EBICS, you'll have to complete an initialization process with
@@ -126,6 +113,15 @@ e = Epics::Client.new(File.open('/tmp/my.key'), 'passphrase', 'url', 'host', 'us
 keys = File.read('/tmp/my.key')
 
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner')
+```
+
+### Client Configuration
+
+You can choose to configure some default values like this
+
+```ruby
+# For default values see `lib/epics.rb`
+e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', locale: :fr, product_name: 'Mon Epic Client EBICS')
 ```
 
 ## Features
