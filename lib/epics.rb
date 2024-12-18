@@ -56,26 +56,12 @@ require "epics/hia"
 require "epics/ini"
 require "epics/signer"
 require "epics/client"
-require "epics/configuration"
 
 I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml')]
 
 module Epics
-  class << self
-    extend Forwardable
-
-    def_delegators :configuration, *Epics::Configuration::PARAMETERS.keys
-
-    def configure
-      yield(configuration)
-    end
-
-    private
-
-    def configuration
-      @configuration ||= Epics::Configuration.new
-    end
-  end
+  DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
+  DEFAULT_LOCALE = :de
 end
 
 Ebics = Epics
