@@ -1,5 +1,7 @@
 ### Unreleased
 
+- [ENHANCEMENT] Added support for configuring locale and client/product name on initialization (thanks to @frantisekrokusek)
+
 ### 2.6.0
 
 - [ENHANCEMENT] Adds CIP order type (instant transfers)
