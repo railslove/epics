@@ -16,7 +16,7 @@ RSpec::Matchers.define :be_a_valid_ebics_doc do
   end
 
   description do
-    "be a valid EBCIS document"
+    "be a valid EBICS document"
   end
 
 end
