@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 2.7.0
+
 - [ENHANCEMENT] Added FDL order type (thanks to @frantisekrokusek)
 - [ENHANCEMENT] Added support for configuring locale and client/product name on initialization (thanks to @frantisekrokusek)
 
