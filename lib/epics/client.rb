@@ -198,6 +198,10 @@ class Epics::Client
     download_and_unzip(Epics::CRZ, from: from, to: to)
   end
 
+  def BKA(from, to)
+    download_and_unzip(Epics::BKA, from: from, to: to)
+  end
+
   def C52(from, to)
     download_and_unzip(Epics::C52, from: from, to: to)
   end

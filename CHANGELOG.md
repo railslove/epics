@@ -1,5 +1,7 @@
 ### Unreleased
 
+- [ENHANCEMENT] Added BKA order type
+
 ### 2.7.0
 
 - [ENHANCEMENT] Added FDL order type (thanks to @frantisekrokusek)
