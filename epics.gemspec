@@ -44,6 +44,8 @@ Gem::Specification.new do |spec|
   spec.post_install_message += "Please create an issue on github (railslove/epics) if anything does not work as expected. And contact team@railslove.com if you are looking for support with your integration.\n"
   spec.post_install_message += "\e[32m" + ('*' * 60) + "\n\e[0m"
 
+  spec.add_dependency 'base64'
+  spec.add_dependency 'bigdecimal'
   spec.add_dependency 'faraday',  '>= 1.10.0'
   spec.add_dependency 'i18n',     '>= 1.1.0'
   spec.add_dependency 'nokogiri', '>= 1.16.7'
