@@ -35,7 +35,7 @@ class Epics::Client
       x: options[:x_509_certificate_x_content],
       e: options[:x_509_certificate_e_content]
     }
-    self.current_order_id = 0
+    self.current_order_id = 466560
     self.version = VERSION_H4
     self.signature_version = VERSION_A6
 
