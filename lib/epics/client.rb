@@ -28,7 +28,7 @@ class Epics::Client
     self.partner_id = partner_id
     self.locale = locale
     self.product_name = product_name
-    self.current_order_id = 0
+    self.current_order_id = 466560
     self.version = VERSION_H4
     self.signature_version = VERSION_A6
 
