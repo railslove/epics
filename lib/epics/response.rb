@@ -12,7 +12,15 @@ class Epics::Response
   end
 
   def technical_code
+    mutable_return_code.empty? ? system_return_code : mutable_return_code
+  end
+
+  def mutable_return_code
     doc.xpath("//xmlns:header/xmlns:mutable/xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").text
+  end
+
+  def system_return_code
+    doc.xpath("//xmlns:SystemReturnCode/xmlns:ReturnCode", xmlns: 'http://www.ebics.org/H000').text
   end
 
   def business_error?
