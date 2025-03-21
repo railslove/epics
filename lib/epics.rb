@@ -10,6 +10,8 @@ require 'faraday'
 require 'securerandom'
 require 'time'
 require "epics/version"
+require "epics/keyring"
+require "epics/signature"
 require "epics/signature_algorithm"
 require "epics/signature_algorithm/base"
 require "epics/signature_algorithm/rsa"

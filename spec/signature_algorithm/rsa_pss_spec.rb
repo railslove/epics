@@ -1,6 +1,6 @@
 RSpec.describe Epics::SignatureAlgorithm::RsaPss do
 
-  subject { described_class.new( File.read(File.join( File.dirname(__FILE__), 'fixtures', 'e002.pem'))) }
+  subject { described_class.new( File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'e002.pem'))) }
 
   describe '#public_digest' do
 
