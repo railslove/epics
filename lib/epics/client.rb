@@ -1,57 +1,46 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name, :current_order_id
-  attr_reader :version
-  attr_accessor :signature_version
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys_content, :locale, :product_name, :current_order_id
+  attr_reader :keyring
   attr_writer :iban, :bic, :name
 
   def_delegators :connection, :post
 
-  VERSION_H3 = 'H003'
-  VERSION_H4 = 'H004'
-  VERSION_H5 = 'H005'
-  VERSION_A5 = 'A005'
-  VERSION_A6 = 'A006'
-
-  VERSIONS = [VERSION_H3, VERSION_H4, VERSION_H5]
-
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
-  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics::DEFAULT_LOCALE, product_name: Epics::DEFAULT_PRODUCT_NAME)
-    self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
-    self.passphrase = passphrase
-    self.keys = extract_keys if keys_content
+  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
     self.url  = url
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
-    self.locale = locale
-    self.product_name = product_name
-    self.current_order_id = 466560
-    self.version = VERSION_H4
-    self.signature_version = VERSION_A6
+    self.locale = options[:locale] || Epics::DEFAULT_LOCALE
+    self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
+    self.current_order_id = options[:order_id] || 466560
+    @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
+    self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
+    self.passphrase = passphrase
+    extract_keys if keys_content
 
     yield self if block_given?
   end
 
-  def version=(version)
-    raise ArgumentError, "Unsupported version: #{version}" unless VERSIONS.include?(version)
-
-    @version = version
+  def version
+    keyring.version
   end
 
   def urn_schema
     case version
-    when VERSION_H3
+    when Epics::Keyring::VERSION_24
       "http://www.ebics.org/#{version}"
-    when VERSION_H4, VERSION_H5
+    when Epics::Keyring::VERSION_25, Epics::Keyring::VERSION_30
       "urn:org:ebics:#{version}"
     end
   end
 
   def inspect
     "#<#{self.class}:#{self.object_id}
+     @version=#{self.keyring.version},
      @keys=#{self.keys.keys},
      @user_id=\"#{self.user_id}\",
      @partner_id=\"#{self.partner_id}\""
@@ -63,31 +52,54 @@ class Epics::Client
   end
 
   def encryption_version
-    'E002'
+    keyring.user_encryption&.version
   end
 
   def encryption_key
-    keys[encryption_version]
+    keyring.user_encryption&.key
+  end
+
+  def signature_version
+    keyring.user_signature&.version
   end
 
   def signature_key
-    keys[signature_version]
+    keyring.user_signature&.key
   end
 
   def authentication_version
-    'X002'
+    keyring.user_authentication&.version
   end
 
   def authentication_key
-    keys[authentication_version]
+    keyring.user_authentication&.key
   end
 
   def bank_encryption_key
-    keys["#{host_id.upcase}.#{encryption_version}"]
+    keyring.bank_encryption&.key
+  end
+
+  def bank_encryption_version
+    keyring.bank_encryption&.version
   end
 
   def bank_authentication_key
-    keys["#{host_id.upcase}.#{authentication_version}"]
+    keyring.bank_authentication&.key
+  end
+
+  def bank_authentication_version
+    keyring.bank_authentication&.version
+  end
+
+  def keys
+    user_signature = [keyring.user_signature, keyring.user_authentication, keyring.user_encryption].each_with_object({}) do |signature, keys|
+      keys[signature.version] = signature.key if signature
+    end
+    bank_signature = [keyring.bank_authentication, keyring.bank_encryption].each_with_object({}) do |signature, keys|
+      keys["#{host_id.upcase}.#{signature.version}"] = signature.key if signature
+    end
+
+    user_signature.merge(bank_signature)
   end
 
   def name
@@ -106,15 +118,25 @@ class Epics::Client
     @order_types ||= (self.HTD; @order_types)
   end
 
-  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, &block)
-    client = new(nil, passphrase, url, host_id, user_id, partner_id, &block)
-    client.keys = [client.signature_version, client.authentication_version, client.encryption_version].each_with_object({}) do |type, memo|
-      memo[type] = case type
-                   when VERSION_A6
-                     Epics::SignatureAlgorithm::RsaPss.new( OpenSSL::PKey::RSA.generate(keysize) )
-                   else
-                     Epics::SignatureAlgorithm::RsaPkcs1.new( OpenSSL::PKey::RSA.generate(keysize) )
-                   end
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, options = {}, &block)
+    signature_version = options.delete(:signature_version) || Epics::Signature::A_VERSION_6
+    client = new(nil, passphrase, url, host_id, user_id, partner_id, options, &block)
+    [signature_version, Epics::Signature::X_VERSION_2, Epics::Signature::E_VERSION_2].each do |version|
+      signature = case version
+                  when Epics::Signature::A_VERSION_6
+                    Epics::Signature.new(version, Epics::SignatureAlgorithm::RsaPss.new(OpenSSL::PKey::RSA.generate(keysize)))
+                  when Epics::Signature::A_VERSION_5, Epics::Signature::X_VERSION_2, Epics::Signature::E_VERSION_2
+                    Epics::Signature.new(version, Epics::SignatureAlgorithm::RsaPkcs1.new(OpenSSL::PKey::RSA.generate(keysize)))
+                  end
+
+      case signature.type
+      when Epics::Signature::TYPE_A
+        client.keyring.user_signature = signature
+      when Epics::Signature::TYPE_X
+        client.keyring.user_authentication = signature
+      when Epics::Signature::TYPE_E
+        client.keyring.user_encryption = signature
+      end
     end
 
     client
@@ -166,7 +188,7 @@ class Epics::Client
 
   def HPB
     Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: urn_schema).each do |node|
-      type = node.parent.last_element_child.content
+      signature_version = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
@@ -176,13 +198,22 @@ class Epics::Client
       sequence << OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(exponent, 2))
 
       bank = OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
+      signature = Epics::Signature.new(
+        signature_version,
+        case signature_version
+        when Epics::Signature::E_VERSION_2, Epics::Signature::X_VERSION_2
+          Epics::SignatureAlgorithm::RsaPkcs1.new(bank)
+        end
+      )
 
-      self.keys["#{host_id.upcase}.#{type}"] = case type
-                                               when VERSION_A6
-                                                 Epics::SignatureAlgorithm::RsaPss.new(bank)
-                                               else
-                                                 Epics::SignatureAlgorithm::RsaPkcs1.new(bank)
-                                               end
+      case signature.type
+      when Epics::Signature::TYPE_E
+        keyring.bank_encryption = signature
+      when Epics::Signature::TYPE_X
+        keyring.bank_authentication = signature
+      end
+    rescue Epics::Signature::UnknownTypeError
+    rescue Epics::Signature::UnknownVersionError
     end
 
     [bank_authentication_key, bank_encryption_key]
@@ -371,18 +402,48 @@ class Epics::Client
   end
 
   def extract_keys
-    JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
-      memo[type] = case type
-                   when VERSION_A6
-                     Epics::SignatureAlgorithm::RsaPss.new(decrypt(key))
-                   else
-                     Epics::SignatureAlgorithm::RsaPkcs1.new(decrypt(key))
-                   end if key
+    JSON.load(self.keys_content).each do |signature_version, key|
+      next unless key
+
+      is_bank_key = signature_version.start_with?("#{host_id.upcase}.")
+      signature_version = signature_version.sub("#{host_id.upcase}.", '') if is_bank_key
+
+      signature = Epics::Signature.new(
+        signature_version,
+        case signature_version
+        when Epics::Signature::A_VERSION_6
+          Epics::SignatureAlgorithm::RsaPss.new(decrypt(key))
+        when Epics::Signature::A_VERSION_5, Epics::Signature::E_VERSION_2, Epics::Signature::X_VERSION_2
+          Epics::SignatureAlgorithm::RsaPkcs1.new(decrypt(key))
+        end
+      )
+
+      if is_bank_key
+        case signature.type
+        when Epics::Signature::TYPE_X
+          keyring.bank_authentication = signature
+        when Epics::Signature::TYPE_E
+          keyring.bank_encryption = signature
+        end
+      else
+        case signature.type
+        when Epics::Signature::TYPE_A
+          keyring.user_signature = signature
+        when Epics::Signature::TYPE_X
+          keyring.user_authentication = signature
+        when Epics::Signature::TYPE_E
+          keyring.user_encryption = signature
+        end
+      end
+    rescue Epics::Signature::UnknownTypeError
+    rescue Epics::Signature::UnknownVersionError
     end
   end
 
   def dump_keys
-    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
+    JSON.pretty_generate(keys.each_with_object({}) do |(version, signature), keys|
+      keys[version] = encrypt(signature.key.to_pem)
+    end, JSON.dump_default_options)
   end
 
   def new_cipher

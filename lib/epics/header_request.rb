@@ -23,7 +23,7 @@ class Epics::HeaderRequest
           xml.Product(client.product_name, 'Language' => client.locale)
           xml.OrderDetails {
             xml.OrderType options[:order_type]
-            xml.OrderID b36encode(client.next_order_id) if client.version == Epics::Client::VERSION_H3
+            xml.OrderID b36encode(client.next_order_id) if client.version == Epics::Keyring::VERSION_24
             xml.OrderAttribute options[:order_attribute]
             xml.StandardOrderParams {
               build_attributes(xml, options[:order_params])
@@ -31,8 +31,8 @@ class Epics::HeaderRequest
             build_attributes(xml, options[:custom_order_params]) if options[:custom_order_params]
           }
           xml.BankPubKeyDigests {
-            xml.Authentication(client.bank_authentication_key.public_digest, Version: client.authentication_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
-            xml.Encryption(client.bank_encryption_key.public_digest, Version: client.encryption_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
+            xml.Authentication(client.bank_authentication_key.public_digest, Version: client.bank_authentication_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
+            xml.Encryption(client.bank_encryption_key.public_digest, Version: client.bank_encryption_version, Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256')
           } if options[:with_bank_pubkey_digests]
           xml.SecurityMedium b36encode(options[:security_medium]) if options[:security_medium]
           xml.NumSegments options[:num_segments] if options[:num_segments]
