@@ -107,6 +107,13 @@ class Epics::Client
     post(url, Epics::INI.new(self).to_xml).body.ok?
   end
 
+  def HEV
+    res = post(url, Epics::HEV.new(self).to_xml).body
+    res.doc.xpath("//xmlns:VersionNumber", xmlns: 'http://www.ebics.org/H000').each_with_object({}) do |node, versions|
+      versions[node['ProtocolVersion']] = node.content
+    end
+  end
+
   def HPB
     Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: "urn:org:ebics:H004").each do |node|
       type = node.parent.last_element_child.content

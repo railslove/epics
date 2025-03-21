@@ -17,7 +17,7 @@ class Epics::Signer
   end
 
   def sign!
-    signature_value_node = doc.xpath("//ds:SignatureValue").first
+    signature_value_node = doc.xpath("//ds:SignatureValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
 
     if signature_node
       signature_value_node.content = Base64.encode64(client.x.key.sign(digester, signature_node.canonicalize)).gsub(/\n/,'')
@@ -27,11 +27,11 @@ class Epics::Signer
   end
 
   def digest_node
-    @d ||= doc.xpath("//ds:DigestValue").first
+    @d ||= doc.xpath("//ds:DigestValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
   end
 
   def signature_node
-    @s ||= doc.xpath("//ds:SignedInfo").first
+    @s ||= doc.xpath("//ds:SignedInfo", ds: "http://www.w3.org/2000/09/xmldsig#").first
   end
 
   def digester
