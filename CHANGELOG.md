@@ -1,5 +1,9 @@
 ### Unreleased
 
+### 2.9.0
+
+- [ENHANCEMENT] Added HEV order type (thanks to @jplot)
+
 ### 2.8.0
 
 - [ENHANCEMENT] Added BKA order type
