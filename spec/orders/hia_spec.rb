@@ -11,7 +11,7 @@ RSpec.describe Epics::HIA do
     describe 'validate against fixture' do
       let(:hia) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', RUBY_ENGINE, 'hia.xml'))) }
 
-      it "will match exactly" do
+      it 'will match exactly' do
         expect(Nokogiri::XML(subject.to_xml)).to be_equivalent_to(hia)
       end
     end
@@ -26,7 +26,7 @@ RSpec.describe Epics::HIA do
 
       let(:hia_request_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hia_request_order_data.xml'))) }
 
-      it "will match exactly" do
+      it 'will match exactly' do
         expect(Nokogiri::XML(subject.order_data)).to be_equivalent_to(hia_request_order_data)
       end
     end
