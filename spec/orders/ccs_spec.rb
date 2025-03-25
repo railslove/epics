@@ -1,21 +1,16 @@
 RSpec.describe Epics::CCS do
-
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
   let(:document) { File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'cd1.xml') ) }
+
   subject { described_class.new(client, document) }
 
   describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
     it { expect(subject.header.to_s).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
     it { expect(subject.header.to_s).to include('<OrderType>CCS</OrderType>') }
   end
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
-  end
-
-  describe '#to_transfer_xml' do
-    before { subject.transaction_id = SecureRandom.hex(16) }
-
-    specify { expect(subject.to_transfer_xml).to be_a_valid_ebics_25_doc }
-  end
+  include_examples '#to_xml'
+  include_examples '#to_transfer_xml'
 end
