@@ -1,10 +1,12 @@
 RSpec.describe Epics::HIA do
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   subject { described_class.new(client) }
 
+  include_examples '#to_xml'
+
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
+    let(:version) { Epics::Keyring::VERSION_25 }
 
     describe 'validate against fixture' do
       let(:hia) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', RUBY_ENGINE, 'hia.xml'))) }
@@ -16,8 +18,9 @@ RSpec.describe Epics::HIA do
   end
 
   describe '#order_data' do
+    let(:version) { Epics::Keyring::VERSION_25 }
 
-    specify { expect(subject.order_data).to be_a_valid_ebics_25_doc }
+    specify { expect(subject.order_data).to be_a_valid_ebics_doc(version) }
 
     describe 'validate against fixture' do
 

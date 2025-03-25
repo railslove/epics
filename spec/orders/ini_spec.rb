@@ -1,12 +1,14 @@
 RSpec.describe Epics::INI do
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   before { allow(subject).to receive(:timestamp) { "2014-10-10T11:16:00Z" } }
 
   subject { described_class.new(client) }
 
+  include_examples '#to_xml'
+
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
+    let(:version) { Epics::Keyring::VERSION_25 }
 
     describe 'validate against fixture' do
       let(:signature_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', RUBY_ENGINE, 'ini.xml'))) }
@@ -18,7 +20,9 @@ RSpec.describe Epics::INI do
   end
 
   describe '#key_signature' do
-    specify { expect(subject.key_signature).to be_a_valid_ebics_25_doc }
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    specify { expect(subject.key_signature).to be_a_valid_ebics_doc(version) }
 
     describe 'validate against fixture' do
 
