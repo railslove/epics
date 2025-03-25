@@ -17,7 +17,7 @@ RSpec::Matchers.define :be_a_valid_ebics_doc do |version|
   end
 
   failure_message do |actual|
-    "expected that #{actual} would be a valid EBICS doc:\n\n #{xsd.validate(Nokogiri::XML(actual))}"
+    "expected that #{actual} would be a valid EBICS doc:\n\n #{xsd(version).validate(Nokogiri::XML(actual))}"
   end
 
   description do
