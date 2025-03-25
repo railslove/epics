@@ -6,7 +6,7 @@ RSpec.describe Epics::INI do
   subject { described_class.new(client) }
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
       let(:signature_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', RUBY_ENGINE, 'ini.xml'))) }
@@ -18,7 +18,7 @@ RSpec.describe Epics::INI do
   end
 
   describe '#key_signature' do
-    specify { expect(subject.key_signature).to be_a_valid_ebics_doc }
+    specify { expect(subject.key_signature).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
 

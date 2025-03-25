@@ -5,7 +5,7 @@ RSpec.describe Epics::HPD do
   subject { described_class.new(client) }
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
   end
 
 end

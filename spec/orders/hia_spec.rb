@@ -4,7 +4,7 @@ RSpec.describe Epics::HIA do
   subject { described_class.new(client) }
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
       let(:hia) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', RUBY_ENGINE, 'hia.xml'))) }
@@ -17,7 +17,7 @@ RSpec.describe Epics::HIA do
 
   describe '#order_data' do
 
-    specify { expect(subject.order_data).to be_a_valid_ebics_doc }
+    specify { expect(subject.order_data).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
 
