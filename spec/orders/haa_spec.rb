@@ -10,7 +10,7 @@ RSpec.describe Epics::HAA do
   end
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
       let(:signature_order_data) { Nokogiri::XML(File.read(File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'haa.xml'))) }
