@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ebics="urn:org:ebics:H005" targetNamespace="urn:org:ebics:H005" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<annotation>
+		<documentation xml:lang="de">ebics_H005.xsd inkludiert alle Schemadateien des EBICS-Protokolls, um die Eindeutigkeit von Element- und Typnamen im EBCIS Namespace zu erzwingen.</documentation>
+		<documentation xml:lang="en">ebics_H005.xsd includes all schema files for the EBICS protocol in order to enforce unique element and type names in the EBICS namespace.</documentation>
+	</annotation>
+	<include schemaLocation="ebics_request_H005.xsd"/>
+	<include schemaLocation="ebics_response_H005.xsd"/>
+	<include schemaLocation="ebics_keymgmt_request_H005.xsd"/>
+	<include schemaLocation="ebics_keymgmt_response_H005.xsd"/>
+</schema>
