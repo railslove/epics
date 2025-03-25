@@ -24,24 +24,24 @@ class Epics::HIA < Epics::GenericRequest
 
   def order_data
     Nokogiri::XML::Builder.new do |xml|
-      xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004') {
+      xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => client.urn_schema) {
         xml.AuthenticationPubKeyInfo {
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
-              xml.send('ds:Modulus', Base64.strict_encode64([client.x.n].pack("H*")))
-              xml.send('ds:Exponent', Base64.strict_encode64(client.x.key.e.to_s(2)))
+              xml.send('ds:Modulus', Base64.strict_encode64([client.authentication_key.n].pack("H*")))
+              xml.send('ds:Exponent', Base64.strict_encode64(client.authentication_key.key.e.to_s(2)))
             }
           }
-          xml.AuthenticationVersion 'X002'
+          xml.AuthenticationVersion client.authentication_version
         }
         xml.EncryptionPubKeyInfo{
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
-              xml.send('ds:Modulus', Base64.strict_encode64([client.e.n].pack("H*")))
-              xml.send('ds:Exponent', Base64.strict_encode64(client.e.key.e.to_s(2)))
+              xml.send('ds:Modulus', Base64.strict_encode64([client.encryption_key.n].pack("H*")))
+              xml.send('ds:Exponent', Base64.strict_encode64(client.encryption_key.key.e.to_s(2)))
             }
           }
-          xml.EncryptionVersion 'E002'
+          xml.EncryptionVersion client.encryption_version
         }
         xml.PartnerID partner_id
         xml.UserID user_id
@@ -51,7 +51,7 @@ class Epics::HIA < Epics::GenericRequest
 
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => client.urn_schema, 'Version' => client.version, 'Revision' => '1') {
         xml.parent.add_child(header)
         xml.parent.add_child(body)
       }
