@@ -4,6 +4,6 @@ RSpec.describe Epics::C5N do
   subject { described_class.new(client, from: "2014-09-01", to: "2014-09-01") }
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
   end
 end

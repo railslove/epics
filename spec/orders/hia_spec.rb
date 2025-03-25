@@ -5,7 +5,7 @@ RSpec.describe Epics::HIA do
   subject { described_class.new(client) }
 
   describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    specify { expect(subject.to_xml).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
       let(:hia) do
@@ -19,7 +19,8 @@ RSpec.describe Epics::HIA do
   end
 
   describe '#order_data' do
-    specify { expect(subject.order_data).to be_a_valid_ebics_doc }
+
+    specify { expect(subject.order_data).to be_a_valid_ebics_25_doc }
 
     describe 'validate against fixture' do
       let(:hia_request_order_data) do
