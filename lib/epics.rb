@@ -69,6 +69,12 @@ require "epics/signer"
 require "epics/x_509_certificate"
 require "epics/client"
 
+require 'epics/builders'
+require 'epics/crypt'
+require 'epics/factories'
+require 'epics/handlers'
+require 'epics/services'
+
 I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml')]
 
 module Epics
