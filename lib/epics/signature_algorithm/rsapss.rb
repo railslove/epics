@@ -17,8 +17,4 @@ class Epics::SignatureAlgorithm::RsaPss < Epics::SignatureAlgorithm::Rsa
       mgf1_hash:   mgf1_hash_algorithm,
     )
   end
-
-  def mgf1_hash_algorithm
-    HASH_ALGORITHM
-  end
 end

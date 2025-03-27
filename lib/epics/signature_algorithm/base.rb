@@ -11,17 +11,22 @@ class Epics::SignatureAlgorithm::Base
   # calculate digest (SHA256)
   # encode as Base64
   ####
+  # TODO: remove this method
   def public_digest
     c = [ e.gsub(/^0*/,''), n.gsub(/^0*/,'') ].map(&:downcase).join(" ")
 
     Base64.encode64(digester.digest(c)).strip
   end
 
-  def n
+  def exponent
     raise NotImplementedError
   end
 
-  def e
+  def modulus
+    raise NotImplementedError
+  end
+
+  def encrypt(data)
     raise NotImplementedError
   end
 
@@ -30,10 +35,6 @@ class Epics::SignatureAlgorithm::Base
   end
 
   def verify(signature, msg)
-    raise NotImplementedError
-  end
-
-  def digester
     raise NotImplementedError
   end
 end

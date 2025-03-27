@@ -1,5 +1,5 @@
 class Epics::SignatureAlgorithm::Rsa < Epics::SignatureAlgorithm::Base
-  HASH_ALGORITHM = 'SHA256'
+  HASH_ALGORITHM = 'sha256'
 
   def initialize(encoded_key, passphrase = nil)
     if encoded_key.kind_of?(OpenSSL::PKey::RSA)
@@ -9,33 +9,41 @@ class Epics::SignatureAlgorithm::Rsa < Epics::SignatureAlgorithm::Base
     end
   end
 
-  def n
-    self.key.n.to_s(16)
+  def exponent
+    key.e
   end
 
+  # TODO: remove this method
   def e
-    self.key.e.to_s(16)
+    exponent.to_s(16)
   end
 
-  def sign(msg)
-    key.sign(
-      hash_algorithm,
-      msg
-    )
+  def modulus
+    key.n
   end
 
-  def verify(signature, msg)
-    key.verify(
-      hash_algorithm,
-      Base64.decode64(signature),
-      msg
-    )
+  # TODO: remove this method
+  def n
+    modulus.to_s(16)
+  end
+
+  def mgf1_hash_algorithm
+    OpenSSL::Digest.new(HASH_ALGORITHM)
   end
 
   def hash_algorithm
-    HASH_ALGORITHM
+    OpenSSL::Digest.new(HASH_ALGORITHM)
   end
 
+  def encrypt(data)
+    key.public_encrypt(data)
+  end
+
+  def private_encrypt(data)
+    key.private_encrypt(data)
+  end
+
+  # TODO: remove this method
   def digester
     @digester ||= OpenSSL::Digest::SHA256.new
   end
