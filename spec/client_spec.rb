@@ -1,6 +1,6 @@
 RSpec.describe Epics::Client do
-
-  subject { described_class.new( File.read(File.join( File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  subject { described_class.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:key) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')) }
 
   describe 'attributes' do
     it { expect(subject.host_id).to eq('SIZBN001') }
@@ -12,14 +12,22 @@ RSpec.describe Epics::Client do
 
     it 'holds all keys, user and bank' do
       expect(subject.keys).to match(a_hash_including(
-        "E002" => be_a(Epics::Key),
-        "X002" => be_a(Epics::Key),
-        "A006" => be_a(Epics::Key),
-        "SIZBN001.E002" => be_a(Epics::Key),
-        "SIZBN001.X002" => be_a(Epics::Key)
-      ))
+                                      'E002' => be_a(Epics::Key),
+                                      'X002' => be_a(Epics::Key),
+                                      'A006' => be_a(Epics::Key),
+                                      'SIZBN001.E002' => be_a(Epics::Key),
+                                      'SIZBN001.X002' => be_a(Epics::Key)
+                                    ))
     end
 
+    it 'assigns x_509_certificates' do
+      subject.x_509_certificate_a_content = 'cert_a'
+      subject.x_509_certificate_x_content = 'cert_x'
+      subject.x_509_certificate_e_content = 'cert_e'
+      expect(subject.x_509_certificate_a_content).to eq('cert_a')
+      expect(subject.x_509_certificate_x_content).to eq('cert_x')
+      expect(subject.x_509_certificate_e_content).to eq('cert_e')
+    end
   end
 
   context 'environment settings' do
@@ -54,41 +62,43 @@ RSpec.describe Epics::Client do
 
   describe '#e' do
     it 'the encryption key' do
-      expect(subject.e.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
+      expect(subject.e.public_digest).to eq('rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=')
     end
   end
 
   describe '#x' do
     it 'the signing key' do
-      expect(subject.x.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
+      expect(subject.x.public_digest).to eq('Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=')
     end
   end
 
   describe '#a' do
     it 'the authentication key' do
-      expect(subject.a.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+      expect(subject.a.public_digest).to eq('9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=')
     end
   end
 
   describe '#bank_e' do
     it 'the banks encryption key' do
-      expect(subject.bank_e.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_e.public_digest).to eq('dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=')
     end
   end
 
   describe '#bank_x' do
     it 'the banks signing key' do
-      expect(subject.bank_x.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_x.public_digest).to eq('dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=')
     end
   end
 
   describe '#order_types' do
     before do
-      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                          'htd_order_data.xml')))
     end
 
     it 'extracts the accessible order types of a subscriber' do
-      expect(subject.order_types).to match_array(%w(PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CIP CD1 CDB CDD))
+      expect(subject.order_types).to match_array(%w[PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE
+                                                    HVS CCS CCT CIP CD1 CDB CDD])
     end
   end
 
@@ -98,109 +108,119 @@ RSpec.describe Epics::Client do
     end
 
     before do
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[ebicsNoPubKeyDigestsRequest])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response_ebics_ns.xml')))
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: /ebicsNoPubKeyDigestsRequest/)
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                          'hpb_response_ebics_ns.xml')))
     end
 
     it { expect(subject.HPB).to match([be_a(Epics::Key), be_a(Epics::Key)]) }
 
     it 'changes the SIZBN001.(E|X)002 keys' do
-      expect { subject.HPB }.to change { subject.keys["SIZBN001.E002"] }
-      expect { subject.HPB }.to change { subject.keys["SIZBN001.X002"] }
+      expect { subject.HPB }.to(change { subject.keys['SIZBN001.E002'] })
+      expect { subject.HPB }.to(change { subject.keys['SIZBN001.X002'] })
     end
 
     describe 'crypto' do
-
       before { subject.HPB }
 
-      it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
-      it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
+      it { expect(subject.keys['SIZBN001.E002'].public_digest).to eq(e_key.public_digest) }
+      it { expect(subject.keys['SIZBN001.X002'].public_digest).to eq(e_key.public_digest) }
     end
 
     describe 'when order data wont include namesspaces' do
       before do
-        allow(subject).to receive(:download).with(Epics::HPB).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'hpb_response_order_without_ns.xml')))
+        allow(subject).to receive(:download).with(Epics::HPB).and_return(File.read(File.join(File.dirname(__FILE__),
+                                                                                             'fixtures', 'xml', 'hpb_response_order_without_ns.xml')))
 
         subject.HPB
       end
 
-      it { expect(subject.keys["SIZBN001.E002"].public_digest).to eq(e_key.public_digest) }
-      it { expect(subject.keys["SIZBN001.X002"].public_digest).to eq(e_key.public_digest) }
+      it { expect(subject.keys['SIZBN001.E002'].public_digest).to eq(e_key.public_digest) }
+      it { expect(subject.keys['SIZBN001.X002'].public_digest).to eq(e_key.public_digest) }
     end
   end
-
 
   describe '#CDB' do
     let(:cdb_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb.xml')) }
     before do
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_init_response.xml')))
-      stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-        .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
-        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cdb_transfer_response.xml')))
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: %r{<TransactionPhase>Initialisation</TransactionPhase>})
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                          'cdb_init_response.xml')))
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: %r{<TransactionPhase>Transfer</TransactionPhase>})
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                          'cdb_transfer_response.xml')))
     end
 
-    it { expect(subject.CDB(cdb_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+    it { expect(subject.CDB(cdb_document)).to eq(%w[387B7BE88FE33B0F4B60AC64A63F18E2 N00L]) }
   end
 
   describe '#CD1' do
     let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
     describe 'normal behaviour' do
       before do
-        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
-          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')))
-        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
-          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')))
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Initialisation</TransactionPhase>})
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                            'cd1_init_response.xml')))
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Transfer</TransactionPhase>})
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                            'cd1_transfer_response.xml')))
       end
 
-      it { expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N00L"]) }
+      it { expect(subject.CD1(cd1_document)).to eq(%w[387B7BE88FE33B0F4B60AC64A63F18E2 N00L]) }
     end
 
     describe 'special case' do
       before do
-        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-          .with(:body => %r[<TransactionPhase>Initialisation</TransactionPhase>])
-          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')).sub('N00L', 'N11L'))
-        stub_request(:post, "https://194.180.18.30/ebicsweb/ebicsweb")
-          .with(:body => %r[<TransactionPhase>Transfer</TransactionPhase>])
-          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')).sub('<OrderID>N00L</OrderID>', ''))
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Initialisation</TransactionPhase>})
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_init_response.xml')).sub(
+            'N00L', 'N11L'
+          ))
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Transfer</TransactionPhase>})
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1_transfer_response.xml')).sub(
+            '<OrderID>N00L</OrderID>', ''
+          ))
       end
 
       # happend on some handelsbank accounts
       it 'can also try to fetch the order_id from the first transaction being made' do
-        expect(subject.CD1(cd1_document)).to eq(["387B7BE88FE33B0F4B60AC64A63F18E2","N11L"])
+        expect(subject.CD1(cd1_document)).to eq(%w[387B7BE88FE33B0F4B60AC64A63F18E2 N11L])
       end
     end
   end
 
   describe '#HTD' do
     before do
-      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data.xml')))
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                          'htd_order_data.xml')))
     end
 
     it 'sets @iban' do
-      expect { subject.HTD }.to change { subject.instance_variable_get("@iban") }
+      expect { subject.HTD }.to(change { subject.instance_variable_get('@iban') })
     end
 
     it 'sets @bic' do
-      expect { subject.HTD }.to change { subject.instance_variable_get("@bic") }
+      expect { subject.HTD }.to(change { subject.instance_variable_get('@bic') })
     end
 
     it 'sets @name' do
-      expect { subject.HTD }.to change { subject.instance_variable_get("@name") }
+      expect { subject.HTD }.to(change { subject.instance_variable_get('@name') })
     end
 
     it 'sets @order_types' do
-      expect { subject.HTD }.to change { subject.instance_variable_get("@order_types") }
+      expect { subject.HTD }.to(change { subject.instance_variable_get('@order_types') })
     end
 
     describe 'without iban' do
       before do
-        allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'htd_order_data_without_names.xml')))
+        allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                            'htd_order_data_without_names.xml')))
       end
 
       it 'sets @iban' do
@@ -211,11 +231,12 @@ RSpec.describe Epics::Client do
 
   describe '#C53/C52/C54/Z52/Z53/Z54 types with zipped data' do
     before do
-      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test.zip') ))
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures',
+                                                                          'test.zip')))
     end
 
     it 'will unzip the returned data' do
-      %w(C52 C53 C54 Z52 Z53 Z54).each do |c|
+      %w[C52 C53 C54 Z52 Z53 Z54].each do |c|
         expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
       end
     end
@@ -223,12 +244,142 @@ RSpec.describe Epics::Client do
 
   describe '#C53/C52/C54/Z52/Z53/Z54 types with zipped data with general purpose bit flag 3 set' do
     before do
-      allow(subject).to receive(:download).and_return( File.read(File.join(File.dirname(__FILE__), 'fixtures', 'test_with_general_purpose_bit_3.zip') ))
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures',
+                                                                          'test_with_general_purpose_bit_3.zip')))
     end
 
     it 'will unzip the returned data' do
-      %w(C52 C53 C54 Z52 Z53 Z54).each do |c|
+      %w[C52 C53 C54 Z52 Z53 Z54].each do |c|
         expect(subject.send(c, :today, :yesterday)).to eq(["ebics is great\n"])
+      end
+    end
+  end
+
+  describe '#x_509_certificate_a' do
+    subject(:x_509_certificate_a) { client.x_509_certificate_a }
+
+    context 'with valid x_509_certificate_a_content value' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_a_content = generate_x_509_crt(client.a.key, '/C=GB/O=TestOrg/CN=test.example.org')
+        client
+      end
+
+      it 'returns an instance of Epics::X509Certificate' do
+        expect(x_509_certificate_a).to be_a(Epics::X509Certificate)
+      end
+    end
+
+    context 'when x_509_certificate_a_content is nil' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_a_content = nil
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_a).to be_nil
+      end
+    end
+
+    context 'when x_509_certificate_a_content is empty string' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_a_content = ''
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_a).to be_nil
+      end
+    end
+  end
+
+  describe '#x_509_certificate_x' do
+    subject(:x_509_certificate_x) { client.x_509_certificate_x }
+
+    context 'with valid x_509_certificate_x_content value' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_x_content = generate_x_509_crt(client.x.key, '/C=GB/O=TestOrg/CN=test.example.org')
+        client
+      end
+
+      it 'returns an instance of Epics::X509Certificate' do
+        expect(x_509_certificate_x).to be_a(Epics::X509Certificate)
+      end
+    end
+
+    context 'when x_509_certificate_x_content is nil' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_x_content = nil
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_x).to be_nil
+      end
+    end
+
+    context 'when x_509_certificate_x_content is empty string' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_x_content = ''
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_x).to be_nil
+      end
+    end
+  end
+
+  describe '#x_509_certificate_e' do
+    subject(:x_509_certificate_e) { client.x_509_certificate_e }
+
+    context 'with valid x_509_certificate_e_content value' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_e_content = generate_x_509_crt(client.e.key, '/C=GB/O=TestOrg/CN=test.example.org')
+        client
+      end
+
+      it 'returns an instance of Epics::X509Certificate' do
+        expect(x_509_certificate_e).to be_a(Epics::X509Certificate)
+      end
+    end
+
+    context 'when x_509_certificate_e_content is nil' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_e_content = nil
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_e).to be_nil
+      end
+    end
+
+    context 'when x_509_certificate_e_content is empty string' do
+      let(:client) do
+        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                   'EBICS')
+        client.x_509_certificate_e_content = ''
+        client
+      end
+
+      it 'returns nil' do
+        expect(x_509_certificate_e).to be_nil
       end
     end
   end
