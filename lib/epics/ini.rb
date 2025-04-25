@@ -54,7 +54,7 @@ class Epics::INI < Epics::GenericRequest
 
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => client.urn_schema, 'Version' => client.version, 'Revision' => '1') {
         xml.parent.add_child(header)
         xml.parent.add_child(body)
       }

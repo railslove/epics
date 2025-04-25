@@ -2,11 +2,15 @@ class Epics::Client
   extend Forwardable
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name,
-                :x_509_certificate_a_content, :x_509_certificate_x_content, :x_509_certificate_e_content, :debug_mode
+                :x_509_certificate_a_content, :x_509_certificate_x_content, :x_509_certificate_e_content, :debug_mode,
+                :current_order_id
   attr_writer :iban, :bic, :name
-
+  attr_reader :keyring
+  
   def_delegators :connection, :post
-
+  
+  USER_AGENT = "EPICS v#{Epics::VERSION}"
+  
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
@@ -21,6 +25,8 @@ class Epics::Client
     self.x_509_certificate_a_content = options[:x_509_certificate_a_content]
     self.x_509_certificate_x_content = options[:x_509_certificate_x_content]
     self.x_509_certificate_e_content = options[:x_509_certificate_e_content]
+    self.current_order_id = options[:order_id] || 466560
+    @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
   end
 
   def inspect
@@ -28,6 +34,24 @@ class Epics::Client
      @keys=#{self.keys.keys},
      @user_id=\"#{self.user_id}\",
      @partner_id=\"#{self.partner_id}\""
+  end
+  
+  def next_order_id
+    raise 'Order ID overflow' if current_order_id >= 1679615
+    self.current_order_id += 1
+  end
+  
+  def version
+    keyring.version
+  end
+  
+  def urn_schema
+    case version
+    when Epics::Keyring::VERSION_24
+      "http://www.ebics.org/#{version}"
+    when Epics::Keyring::VERSION_25
+      "urn:org:ebics:#{version}"
+    end
   end
 
   def e

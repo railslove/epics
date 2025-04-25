@@ -22,6 +22,7 @@ class Epics::HeaderRequest
           xml.Product(client.product_name, 'Language' => client.locale)
           xml.OrderDetails {
             xml.OrderType options[:order_type]
+            xml.OrderID b36encode(client.next_order_id) if client.version == Epics::Keyring::VERSION_24
             xml.OrderAttribute options[:order_attribute]
             xml.StandardOrderParams {
               build_attributes(xml, options[:order_params])
@@ -54,5 +55,9 @@ class Epics::HeaderRequest
         xml.send(key, value)
       end
     end
+  end
+  
+  def b36encode(number)
+    number.to_s(36).upcase.rjust(4, '0')
   end
 end
