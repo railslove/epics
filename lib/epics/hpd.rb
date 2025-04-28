@@ -1,12 +1,6 @@
 class Epics::HPD < Epics::GenericRequest
-  def header
-    client.header_request.build(
-      nonce: nonce,
-      timestamp: timestamp,
-      order_type: 'HPD',
-      order_attribute: 'DZHNN',
-      order_params: {},
-      mutable: { TransactionPhase: 'Initialisation' }
-    )
+  def to_xml
+    builder = request_factory.create_hpd
+    builder.to_xml
   end
 end

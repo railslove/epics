@@ -422,7 +422,6 @@ class Epics::Client
 
   def connection
     @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT }, ssl: { verify: verify_ssl? }) do |faraday|
-      faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.use MyAdapter
       faraday.response :logger, ::Logger.new(STDOUT), bodies: true if debug_mode # log requests/response to STDOUT

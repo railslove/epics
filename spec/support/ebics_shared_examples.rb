@@ -1,5 +1,5 @@
-RSpec.shared_examples '#to_xml' do
-  describe '#to_xml' do |versions = [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_24]|
+RSpec.shared_examples '#to_xml' do |versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]|
+  describe '#to_xml' do
     versions.each do |version|
       context version do
         let(:version) { version }
@@ -9,8 +9,8 @@ RSpec.shared_examples '#to_xml' do
   end
 end
 
-RSpec.shared_examples '#to_transfer_xml' do
-  describe '#to_transfer_xml' do |versions = [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_24]|
+RSpec.shared_examples '#to_transfer_xml' do |versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]|
+  describe '#to_transfer_xml' do
     versions.each do |version|
       context version do
         let(:version) { version }
@@ -21,8 +21,8 @@ RSpec.shared_examples '#to_transfer_xml' do
   end
 end
 
-RSpec.shared_examples '#to_receipt_xml' do
-  describe '#to_receipt_xml' do |versions = [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_24]|
+RSpec.shared_examples '#to_receipt_xml' do |versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]|
+  describe '#to_receipt_xml' do
     versions.each do |version|
       context version do
         let(:version) { version }

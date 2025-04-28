@@ -4,6 +4,13 @@ RSpec.describe Epics::CDB do
 
   subject { described_class.new(client, document) }
 
-  include_examples '#to_xml'
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>OZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>CDB</OrderType>') }
+  end
+
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
   include_examples '#to_transfer_xml'
 end

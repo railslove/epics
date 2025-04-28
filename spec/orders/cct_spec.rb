@@ -7,10 +7,10 @@ RSpec.describe Epics::CCT do
   describe 'order attributes' do
     let(:version) { Epics::Keyring::VERSION_25 }
 
-    it { expect(subject.header.to_s).to include('<OrderAttribute>OZHNN</OrderAttribute>') }
-    it { expect(subject.header.to_s).to include('<OrderType>CCT</OrderType>') }
+    it { expect(subject.to_xml).to include('<OrderAttribute>OZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>CCT</OrderType>') }
   end
 
-  include_examples '#to_xml'
-  include_examples '#to_transfer_xml'
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_25]
 end
