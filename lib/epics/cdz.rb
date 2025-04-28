@@ -1,17 +1,6 @@
 class Epics::CDZ < Epics::GenericRequest
-  def header
-    client.header_request.build(
-      nonce: nonce,
-      timestamp: timestamp,
-      order_type: 'CDZ',
-      order_attribute: 'DZHNN',
-      order_params: !!options[:from] && !!options[:to] ? {
-        DateRange: {
-          Start: options[:from],
-          End: options[:to]
-        }
-      } : {},
-      mutable: { TransactionPhase: 'Initialisation' }
-    )
+  def to_xml
+    builder = request_factory.create_cdz(options[:from], options[:to])
+    builder.to_xml
   end
 end
