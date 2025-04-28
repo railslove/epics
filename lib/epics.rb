@@ -20,7 +20,6 @@ require "epics/signature_algorithm/rsapkcs1"
 require "epics/response"
 require "epics/error"
 require 'epics/letter_renderer'
-require "epics/middleware/xmlsig"
 require "epics/middleware/parse_ebics"
 require "epics/generic_request"
 require "epics/generic_upload_request"

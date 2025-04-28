@@ -20,7 +20,7 @@ RSpec.describe Epics::Crypt::Aes do
 
   describe '#decrypt' do
     it 'valid' do
-      expect(subject.decrypt(subject.encrypt('a' * 13))).to eq('a' * 13)
+      expect(subject.decrypt(Base64.strict_decode64('f8kId9dqBLaEbhSz9PBv7g=='))).to eq('a' * 13)
     end
   end
 

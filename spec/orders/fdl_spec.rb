@@ -35,6 +35,13 @@ RSpec.describe Epics::FDL do
   context 'without file_format' do
     subject(:order) { described_class.new(client) }
 
+    describe 'order attributes' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+
+      it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+      it { expect(subject.to_xml).to include('<OrderType>FDL</OrderType>') }
+    end
+
     include_examples '#to_xml'
     include_examples '#to_receipt_xml'
 

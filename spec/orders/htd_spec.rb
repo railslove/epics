@@ -3,5 +3,12 @@ RSpec.describe Epics::HTD do
 
   subject { described_class.new(client) }
 
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>HTD</OrderType>') }
+  end
+
   include_examples '#to_xml'
 end
