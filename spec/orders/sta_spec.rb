@@ -2,9 +2,9 @@ RSpec.describe Epics::STA do
   let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   context 'with date range' do
-    subject(:order) { described_class.new(client, from: '2014-09-01', to: '2014-09-30') }
+    subject(:order) { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-    include_examples '#to_xml'
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
     include_examples '#to_receipt_xml'
 
     describe '#to_xml' do
@@ -18,7 +18,14 @@ RSpec.describe Epics::STA do
   context 'without date range' do
     subject(:order) { described_class.new(client) }
 
-    include_examples '#to_xml'
+    describe 'order attributes' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+
+      it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+      it { expect(subject.to_xml).to include('<OrderType>STA</OrderType>') }
+    end
+
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
     include_examples '#to_receipt_xml'
 
     describe '#to_xml' do

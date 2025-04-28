@@ -1,13 +1,4 @@
-class Epics::AZV < Epics::GenericUploadRequest
-  def header
-    client.header_request.build(
-      nonce: nonce,
-      timestamp: timestamp,
-      order_type: 'CD1',
-      order_attribute: 'OZHNN',
-      order_params: {},
-      num_segments: 1,
-      mutable: { TransactionPhase: 'Initialisation' }
-    )
-  end
+require 'epics/cd1'
+
+class Epics::AZV < Epics::CD1
 end

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsUnsecuredRequest Revision="1" Version="H004" 
-  xmlns="urn:org:ebics:H004" 
-  xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ebicsUnsecuredRequest xmlns="urn:org:ebics:H004" Version="H004" Revision="1">
   <header authenticate="true">
     <static>
       <HostID>SIZBN001</HostID>

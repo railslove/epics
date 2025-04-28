@@ -3,5 +3,12 @@ RSpec.describe Epics::WSS do
 
   subject { described_class.new(client) }
 
-  include_examples '#to_xml'
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>WSS</OrderType>') }
+  end
+
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
 end

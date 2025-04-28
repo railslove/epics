@@ -18,10 +18,10 @@
          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
        </ds:Transforms>
        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-       <ds:DigestValue/>
+       <ds:DigestValue>qqBMh+vsFDI71+EhynHYjTMFSDKXCMQ2AYl91RXO2Fs=</ds:DigestValue>
      </ds:Reference>
    </ds:SignedInfo>
-   <ds:SignatureValue/>
+   <ds:SignatureValue>JMXBSYgQ0e4Ofss/JUMl3+POv7QSF+d52PFnmwccr4FiIoVgC7DtLPY8eDwGWwpjOYfnpAYGy2onoaC3K+xZwOx+0fLJ0XTjrcUxdDV2KCAjB1udIcERuLWwpU+jRwgXnHSlHrYbq2h0q3kZ5nPNbXhJen1JBFQGu1T2Lss7fLtmj65P1ugfYFBANqth9cWaZDD1Ck+5z7ZFUqXmru1eSf1IsnBh+57mZbQ/cefk4F7laTIw9UWm/yhOTfYxW/SlKCPDkFMVfdp3taDPHORngA9slIG0t5It94CMNSZncqeS5AYIOTGBV9HIcbrj9zVQL/BHn4BB3hdGbH8qWjgCrw==</ds:SignatureValue>
  </AuthSignature>
  <body>
    <TransferReceipt authenticate="true">

@@ -2,9 +2,9 @@ RSpec.describe Epics::CDZ do
   let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   context 'with date range' do
-    subject { described_class.new(client, from: '2014-09-01', to: '2014-09-30') }
+    subject { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-    include_examples '#to_xml'
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -18,7 +18,14 @@ RSpec.describe Epics::CDZ do
   context 'without date range' do
     subject { described_class.new(client) }
 
-    include_examples '#to_xml'
+    describe 'order attributes' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+
+      it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+      it { expect(subject.to_xml).to include('<OrderType>CDZ</OrderType>') }
+    end
+
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }

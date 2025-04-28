@@ -1,2 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsUnsecuredRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:org:ebics:H004" Version="H004" Revision="1"><header authenticate="true"><static><HostID>SIZBN001</HostID><PartnerID>EBICS</PartnerID><UserID>EBIX</UserID><Product Language="de">EPICS - a ruby ebics kernel</Product><OrderDetails><OrderType>INI</OrderType><OrderAttribute>DZNNN</OrderAttribute></OrderDetails><SecurityMedium>0000</SecurityMedium></static><mutable/></header><body><DataTransfer><OrderData>eJxlUltzmkAUfs+vyNDHTrOLogEHyXBTLlIhJIJ5g+yKiC6wLKD59bVJa2Mzcx72u5yzM+d88sPxsL/tMG3ykkw5/g5yt5i8lign2ZRr2eaHyD0oN3KYZyRhLcV+m7r4tKQIUyNhye25nTQT1Ey5LWPVBIC+7+/64V1JMzCAEAIogbMHNXn2jftwX1lxmr827+4QQp5T/v/JJptSkT/eq2TfYkVGzeQxVK+wV6J23zYKL4zK+xcRx6SijB0X2bOOJN8VE9dpk4UzGkJixbojuvny3vfaA3JWCWqWaWrYVixtX+kqlk7RMxUal9Vg92aecK7Rx2p2jOfMdgeFlgqiVSWbyKwDPk1SoOYCWEWG0FjrQO+1SHTtU+MSe109BmveIFbw3RrGm9k21MhuNaeiDUlqZPpAcLW2K2pp5utiGYKsCMiBui+jAUW7RRQO62GBmB503qnohTnsu5/B3NmHIDp6ehFCuoEOtHf9Wg2Pez7dC5Iz6LpuEda9wVTHnyWR3RbQs6zMHI8y4sMtP17WkPd3nuq3R9WqtvWCZJ1HwqjAawOxkm6kHVbNAzUXaI3sGaBvFq2dfjqVwacl/164eaxKgglT1EDV3tUL846uDvSUH3DIkkOlDCAv/ODhuZ54fsKPJxC+yOCfLoOrS1+ysPoIqKJCOJbBF/oTdZWahDKCqW0opmbr4Xn4hZCfm79CLIM/4MuYS8yVm1/X5hKV</OrderData></DataTransfer></body></ebicsUnsecuredRequest>
+<ebicsUnsecuredRequest xmlns="urn:org:ebics:H004" Version="H004" Revision="1">
+  <header authenticate="true">
+    <static>
+      <HostID>SIZBN001</HostID>
+      <PartnerID>EBICS</PartnerID>
+      <UserID>EBIX</UserID>
+      <Product Language="de">EPICS - a ruby ebics kernel</Product>
+      <OrderDetails>
+        <OrderType>INI</OrderType>
+        <OrderAttribute>DZNNN</OrderAttribute>
+      </OrderDetails>
+      <SecurityMedium>0000</SecurityMedium>
+    </static>
+    <mutable/>
+  </header>
+  <body>
+    <DataTransfer>
+      <OrderData>eJx1k1tzokAQhd/9FZb7uLWZQdGAhaS4KReJkEkE8wYBEdEBhuFifv2auEk2yW5Vv8x3TnVXdZ8Rbrrjod/EpEpzPBswV3BwI/YElCY4oDWJnTq04tOKRDFRAxr0z25czQY7SospAG3bXsVh+lRd5SQBCEJmcHFMo8+mdvTqGEIIAeTB2RNVafJjIPb6/a/DDLzNX/hZuYB1cKjjCzmzqJreIekrvgh2HtWHuhIZdpxfP3KxjwtCabdMHpSIdywusMw6WJrjEcS6r5icla6uHbs+RuY6iKpVGKqG7vO7J7L2+ZP3QNjKoiXYP2unOJXJXTHv/AU1rGEmhyynF8HW00qXCYMQSCkL1p7KVvrGVVrZ4yzjVFnY2BR37oZRse7+1Ef+dr5DMt6vF4QzIA7VRBmyllw3WcnPHYXLEUgyFx+J9Tgekmi/9NCoHGURVdzGPmUtu4Btc+suzAMCXmcrGYJkC01o7NuNhLoDEx5Y3hw2TbNEZatSyXTmgWfUGbR1PdEm4wQ7cMdMViVknL0tOXUn6cWuXOKksTHysnijRjQnW34fS9qRaMtoExlzQJ51UprtbCaAv5b8afNaV+Q4xlSUXEl+tb2Tt8OBf19OuE+PMaLBsRCHkGF/MfBc9wwzZSZTCB8F8KFfQgG+peIjQetLkEUJwokAvuGXtIH/xE1wAkJxTAxV1GRDQec57+BFfqjeNF8Afx69b93ef4rY+w2ZIxQ7</OrderData>
+    </DataTransfer>
+  </body>
+</ebicsUnsecuredRequest>
