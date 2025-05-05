@@ -50,5 +50,32 @@ RSpec.describe Epics::HIA do
         expect(subject.order_data).to include("<ds:X509Certificate>#{e_crt.data}</ds:X509Certificate>")
       end
     end
+    
+    context 'when EBICS version is 2.4' do
+      let(:client) do
+        Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', options)
+      end
+      let(:options) { {version: Epics::Keyring::VERSION_24} }
+      
+      it 'includes the correct OrderID in the headers' do
+        expect(subject.header.to_xml).to include("<OrderID>A001</OrderID>")
+      end
+      
+      it 'includes the correct urn schema and version' do
+        expect(subject.to_xml).to include('xmlns="http://www.ebics.org/H003"')
+        expect(subject.to_xml).to include('Version="H003"')
+      end
+    end
+    
+    context 'when EBICS version is 2.5' do
+      it 'does not include the OrderID in the headers' do
+        expect(subject.header.to_xml).not_to include("<OrderID>A001</OrderID>")
+      end
+      
+      it 'includes the correct urn schema' do
+        expect(subject.to_xml).to include('xmlns="urn:org:ebics:H004"')
+        expect(subject.to_xml).to include('Version="H004"')
+      end
+    end
   end
 end
