@@ -3,7 +3,7 @@ class Epics::X509Certificate
 
   attr_reader :certificate
 
-  def_delegators :certificate, :issuer, :version
+  def_delegators :certificate, :issuer, :version, :to_pem
 
   def initialize(crt_content)
     @certificate = OpenSSL::X509::Certificate.new(crt_content)

@@ -309,16 +309,31 @@ class Epics::Client
     Epics::X509Certificate.new(x_509_certificate_a_content)
   end
 
+  def x_509_certificate_a_hash
+    cert = OpenSSL::X509::Certificate.new(x_509_certificate_a_content)
+    Digest::SHA256.hexdigest(cert.to_der).upcase
+  end
+
   def x_509_certificate_x
     return if x_509_certificate_x_content.nil? || x_509_certificate_x_content.empty?
 
     Epics::X509Certificate.new(x_509_certificate_x_content)
   end
 
+  def x_509_certificate_x_hash
+    cert = OpenSSL::X509::Certificate.new(x_509_certificate_x_content)
+    Digest::SHA256.hexdigest(cert.to_der).upcase
+  end
+
   def x_509_certificate_e
     return if x_509_certificate_e_content.nil? || x_509_certificate_e_content.empty?
 
     Epics::X509Certificate.new(x_509_certificate_e_content)
+  end
+
+  def x_509_certificate_e_hash
+    cert = OpenSSL::X509::Certificate.new(x_509_certificate_e_content)
+    Digest::SHA256.hexdigest(cert.to_der).upcase
   end
 
   private
