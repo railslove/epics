@@ -1,6 +1,5 @@
 class Epics::Response
-  attr_accessor :doc
-  attr_accessor :client
+  attr_accessor :doc, :client
 
   def initialize(client, xml)
     self.doc = Nokogiri::XML.parse(xml)
@@ -8,7 +7,7 @@ class Epics::Response
   end
 
   def technical_error?
-    !["011000", "000000"].include?(technical_code)
+    !%w[011000 000000].include?(technical_code)
   end
 
   def technical_code
@@ -16,19 +15,19 @@ class Epics::Response
   end
 
   def mutable_return_code
-    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").text
+    doc.xpath('//xmlns:header/xmlns:mutable/xmlns:ReturnCode', xmlns: client.urn_schema).text
   end
 
   def system_return_code
-    doc.xpath("//xmlns:SystemReturnCode/xmlns:ReturnCode", xmlns: 'http://www.ebics.org/H000').text
+    doc.xpath('//xmlns:SystemReturnCode/xmlns:ReturnCode', xmlns: client.urn_schema).text
   end
 
   def business_error?
-    !["", "000000"].include?(business_code)
+    !['', '000000'].include?(business_code)
   end
 
   def business_code
-    doc.xpath("//xmlns:body/xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").text
+    doc.xpath('//xmlns:body/xmlns:ReturnCode', xmlns: client.urn_schema).text
   end
 
   def ok?
@@ -36,34 +35,34 @@ class Epics::Response
   end
 
   def last_segment?
-    !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']", xmlns: "urn:org:ebics:H004")
+    !!doc.at_xpath("//xmlns:header/xmlns:mutable/*[@lastSegment='true']", xmlns: client.urn_schema)
   end
 
   def segmented?
-    !!doc.at_xpath("//xmlns:header/xmlns:mutable/xmlns:SegmentNumber", xmlns: "urn:org:ebics:H004")
+    !!doc.at_xpath('//xmlns:header/xmlns:mutable/xmlns:SegmentNumber', xmlns: client.urn_schema)
   end
 
   def return_code
-    doc.xpath("//xmlns:ReturnCode", xmlns: "urn:org:ebics:H004").last.content
+    doc.xpath('//xmlns:ReturnCode', xmlns: client.urn_schema).last.content
   rescue NoMethodError
     nil
   end
 
   def report_text
-    doc.xpath("//xmlns:ReportText", xmlns: "urn:org:ebics:H004").first.content
+    doc.xpath('//xmlns:ReportText', xmlns: client.urn_schema).first.content
   end
 
   def transaction_id
-    doc.xpath("//xmlns:header/xmlns:static/xmlns:TransactionID", xmlns: 'urn:org:ebics:H004').text
+    doc.xpath('//xmlns:header/xmlns:static/xmlns:TransactionID', xmlns: client.urn_schema).text
   end
 
   def order_id
-    doc.xpath("//xmlns:header/xmlns:mutable/xmlns:OrderID", xmlns: "urn:org:ebics:H004").text
+    doc.xpath('//xmlns:header/xmlns:mutable/xmlns:OrderID', xmlns: client.urn_schema).text
   end
 
   def digest_valid?
     authenticated = doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join
-    digest_value = doc.xpath("//ds:DigestValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
+    digest_value = doc.xpath('//ds:DigestValue', ds: 'http://www.w3.org/2000/09/xmldsig#').first
 
     digest = Base64.encode64(digester.digest(authenticated)).strip
 
@@ -71,20 +70,20 @@ class Epics::Response
   end
 
   def signature_valid?
-    signature = doc.xpath("//ds:SignedInfo", ds: "http://www.w3.org/2000/09/xmldsig#").first.canonicalize
-    signature_value = doc.xpath("//ds:SignatureValue", ds: "http://www.w3.org/2000/09/xmldsig#").first
+    signature = doc.xpath('//ds:SignedInfo', ds: 'http://www.w3.org/2000/09/xmldsig#').first.canonicalize
+    signature_value = doc.xpath('//ds:SignatureValue', ds: 'http://www.w3.org/2000/09/xmldsig#').first
 
     client.bank_x.key.verify(digester, Base64.decode64(signature_value.content), signature)
   end
 
   def public_digest_valid?
-    encryption_pub_key_digest = doc.xpath("//xmlns:EncryptionPubKeyDigest", xmlns: 'urn:org:ebics:H004').first
+    encryption_pub_key_digest = doc.xpath('//xmlns:EncryptionPubKeyDigest', xmlns: client.urn_schema).first
 
     client.e.public_digest == encryption_pub_key_digest.content
   end
 
   def order_data
-    order_data_encrypted = Base64.decode64(doc.xpath("//xmlns:OrderData", xmlns: 'urn:org:ebics:H004').first.content)
+    order_data_encrypted = Base64.decode64(doc.xpath('//xmlns:OrderData', xmlns: client.urn_schema).first.content)
 
     data = (cipher.update(order_data_encrypted) + cipher.final)
 
@@ -92,7 +91,7 @@ class Epics::Response
   end
 
   def cipher
-    cipher = OpenSSL::Cipher.new("aes-128-cbc")
+    cipher = OpenSSL::Cipher.new('aes-128-cbc')
 
     cipher.decrypt
     cipher.padding = 0
@@ -101,13 +100,13 @@ class Epics::Response
   end
 
   def transaction_key
-    transaction_key_encrypted = Base64.decode64(doc.xpath("//xmlns:TransactionKey", xmlns: 'urn:org:ebics:H004').first.content)
+    transaction_key_encrypted = Base64.decode64(doc.xpath('//xmlns:TransactionKey',
+                                                          xmlns: client.urn_schema).first.content)
 
     @transaction_key ||= client.e.key.private_decrypt(transaction_key_encrypted)
   end
 
   def digester
-    @digester ||= OpenSSL::Digest::SHA256.new
+    @digester ||= OpenSSL::Digest.new('SHA256')
   end
-
 end
