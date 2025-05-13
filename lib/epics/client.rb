@@ -144,7 +144,7 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: "urn:org:ebics:H004").each do |node|
+    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: urn_schema).each do |node|
       type = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
@@ -267,15 +267,15 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: urn_schema).content.split(/\s/)
   end
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: "urn:org:ebics:H004").text rescue nil
-      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: "urn:org:ebics:H004").text rescue nil
-      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: "urn:org:ebics:H004").map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: urn_schema).text rescue nil
+      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: urn_schema).text rescue nil
+      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: urn_schema).text rescue nil
+      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: urn_schema).map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
     end.to_xml
   end
 
