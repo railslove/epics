@@ -23,9 +23,20 @@ class Epics::INI < Epics::GenericRequest
   end
 
   def key_signature
+    x_509_certificate_a = client.x_509_certificate_a
+
     Nokogiri::XML::Builder.new do |xml|
       xml.SignaturePubKeyOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'http://www.ebics.org/S001') {
         xml.SignaturePubKeyInfo {
+          if x_509_certificate_a
+            xml.send('ds:X509Data') do
+              xml.send('ds:X509IssuerSerial') do
+                xml.send('ds:X509IssuerName', x_509_certificate_a.issuer )
+                xml.send('ds:X509SerialNumber', x_509_certificate_a.version)
+              end
+              xml.send('ds:X509Certificate', x_509_certificate_a.data)
+            end
+          end
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.a.n].pack("H*")))
