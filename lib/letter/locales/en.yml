@@ -9,6 +9,7 @@ en:
       exponent: Exponent
       modulus: Modulus
       hash: Hash
+      certificate: Certificate
       bit: '%{bit} Bit'
       issued_in: Location/Date
       name: Name/Company
