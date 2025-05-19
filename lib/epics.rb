@@ -59,6 +59,7 @@ require "epics/hia"
 require "epics/ini"
 require "epics/hev"
 require "epics/signer"
+require "epics/x_509_certificate"
 require "epics/client"
 
 I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml')]

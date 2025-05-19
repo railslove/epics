@@ -23,9 +23,21 @@ class Epics::HIA < Epics::GenericRequest
   end
 
   def order_data
+    x_509_certificate_x = client.x_509_certificate_x
+    x_509_certificate_e = client.x_509_certificate_e
+
     Nokogiri::XML::Builder.new do |xml|
       xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004') {
         xml.AuthenticationPubKeyInfo {
+          if x_509_certificate_x
+            xml.send('ds:X509Data') do
+              xml.send('ds:X509IssuerSerial') do
+                xml.send('ds:X509IssuerName', x_509_certificate_x.issuer )
+                xml.send('ds:X509SerialNumber', x_509_certificate_x.version)
+              end
+              xml.send('ds:X509Certificate', x_509_certificate_x.data)
+            end
+          end
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.x.n].pack("H*")))
@@ -35,6 +47,15 @@ class Epics::HIA < Epics::GenericRequest
           xml.AuthenticationVersion 'X002'
         }
         xml.EncryptionPubKeyInfo{
+          if x_509_certificate_e
+            xml.send('ds:X509Data') do
+              xml.send('ds:X509IssuerSerial') do
+                xml.send('ds:X509IssuerName', x_509_certificate_e.issuer )
+                xml.send('ds:X509SerialNumber', x_509_certificate_e.version)
+              end
+              xml.send('ds:X509Certificate', x_509_certificate_e.data)
+            end
+          end
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.e.n].pack("H*")))

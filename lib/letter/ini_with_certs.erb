@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="UTF-8" />
+  <title>EBICS ini</title>
+  <style>
+      code {
+          font-size: 0.6rem;
+          overflow-wrap: break-word;
+      }
+      .code {
+          border-style: solid;
+          border-width: 1px;
+          padding: 8px;
+          background-color: azure;
+      }
+      .strong {
+          font-weight: bold;
+      }
+      h2 {
+          text-align: center;
+      }
+      td {
+          min-width: 150px;
+      }
+      table {
+          display: flex;
+          justify-content: center;
+      }
+      .column {
+          height: 100px;
+      }
+  </style>
+</head>
+<body>
+<div>
+  <h2><%= t('initialization_letter.a') %></h2>
+  <table>
+    <tr>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                <%= t('date') %> :
+              </td>
+              <td>
+                <%= Date.today.strftime('%d.%m.%Y') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('time') %> :
+              </td>
+              <td>
+                <%= Time.now.strftime('%H:%M:%S') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('recipient') %> :
+              </td>
+              <td>
+                <%= bankname %>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                Host-ID :
+              </td>
+              <td>
+                <%= host_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                User-ID :
+              </td>
+              <td>
+                <%= user_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                Partner-ID :
+              </td>
+              <td>
+                <%= partner_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('version') %> :
+              </td>
+              <td>
+                A006
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <p><%= t('certificate') %> :</p>
+  <pre class="code"><code><%= x_509_certificate_a_content %></code></pre>
+  <p><%= t('hash') %> (SHA-256) :</p>
+  <p class="code"><code><%= x_509_certificate_a_hash.scan(/../).join(":") %></code></p>
+  <p><%= t('confirmation') %></p>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <table>
+    <tr>
+      <td>
+        _________________________
+      </td>
+      <td>
+        _________________________
+      </td>
+      <td>
+        _________________________
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= t('issued_in') %>
+      </td>
+      <td>
+        <%= t('name') %>
+      </td>
+      <td>
+        <%= t('signature') %>
+      </td>
+    </tr>
+  </table>
+</div>
+<div style="page-break-after:always"></div>
+<div>
+  <h2><%= t('initialization_letter.x') %></h2>
+  <table>
+    <tr>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                <%= t('date') %> :
+              </td>
+              <td>
+                <%= Date.today.strftime('%d.%m.%Y') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('time') %> :
+              </td>
+              <td>
+                <%= Time.now.strftime('%H:%M:%S') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('recipient') %> :
+              </td>
+              <td>
+                <%= bankname %>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                Host-ID :
+              </td>
+              <td>
+                <%= host_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                User-ID :
+              </td>
+              <td>
+                <%= user_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                Partner-ID :
+              </td>
+              <td>
+                <%= partner_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('version') %> :
+              </td>
+              <td>
+                X002
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <p><%= t('certificate') %> :</p>
+  <pre class="code"><code><%= x_509_certificate_x_content %></code></pre>
+  <p><%= t('hash') %> (SHA-256) :</p>
+  <p class="code"><code><%= x_509_certificate_x_hash.scan(/../).join(":") %></code></p>
+</div>
+<div style="page-break-after:always"></div>
+<div>
+  <h2><%= t('initialization_letter.e') %></h2>
+  <table>
+    <tr>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                <%= t('date') %> :
+              </td>
+              <td>
+                <%= Date.today.strftime('%d.%m.%Y') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('time') %> :
+              </td>
+              <td>
+                <%= Time.now.strftime('%H:%M:%S') %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('recipient') %> :
+              </td>
+              <td>
+                <%= bankname %>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td>
+        <div class="column">
+          <table>
+            <tr>
+              <td class="strong">
+                Host-ID :
+              </td>
+              <td>
+                <%= host_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                User-ID :
+              </td>
+              <td>
+                <%= user_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                Partner-ID :
+              </td>
+              <td>
+                <%= partner_id %>
+              </td>
+            </tr>
+            <tr>
+              <td class="strong">
+                <%= t('version') %> :
+              </td>
+              <td>
+                E002
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <p><%= t('certificate') %> :</p>
+  <pre class="code"><code><%= x_509_certificate_e_content %></code></pre>
+  <p><%= t('hash') %> (SHA-256) :</p>
+  <p class="code"><code><%= x_509_certificate_e_hash.scan(/../).join(":") %></code></p>
+  <p><%= t('confirmation') %></p>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <table>
+    <tr>
+      <td>
+        _________________________
+      </td>
+      <td>
+        _________________________
+      </td>
+      <td>
+        _________________________
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%= t('issued_in') %>
+      </td>
+      <td>
+        <%= t('name') %>
+      </td>
+      <td>
+        <%= t('signature') %>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>
