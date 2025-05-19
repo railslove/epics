@@ -1,5 +1,7 @@
 ### Unreleased
 
+- [ENHANCEMENT] Added Z01 order type (thanks to @Nymuxyzo)
+
 ### 2.9.0
 
 - [ENHANCEMENT] Added HEV order type (thanks to @jplot)
