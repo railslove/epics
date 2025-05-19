@@ -57,6 +57,7 @@ require "epics/xct"
 require "epics/hia"
 require "epics/ini"
 require "epics/hev"
+require "epics/z01"
 require "epics/signer"
 require "epics/client"
 

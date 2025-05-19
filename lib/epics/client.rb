@@ -225,6 +225,10 @@ class Epics::Client
     download_and_unzip(Epics::C5N, from: from, to: to)
   end
 
+  def Z01(from, to)
+    download_and_unzip(Epics::Z01, from: from, to: to)
+  end
+
   def Z52(from, to)
     download_and_unzip(Epics::Z52, from: from, to: to)
   end
