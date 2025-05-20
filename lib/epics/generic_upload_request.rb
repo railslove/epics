@@ -1,80 +1,22 @@
 class Epics::GenericUploadRequest < Epics::GenericRequest
-  attr_accessor :key
-  attr_accessor :iv
   attr_accessor :document
+  attr_reader :transaction_key
 
   def initialize(client, document, **options)
     super(client, **options)
     self.document = document
-    self.key = cipher.random_key
-    self.iv = 0.chr * cipher.iv_len
+    aes_factory = Epics::Factories::Crypt::AesFactory.new
+    aes = aes_factory.create
+    @transaction_key = aes.key
+    @crypt_service = Epics::Services::CryptService.new
   end
 
-  def cipher
-    @cipher ||= OpenSSL::Cipher.new("aes-128-cbc").tap { |cipher| cipher.encrypt }
+  def document_digest
+    @crypt_service.hash(document)
   end
 
-  def digester
-    @digester ||= OpenSSL::Digest::SHA256.new
+  def to_transfer_xml
+    builder = request_factory.create_transfer_upload(transaction_id, transaction_key, document, 1, true)
+    builder.to_xml
   end
-
-  def body
-    Nokogiri::XML::Builder.new do |xml|
-      xml.body {
-        xml.DataTransfer {
-          xml.DataEncryptionInfo(authenticate: true) {
-            xml.EncryptionPubKeyDigest(client.bank_e.public_digest, Version: 'E002', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
-            xml.TransactionKey Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
-          }
-          xml.SignatureData(encrypted_order_signature, authenticate: true)
-        }
-      }
-    end.doc.root
-  end
-
-  def order_signature
-    Nokogiri::XML::Builder.new do |xml|
-      xml.UserSignatureData('xmlns' => 'http://www.ebics.org/S001', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') {
-        xml.OrderSignatureData {
-          xml.SignatureVersion "A006"
-          xml.SignatureValue signature_value
-          xml.PartnerID partner_id
-          xml.UserID user_id
-        }
-      }
-    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
-  end
-
-  def signature_value
-    client.a.sign( digester.digest(document.gsub(/\n|\r/, "")) )
-  end
-
-  def encrypt(d)
-    cipher.reset
-    cipher.padding = 0
-    cipher.key = self.key
-    cipher.iv = self.iv
-    (cipher.update(pad(d)) + cipher.final)
-  end
-
-  def encrypted_order_data
-    dst = Zlib::Deflate.deflate(document)
-
-    Base64.encode64(encrypt(dst)).gsub(/\n/,'')
-  end
-
-  def encrypted_order_signature
-    dst = Zlib::Deflate.deflate(order_signature)
-
-    Base64.encode64(encrypt(dst)).gsub(/\n/,'')
-  end
-
-  def pad(d)
-    len = cipher.block_size*((d.size / cipher.block_size)+1)
-
-    d.ljust(len, [0].pack("C*")).tap do |padded|
-      padded[-1] = [len - d.size].pack("C*")
-    end
-  end
-
 end
