@@ -67,6 +67,10 @@ class Epics::Error < StandardError
         "short_text" => "Synchronisation necessary",
         "meaning" => "Recovery of the transaction requires synchronisation between the customer system and the bank system Continuation of the transaction using the recovery point from the bank system's EBICS response",
       },
+      "090005" => {
+        "symbol" => "EBICS_NO_DOWNLOAD_DATA_AVAILABLE",
+        "short_text" => "No data are available at present for the selected download order type"
+      },
       "091002" => {
         "symbol" => "EBICS_INVALID_USER_OR_USER_STATE",
         "short_text" => "Subscriber unknown or subscriber state inadmissible",

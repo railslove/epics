@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsResponse xmlns="http://www.ebics.org/H003" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Revision="1" Version="H003"
+               xsi:schemaLocation="http://www.ebics.org/H003 http://www.ebics.org/H003/ebics_response.xsd">
+  <header authenticate="true">
+    <static>
+      <TransactionID>543</TransactionID>
+    </static>
+    <mutable>
+      <TransactionPhase>Initialisation</TransactionPhase>
+      <ReturnCode>090005</ReturnCode>
+      <ReportText>[EBICS_NO_DOWNLOAD_DATA_AVAILABLE]</ReportText>
+    </mutable>
+  </header>
+  <body>
+    <ReturnCode authenticate="true">000000</ReturnCode>
+  </body>
+</ebicsResponse>
