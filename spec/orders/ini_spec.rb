@@ -36,13 +36,12 @@ RSpec.describe Epics::INI do
     context 'with x509 certificate' do
       let(:client) do
         client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
-        client.x_509_certificate_a_content = generate_x_509_crt(client.a.key, distinguished_name)
+        client.x_509_certificates_content = {a: generate_x_509_crt(client.a.key, '/C=GB/O=TestOrg/CN=test.example.org')}
         client
       end
-      let(:distinguished_name) { '/C=GB/O=TestOrg/CN=test.example.org' }
 
       it 'includes x509 certificate' do
-        a_crt = Epics::X509Certificate.new(client.x_509_certificate_a_content)
+        a_crt = Epics::X509Certificate.new(client.x_509_certificates_content[:a])
         expect(subject.key_signature).to include('<ds:X509IssuerName>/C=GB/O=TestOrg/CN=test.example.org</ds:X509IssuerName>')
         expect(subject.key_signature).to include('<ds:X509SerialNumber>2</ds:X509SerialNumber>')
         expect(subject.key_signature).to include("<ds:X509Certificate>#{a_crt.data}</ds:X509Certificate>")
