@@ -39,8 +39,4 @@ class Epics::LetterRenderer
   def x_509_certificate_e_hash
     @client.x_509_certificate_hash(:e)
   end
-  
-  def x_509_certificate_a_content
-    @client.x_509_certificates_content(:a)
-  end
 end
