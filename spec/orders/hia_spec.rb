@@ -35,15 +35,16 @@ RSpec.describe Epics::HIA do
     context 'with x509 certificate' do
       let(:client) do
         client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
-        client.x_509_certificate_x_content = generate_x_509_crt(client.x.key, distinguished_name)
-        client.x_509_certificate_e_content = generate_x_509_crt(client.e.key, distinguished_name)
+        client.x_509_certificates_content = {
+          x: generate_x_509_crt(client.x.key, '/C=GB/O=TestOrg/CN=test.example.org'),
+          e: generate_x_509_crt(client.e.key, '/C=GB/O=TestOrg/CN=test.example.org')
+        }
         client
       end
-      let(:distinguished_name) { '/C=GB/O=TestOrg/CN=test.example.org' }
 
       it 'includes x509 certificate' do
-        x_crt = Epics::X509Certificate.new(client.x_509_certificate_x_content)
-        e_crt = Epics::X509Certificate.new(client.x_509_certificate_e_content)
+        x_crt = Epics::X509Certificate.new(client.x_509_certificates_content[:x])
+        e_crt = Epics::X509Certificate.new(client.x_509_certificates_content[:e])
         expect(subject.order_data).to include('<ds:X509IssuerName>/C=GB/O=TestOrg/CN=test.example.org</ds:X509IssuerName>')
         expect(subject.order_data).to include('<ds:X509SerialNumber>2</ds:X509SerialNumber>')
         expect(subject.order_data).to include("<ds:X509Certificate>#{x_crt.data}</ds:X509Certificate>")
