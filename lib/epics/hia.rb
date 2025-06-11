@@ -23,8 +23,8 @@ class Epics::HIA < Epics::GenericRequest
   end
 
   def order_data
-    x_509_certificate_x = client.x_509_certificate_x
-    x_509_certificate_e = client.x_509_certificate_e
+    x_509_certificate_x = client.x_509_certificate(:x)
+    x_509_certificate_e = client.x_509_certificate(:e)
 
     Nokogiri::XML::Builder.new do |xml|
       xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004') {

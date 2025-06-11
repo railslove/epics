@@ -109,7 +109,7 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= x_509_certificate_a_content %></code></pre>
+  <pre class="code"><code><%= @client.x_509_certificates_content(:a) %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
   <p class="code"><code><%= x_509_certificate_a_hash.scan(/../).join(":") %></code></p>
   <p><%= t('confirmation') %></p>
@@ -218,7 +218,7 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= x_509_certificate_x_content %></code></pre>
+  <pre class="code"><code><%= @client.x_509_certificates_content(:x) %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
   <p class="code"><code><%= x_509_certificate_x_hash.scan(/../).join(":") %></code></p>
 </div>
@@ -298,7 +298,7 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= x_509_certificate_e_content %></code></pre>
+  <pre class="code"><code><%= @client.x_509_certificates_content(:e) %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
   <p class="code"><code><%= x_509_certificate_e_hash.scan(/../).join(":") %></code></p>
   <p><%= t('confirmation') %></p>

@@ -23,7 +23,7 @@ class Epics::INI < Epics::GenericRequest
   end
 
   def key_signature
-    x_509_certificate_a = client.x_509_certificate_a
+    x_509_certificate_a = client.x_509_certificate(:a)
 
     Nokogiri::XML::Builder.new do |xml|
       xml.SignaturePubKeyOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'http://www.ebics.org/S001') {
