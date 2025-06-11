@@ -2,7 +2,7 @@ class Epics::Client
   extend Forwardable
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name,
-                :x_509_certificate_a_content, :x_509_certificate_x_content, :x_509_certificate_e_content, :debug_mode
+                :x_509_certificates_content, :debug_mode
 
   attr_writer :iban, :bic, :name
   
@@ -19,9 +19,11 @@ class Epics::Client
     self.locale = options[:locale] || Epics::DEFAULT_LOCALE
     self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
     self.debug_mode = !!options[:debug_mode]
-    self.x_509_certificate_a_content = options[:x_509_certificate_a_content]
-    self.x_509_certificate_x_content = options[:x_509_certificate_x_content]
-    self.x_509_certificate_e_content = options[:x_509_certificate_e_content]
+    self.x_509_certificates_content = {
+      a: options[:x_509_certificate_a_content],
+      x: options[:x_509_certificate_x_content],
+      e: options[:x_509_certificate_e_content]
+    }
   end
 
   def inspect
@@ -279,37 +281,17 @@ class Epics::Client
   def save_keys(path)
     File.write(path, dump_keys)
   end
-
-  def x_509_certificate_a
-    return if x_509_certificate_a_content.nil? || x_509_certificate_a_content.empty?
-
-    Epics::X509Certificate.new(x_509_certificate_a_content)
+  
+  def x_509_certificate(type)
+    content = x_509_certificates_content[type.to_sym]
+    return if content.nil? || content.empty?
+    Epics::X509Certificate.new(content)
   end
-
-  def x_509_certificate_a_hash
-    cert = OpenSSL::X509::Certificate.new(x_509_certificate_a_content)
-    Digest::SHA256.hexdigest(cert.to_der).upcase
-  end
-
-  def x_509_certificate_x
-    return if x_509_certificate_x_content.nil? || x_509_certificate_x_content.empty?
-
-    Epics::X509Certificate.new(x_509_certificate_x_content)
-  end
-
-  def x_509_certificate_x_hash
-    cert = OpenSSL::X509::Certificate.new(x_509_certificate_x_content)
-    Digest::SHA256.hexdigest(cert.to_der).upcase
-  end
-
-  def x_509_certificate_e
-    return if x_509_certificate_e_content.nil? || x_509_certificate_e_content.empty?
-
-    Epics::X509Certificate.new(x_509_certificate_e_content)
-  end
-
-  def x_509_certificate_e_hash
-    cert = OpenSSL::X509::Certificate.new(x_509_certificate_e_content)
+  
+  def x_509_certificate_hash(type)
+    content = x_509_certificates_content[type.to_sym]
+    return if content.nil? || content.empty?
+    cert = OpenSSL::X509::Certificate.new(content)
     Digest::SHA256.hexdigest(cert.to_der).upcase
   end
 

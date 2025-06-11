@@ -13,9 +13,7 @@ class Epics::LetterRenderer
 
   alias t translate
 
-  def_delegators :@client, :host_id, :user_id, :partner_id, :a, :x, :e,
-                 :x_509_certificate_a_hash, :x_509_certificate_x_hash, :x_509_certificate_e_hash,
-                 :x_509_certificate_a_content, :x_509_certificate_x_content, :x_509_certificate_e_content
+  def_delegators :@client, :host_id, :user_id, :partner_id, :a, :x, :e
 
   def render(bankname)
     template_path = File.join(File.dirname(__FILE__), '../letter/', template_filename)
@@ -27,6 +25,22 @@ class Epics::LetterRenderer
   end
 
   def use_x_509_certificate_template?
-    x_509_certificate_a_content && x_509_certificate_x_content && x_509_certificate_e_content
+    x_509_certificate_a_hash && x_509_certificate_x_hash && x_509_certificate_e_hash
+  end
+  
+  def x_509_certificate_a_hash
+    @client.x_509_certificate_hash(:a)
+  end
+  
+  def x_509_certificate_x_hash
+    @client.x_509_certificate_hash(:x)
+  end
+  
+  def x_509_certificate_e_hash
+    @client.x_509_certificate_hash(:e)
+  end
+  
+  def x_509_certificate_a_content
+    @client.x_509_certificates_content(:a)
   end
 end
