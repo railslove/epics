@@ -26,6 +26,7 @@ class Epics::HIA < Epics::GenericRequest
     Nokogiri::XML::Builder.new do |xml|
       xml.HIARequestOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004') {
         xml.AuthenticationPubKeyInfo {
+          x509_data_xml(xml, client.x_509_certificate(:x))
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.x.n].pack("H*")))
@@ -35,6 +36,7 @@ class Epics::HIA < Epics::GenericRequest
           xml.AuthenticationVersion 'X002'
         }
         xml.EncryptionPubKeyInfo{
+          x509_data_xml(xml, client.x_509_certificate(:e))
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.e.n].pack("H*")))
