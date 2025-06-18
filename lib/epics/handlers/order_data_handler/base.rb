@@ -6,6 +6,7 @@ class Epics::Handlers::OrderDataHandler::Base
   def handle_ini(signature, timestamp = Time.now.utc)
     create_signature_pubbey_order_data do
       @xml.SignaturePubKeyInfo do
+        handle_x509_data(signature)
         handle_ini_signature_pubkey(signature, timestamp)
         @xml.SignatureVersion signature.version
       end
@@ -17,10 +18,12 @@ class Epics::Handlers::OrderDataHandler::Base
   def handle_hia(authentication, encryption, timestamp = Time.now.utc)
     create_hia_request_order_data do
       @xml.AuthenticationPubKeyInfo do
+        handle_x509_data(authentication)
         handle_hia_authentication_pubkey(authentication, timestamp)
         @xml.AuthenticationVersion authentication.version
       end
       @xml.EncryptionPubKeyInfo do
+        handle_x509_data(encryption)
         handle_hia_encryption_pubkey(encryption, timestamp)
         @xml.EncryptionVersion encryption.version
       end
@@ -74,6 +77,18 @@ class Epics::Handlers::OrderDataHandler::Base
   end
 
   private
+
+  def handle_x509_data(signature)
+    return unless signature.certificate
+
+    @xml.send('ds:X509Data') do
+      @xml.send('ds:X509IssuerSerial') do
+        @xml.send('ds:X509IssuerName', signature.certificate.issuer )
+        @xml.send('ds:X509SerialNumber', signature.certificate.version)
+      end
+      @xml.send('ds:X509Certificate', Base64.strict_encode64(signature.certificate.to_der))
+    end
+  end
 
   def handle_partner_id
     @xml.PartnerID @client.partner_id

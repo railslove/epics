@@ -6,6 +6,12 @@ class Epics::LetterRenderer
 
   def initialize(client)
     @client = client
+    @digest_resolver = case client.version
+    when Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25
+      Epics::Services::DigestResolver::V2.new
+    when Epics::Keyring::VERSION_30
+      Epics::Services::DigestResolver::V3.new
+    end
   end
 
   def translate(key, **options)
@@ -14,7 +20,9 @@ class Epics::LetterRenderer
 
   alias_method :t, :translate
 
-  def_delegators :@client, :host_id, :user_id, :partner_id,
+  def_delegators @digest_resolver, :confirm_digest
+  def_delegators :@client, :keyring,
+                 :host_id, :user_id, :partner_id,
                  :signature_version, :signature_key,
                  :encryption_version, :encryption_key,
                  :authentication_version, :authentication_key

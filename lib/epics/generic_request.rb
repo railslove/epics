@@ -14,6 +14,8 @@ class Epics::GenericRequest
       Epics::Factories::RequestFactory::V25.new(client)
     when Epics::Keyring::VERSION_24
       Epics::Factories::RequestFactory::V24.new(client)
+    when Epics::Keyring::VERSION_30
+      Epics::Factories::RequestFactory::V3.new(client)
     end
   end
 
@@ -23,6 +25,8 @@ class Epics::GenericRequest
       Epics::Handlers::OrderDataHandler::V25.new(client)
     when Epics::Keyring::VERSION_24
       Epics::Handlers::OrderDataHandler::V24.new(client)
+    when Epics::Keyring::VERSION_30
+      Epics::Handlers::OrderDataHandler::V3.new(client)
     end
   end
 

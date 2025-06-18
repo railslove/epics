@@ -23,6 +23,8 @@ class Epics::Handlers::OrderDataHandler::V2 < Epics::Handlers::OrderDataHandler:
     handle_pubkey_value(encryption, timestamp)
   end
 
+  private
+
   def handle_pubkey_value(signature, timestamp)
     modulus = [signature.key.modulus.to_s(16)].pack('H*')
     exponent = signature.key.exponent.to_s(2)

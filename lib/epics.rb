@@ -76,6 +76,23 @@ I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml
 module Epics
   DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
   DEFAULT_LOCALE = :de
+
+  class VersionSupportError < StandardError
+    attr_reader :version
+
+    def initialize(version, direction = 'above')
+      @version = version
+      message = case direction
+      when 'above'
+        "Supported from version #{version}"
+      when 'below'
+        "Support for versions below #{version}"
+      else
+        raise ArgumentError, "Invalid direction: #{direction}. Use 'above' or 'below'."
+      end
+      super(message)
+    end
+  end
 end
 
 Ebics = Epics

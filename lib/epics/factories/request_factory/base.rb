@@ -215,9 +215,9 @@ class Epics::Factories::RequestFactory::Base
           end
           static_builder.add_bank_pubbey_digests(
             @client.keyring.bank_authentication.version,
-            @digest_resolver.sign_digest(@client.keyring.bank_authentication.key),
+            @digest_resolver.sign_digest(@client.keyring.bank_authentication),
             @client.keyring.bank_encryption.version,
-            @digest_resolver.sign_digest(@client.keyring.bank_encryption.key)
+            @digest_resolver.sign_digest(@client.keyring.bank_encryption)
           )
           static_builder.add_security_medium Epics::Builders::StaticBuilder::SECURITY_MEDIUM_0000
         end
@@ -227,15 +227,6 @@ class Epics::Factories::RequestFactory::Base
       end
       xml_builder.add_body
       auth_signature_handler.handle(xml_builder)
-    end
-  end
-
-  class SupportedFromVersion < StandardError
-    attr_reader :version
-
-    def initialize(version)
-      @version = version
-      super("Supported from version #{@version}")
     end
   end
 end

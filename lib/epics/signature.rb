@@ -15,7 +15,7 @@ class Epics::Signature
   TYPES = [TYPE_A, TYPE_X, TYPE_E]
 
   attr_reader :type, :version
-  attr_accessor :key
+  attr_accessor :key, :certificate
 
   def initialize(version, key)
     self.key = key

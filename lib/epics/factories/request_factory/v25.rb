@@ -1,6 +1,6 @@
 class Epics::Factories::RequestFactory::V25 < Epics::Factories::RequestFactory::V2
   NOT_IMPLEMENTED_ORDER_TYPES = %w[
-    xek zsr
+    xek yct zsr
   ].freeze
 
   NOT_IMPLEMENTED_ORDER_TYPES.each do |type|
@@ -142,9 +142,9 @@ class Epics::Factories::RequestFactory::V25 < Epics::Factories::RequestFactory::
           end
           static_builder.add_bank_pubbey_digests(
             @client.keyring.bank_authentication.version,
-            @digest_resolver.sign_digest(@client.keyring.bank_authentication.key),
+            @digest_resolver.sign_digest(@client.keyring.bank_authentication),
             @client.keyring.bank_encryption.version,
-            @digest_resolver.sign_digest(@client.keyring.bank_encryption.key)
+            @digest_resolver.sign_digest(@client.keyring.bank_encryption)
           )
           static_builder.add_security_medium Epics::Builders::StaticBuilder::SECURITY_MEDIUM_0000
           static_builder.add_num_segments num_segments
