@@ -1,6 +1,6 @@
 class Epics::Factories::RequestFactory::V24 < Epics::Factories::RequestFactory::V2
   NOT_IMPLEMENTED_ORDER_TYPES = %w[
-    xek zsr
+    xek yct zsr
   ].freeze
 
   NOT_IMPLEMENTED_ORDER_TYPES.each do |type|

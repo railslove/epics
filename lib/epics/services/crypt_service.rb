@@ -26,6 +26,16 @@ class Epics::Services::CryptService
     aes.encrypt(data)
   end
 
+  # TODO: to be implemented
+  def sign(signature, data)
+    case signature.version
+    when Epics::Signature::A_VERSION_6
+      # emsaPssEncode
+    when Epics::Signature::A_VERSION_5
+      # emsaPkcs1V15Encode
+    end
+  end
+
   def encrypt_transaction_key(key, transaction_key)
     encrypt_by_rsa_public_key(key, transaction_key)
   end
@@ -44,6 +54,10 @@ class Epics::Services::CryptService
 
   def calculate_key(exponent, modulus)
     [exponent.gsub(/^0*/,''), modulus.gsub(/^0*/,'')].map(&:downcase).join(' ')
+  end
+
+  def calculate_certificate_fingerprint(certificate, algorithm = 'sha256')
+    hash(certificate.to_der, algorithm)
   end
 
   private

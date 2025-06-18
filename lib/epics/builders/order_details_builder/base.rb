@@ -12,6 +12,10 @@ class Epics::Builders::OrderDetailsBuilder::Base
     raise NotImplementedError
   end
 
+  def add_admin_order_type
+    raise NotImplementedError
+  end
+
   def add_order_id(order_id)
     @xml.OrderID order_id.to_s(36).upcase.rjust(4, '0')
     self
@@ -34,6 +38,14 @@ class Epics::Builders::OrderDetailsBuilder::Base
       xml.FileFormat format
     end
     self
+  end
+
+  def add_btd_order_params
+    raise NotImplementedError
+  end
+
+  def add_btu_order_params
+    raise NotImplementedError
   end
 
   def doc

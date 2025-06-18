@@ -7,3 +7,4 @@ end
 
 require 'epics/builders/order_details_builder/base'
 require 'epics/builders/order_details_builder/v2'
+require 'epics/builders/order_details_builder/v3'

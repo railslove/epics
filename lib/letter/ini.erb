@@ -113,7 +113,7 @@
       <p><%= t('modulus') %> (<%= t('bit', bit: a.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= a.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
-      <p class="code"><code><%= Base64.decode64(a.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
+      <p class="code"><code><%= confirm_digest(keyring.user_signature).upcase.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('confirmation') %></p>
       <br/>
       <br/>
@@ -224,7 +224,7 @@
       <p><%= t('modulus') %> (<%= t('bit', bit: x.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= x.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
-      <p class="code"><code><%= Base64.decode64(x.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
+      <p class="code"><code><%= confirm_digest(keyring.user_authentication).upcase.scan(/.{2}/).join(' ') %></code></p>
     </div>
     <div style="page-break-after:always"></div>
     <div>
@@ -306,7 +306,7 @@
       <p><%= t('modulus') %> (<%= t('bit', bit: e.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= e.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
-      <p class="code"><code><%= Base64.decode64(e.public_digest).unpack('H*').join.upcase.scan(/.{2}/).join(' ') %></code></p>
+      <p class="code"><code><%= confirm_digest(keyring.user_encryption).upcase.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('confirmation') %></p>
       <br/>
       <br/>
