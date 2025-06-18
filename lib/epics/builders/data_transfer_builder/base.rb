@@ -38,6 +38,14 @@ class Epics::Builders::DataTransferBuilder::Base
     self
   end
 
+  def add_data_digest(signature_version, digest = nil)
+    raise NotImplementedError
+  end
+
+  def add_additional_order_info
+    raise NotImplementedError
+  end
+
   def doc
     @xml.doc.root
   end

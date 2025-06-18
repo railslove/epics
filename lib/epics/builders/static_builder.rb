@@ -6,3 +6,4 @@ end
 
 require 'epics/builders/static_builder/base'
 require 'epics/builders/static_builder/v2'
+require 'epics/builders/static_builder/v3'
