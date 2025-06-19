@@ -1,12 +1,14 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name,
+                :x_509_certificates_content, :debug_mode
+
   attr_writer :iban, :bic, :name
-
+  
   def_delegators :connection, :post
-
-  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, locale: Epics::DEFAULT_LOCALE, product_name: Epics::DEFAULT_PRODUCT_NAME)
+  
+  def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
     self.keys = extract_keys if keys_content
@@ -14,8 +16,14 @@ class Epics::Client
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
-    self.locale = locale
-    self.product_name = product_name
+    self.locale = options[:locale] || Epics::DEFAULT_LOCALE
+    self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
+    self.debug_mode = !!options[:debug_mode]
+    self.x_509_certificates_content = {
+      a: options[:x_509_certificate_a_content],
+      x: options[:x_509_certificate_x_content],
+      e: options[:x_509_certificate_e_content]
+    }
   end
 
   def inspect
@@ -61,8 +69,8 @@ class Epics::Client
     @order_types ||= (self.HTD; @order_types)
   end
 
-  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048)
-    client = new(nil, passphrase, url, host_id, user_id, partner_id)
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, options = {})
+    client = new(nil, passphrase, url, host_id, user_id, partner_id, options)
     client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
       memo[type] = Epics::Key.new( OpenSSL::PKey::RSA.generate(keysize) )
     end
@@ -277,6 +285,19 @@ class Epics::Client
   def save_keys(path)
     File.write(path, dump_keys)
   end
+  
+  def x_509_certificate(type)
+    content = x_509_certificates_content[type.to_sym]
+    return if content.nil? || content.empty?
+    Epics::X509Certificate.new(content)
+  end
+  
+  def x_509_certificate_hash(type)
+    content = x_509_certificates_content[type.to_sym]
+    return if content.nil? || content.empty?
+    cert = OpenSSL::X509::Certificate.new(content)
+    Digest::SHA256.hexdigest(cert.to_der).upcase
+  end
 
   private
 
@@ -317,7 +338,7 @@ class Epics::Client
       faraday.use Epics::XMLSIG, { client: self }
       faraday.use Epics::ParseEbics, { client: self}
       # faraday.use MyAdapter
-      # faraday.response :logger                  # log requests to STDOUT
+      faraday.response :logger, ::Logger.new(STDOUT), bodies: true if debug_mode # log requests/response to STDOUT
     end
   end
 

@@ -105,4 +105,18 @@ class Epics::GenericRequest
       }
     end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
+  
+  private
+  
+  def x509_data_xml(xml, x_509_certificate)
+    return unless x_509_certificate
+    
+    xml.send('ds:X509Data') do
+      xml.send('ds:X509IssuerSerial') do
+        xml.send('ds:X509IssuerName', x_509_certificate.issuer)
+        xml.send('ds:X509SerialNumber', x_509_certificate.version)
+      end
+      xml.send('ds:X509Certificate', x_509_certificate.data)
+    end
+  end
 end
