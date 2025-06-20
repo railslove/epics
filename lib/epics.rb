@@ -10,11 +10,16 @@ require 'faraday'
 require 'securerandom'
 require 'time'
 require "epics/version"
-require "epics/key"
+require "epics/keyring"
+require "epics/signature"
+require "epics/signature_algorithm"
+require "epics/signature_algorithm/base"
+require "epics/signature_algorithm/rsa"
+require "epics/signature_algorithm/rsapss"
+require "epics/signature_algorithm/rsapkcs1"
 require "epics/response"
 require "epics/error"
 require 'epics/letter_renderer'
-require "epics/middleware/xmlsig"
 require "epics/middleware/parse_ebics"
 require "epics/generic_request"
 require "epics/generic_upload_request"
@@ -61,11 +66,34 @@ require "epics/hev"
 require "epics/signer"
 require "epics/client"
 
+require 'epics/builders'
+require 'epics/crypt'
+require 'epics/factories'
+require 'epics/handlers'
+require 'epics/services'
+
 I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml')]
 
 module Epics
   DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
   DEFAULT_LOCALE = :de
+
+  class VersionSupportError < StandardError
+    attr_reader :version
+
+    def initialize(version, direction = 'above')
+      @version = version
+      message = case direction
+      when 'above'
+        "Supported from version #{version}"
+      when 'below'
+        "Support for versions below #{version}"
+      else
+        raise ArgumentError, "Invalid direction: #{direction}. Use 'above' or 'below'."
+      end
+      super(message)
+    end
+  end
 end
 
 Ebics = Epics

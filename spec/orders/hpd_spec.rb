@@ -1,11 +1,14 @@
 RSpec.describe Epics::HPD do
-
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   subject { described_class.new(client) }
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>HPD</OrderType>') }
   end
 
+  include_examples '#to_xml'
 end

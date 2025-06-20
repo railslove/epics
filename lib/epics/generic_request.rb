@@ -8,6 +8,28 @@ class Epics::GenericRequest
     @options = options
   end
 
+  def request_factory
+    @request_factory ||= case client.version
+    when Epics::Keyring::VERSION_25
+      Epics::Factories::RequestFactory::V25.new(client)
+    when Epics::Keyring::VERSION_24
+      Epics::Factories::RequestFactory::V24.new(client)
+    when Epics::Keyring::VERSION_30
+      Epics::Factories::RequestFactory::V3.new(client)
+    end
+  end
+
+  def order_data_handle
+    @order_data_handle ||= case client.version
+    when Epics::Keyring::VERSION_25
+      Epics::Handlers::OrderDataHandler::V25.new(client)
+    when Epics::Keyring::VERSION_24
+      Epics::Handlers::OrderDataHandler::V24.new(client)
+    when Epics::Keyring::VERSION_30
+      Epics::Handlers::OrderDataHandler::V3.new(client)
+    end
+  end
+
   def nonce
     SecureRandom.hex(16)
   end
@@ -18,91 +40,16 @@ class Epics::GenericRequest
 
   def_delegators :client, :host_id, :user_id, :partner_id
 
-  def root
-    "ebicsRequest"
-  end
-
-  def body
-    Nokogiri::XML::Builder.new do |xml|
-      xml.body
-    end.doc.root
-  end
-
-  def header
+  def to_transfer_xml
     raise NotImplementedError
   end
 
-  def auth_signature
-    Nokogiri::XML::Builder.new do |xml|
-      xml.AuthSignature{
-        xml.send('ds:SignedInfo') {
-          xml.send('ds:CanonicalizationMethod', '', Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
-          xml.send('ds:SignatureMethod', '', Algorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
-          xml.send('ds:Reference', '', URI: "#xpointer(//*[@authenticate='true'])") {
-            xml.send('ds:Transforms') {
-              xml.send('ds:Transform', '', Algorithm: "http://www.w3.org/TR/2001/REC-xml-c14n-20010315")
-            }
-            xml.send('ds:DigestMethod', '', Algorithm: "http://www.w3.org/2001/04/xmlenc#sha256")
-            xml.send('ds:DigestValue', '')
-          }
-        }
-        xml.send('ds:SignatureValue', '')
-      }
-    end.doc.root
-  end
-
-  def to_transfer_xml
-    Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
-        xml.header(authenticate: true) {
-          xml.static {
-            xml.HostID host_id
-            xml.TransactionID transaction_id
-          }
-          xml.mutable {
-            xml.TransactionPhase 'Transfer'
-            xml.SegmentNumber(1, lastSegment: true)
-          }
-        }
-        xml.parent.add_child(auth_signature)
-        xml.body {
-          xml.DataTransfer {
-            xml.OrderData encrypted_order_data
-          }
-        }
-      }
-    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
-  end
-
   def to_receipt_xml
-    Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
-        xml.header(authenticate: true) {
-          xml.static {
-            xml.HostID host_id
-            xml.TransactionID(transaction_id)
-          }
-          xml.mutable {
-            xml.TransactionPhase 'Receipt'
-          }
-        }
-        xml.parent.add_child(auth_signature)
-        xml.body {
-          xml.TransferReceipt(authenticate: true) {
-            xml.ReceiptCode 0
-          }
-        }
-      }
-    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
+    builder = request_factory.create_transfer_receipt(transaction_id, 0)
+    builder.to_xml
   end
 
   def to_xml
-    Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision'=> '1') {
-        xml.parent.add_child(header)
-        xml.parent.add_child(auth_signature)
-        xml.parent.add_child(body)
-      }
-    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
+    raise NotImplementedError
   end
 end

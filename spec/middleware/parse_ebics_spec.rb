@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Epics::ParseEbics do
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'HOST', 'USER', 'PARTNER') }
   subject do
     Faraday.new do |builder|
-      builder.use Epics::ParseEbics
+      builder.use Epics::ParseEbics, { client: client }
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
         stub.post('/business_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_business_nok.xml'))] }
         stub.post('/technical_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml'))] }

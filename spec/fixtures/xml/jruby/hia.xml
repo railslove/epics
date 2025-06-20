@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsUnsecuredRequest Revision="1" Version="H004" 
-       xmlns="urn:org:ebics:H004" 
-       xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-       <header authenticate="true">
-              <static>
-                     <HostID>SIZBN001</HostID>
-                     <PartnerID>EBICS</PartnerID>
-                     <UserID>EBIX</UserID>
-                     <Product Language="de">EPICS - a ruby ebics kernel</Product>
-                     <OrderDetails>
-                            <OrderType>HIA</OrderType>
-                            <OrderAttribute>DZNNN</OrderAttribute>
-                     </OrderDetails>
-                     <SecurityMedium>0000</SecurityMedium>
-              </static>
-              <mutable/>
-       </header>
-       <body>
-              <DataTransfer>
-                     <OrderData>eJzNlEuTqkgQhffzKzqcpTHNQ0A0bG8gIILIW6Td8RIQKKCKh/jrx+ients9cze9mtlVnpMnqyLyi1r9uJXFUx9DlFXgZUI845OnGIRVlIHkZdK1lz/YyY/1b6udzFlx08Wo1WEUQ8Fv/adHEqBHEwTLCibLOMhCtNzhODV5t5bRw03btl5i2DAMz8Ps+dGHkTiOY/gCe/REKEt+n6xXXNemMWiz0G8fzzC6YB+PMrhU69X72fWLLl6vIrS0bO6j/u4lj/ShirqiQ99M1ukloaUeowaIpFYny2o2O97CjMcEuxxwKwo2KU/3roGapOwLITkTQY2k04A8Pdsc6c2tDnitbzeqPb9aGNXaiZYJ8FQqhnrA6THZ7u/pmGKsFpFNe+ZbTPHNDiD7otWyWk6DRUqcs860AK+jHinNPD7ysFHAkVYvGHc6iXSyMApfD484oVmN4h+sQZcpeUp3OKESSqQsGBZ6XJ4mhazaw4CP3T6q6MbB+Fw3OKajYiq7G7d+Z0gKzUQRQ0DrYuz7CPZ21zGJqN+rwmYOTBdDSWCgfMjyQ9qZl7lF8BIdqvxVMveCINSk5jfx/cQRUJjh1i2QX1Vy1sxdVXdxwMxn/TUTCh965svLCvu5krf1iLe6Ag8OvrkfzuQ2b7M+8uu36hMqD+ELSF95c9/pX3s4Tq6wX3v/1D8zKoIQjvX/kVwC5tfzlnEonmEWFF9melAP8oLNKZD4jRBvatl02RKQmCVyULyCZPCBogSRRhM1P2I2IPBz1jYGQlRp1GMeOsqoCTf9Hp1zghyiu1xVTjaOB6WSWW2KnNPmVEi9w4oWeRZ3enBWOOnUbBikW1dHtIymQSY7RUcttCvbu4Tg4MIgqQPXxlSUmEMBGrIukdXMaCF3L1N8dkxf0czM6/ae+qYnbctAEAKqqp1bTZwTpbkXzG4qCUK65ejp7U7wtOFTukpeNZ0fO6tj8GEsd0QSMqFeev2rsx95232d5iw2GFHDwC0xFn7oiKdtGmRT4syxlqsYjXnXYybxbgdvu632TgwIp80Tr2T+U3J/svZBpvhG7b/1z9oXLn3YghjKwlrcyLz9mP+3sDqiD8NbYX8VK+wXf//6T/odHps=</OrderData>
-              </DataTransfer>
-       </body>
+<ebicsUnsecuredRequest xmlns="urn:org:ebics:H004" Version="H004" Revision="1">
+  <header authenticate="true">
+    <static>
+      <HostID>SIZBN001</HostID>
+      <PartnerID>EBICS</PartnerID>
+      <UserID>EBIX</UserID>
+      <Product Language="de">EPICS - a ruby ebics kernel</Product>
+      <OrderDetails>
+        <OrderType>HIA</OrderType>
+        <OrderAttribute>DZNNN</OrderAttribute>
+      </OrderDetails>
+      <SecurityMedium>0000</SecurityMedium>
+    </static>
+    <mutable/>
+  </header>
+  <body>
+    <DataTransfer>
+      <OrderData>eJzNlEuTqkgQhffzKzqcpTHNQ0A0bG8gIILIW6Td8RIQKKCKh/jrx+ients9cze9mtlVnpMnqyLyi1r9uJXFUx9DlFXgZUI845OnGIRVlIHkZdK1lz/YyY/1b6udzFlx08Wo1WEUQ8Fv/adHEqBHEwTLCibLOMhCtNzhODV5t5bRw03btl5i2DAMz8Ps+dGHkTiOY/gCe/REKEt+n6xXXNemMWiz0G8fzzC6YB+PMrhU69X72fWLLl6vIrS0bO6j/u4lj/ShirqiQ99M1ukloaUeowaIpFYny2o2O97CjMcEuxxwKwo2KU/3roGapOwLITkTQY2k04A8Pdsc6c2tDnitbzeqPb9aGNXaiZYJ8FQqhnrA6THZ7u/pmGKsFpFNe+ZbTPHNDiD7otWyWk6DRUqcs860AK+jHinNPD7ysFHAkVYvGHc6iXSyMApfD484oVmN4h+sQZcpeUp3OKESSqQsGBZ6XJ4mhazaw4CP3T6q6MbB+Fw3OKajYiq7G7d+Z0gKzUQRQ0DrYuz7CPZ21zGJqN+rwmYOTBdDSWCgfMjyQ9qZl7lF8BIdqvxVMveCINSk5jfx/cQRUJjh1i2QX1Vy1sxdVXdxwMxn/TUTCh965svLCvu5krf1iLe6Ag8OvrkfzuQ2b7M+8uu36hMqD+ELSF95c9/pX3s4Tq6wX3v/1D8zKoIQjvX/kVwC5tfzlnEonmEWFF9melAP8oLNKZD4jRBvatl02RKQmCVyULyCZPCBogSRRhM1P2I2IPBz1jYGQlRp1GMeOsqoCTf9Hp1zghyiu1xVTjaOB6WSWW2KnNPmVEi9w4oWeRZ3enBWOOnUbBikW1dHtIymQSY7RUcttCvbu4Tg4MIgqQPXxlSUmEMBGrIukdXMaCF3L1N8dkxf0czM6/ae+qYnbctAEAKqqp1bTZwTpbkXzG4qCUK65ejp7U7wtOFTukpeNZ0fO6tj8GEsd0QSMqFeev2rsx95232d5iw2GFHDwC0xFn7oiKdtGmRT4syxlqsYjXnXYybxbgdvu632TgwIp80Tr2T+U3J/svZBpvhG7b/1z9oXLn3YghjKwlrcyLz9mP+3sDqiD8NbYX8VK+wXf//6T/odHps=</OrderData>
+    </DataTransfer>
+  </body>
 </ebicsUnsecuredRequest>

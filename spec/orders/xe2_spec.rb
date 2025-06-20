@@ -1,17 +1,16 @@
 RSpec.describe Epics::XE2 do
-
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
   let(:document) { File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'swiss_credit_transfer.xml') ) }
+
   subject { described_class.new(client, document) }
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>OZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>XE2</OrderType>') }
   end
 
-  describe '#to_transfer_xml' do
-    before { subject.transaction_id = SecureRandom.hex(16) }
-
-    specify { expect(subject.to_transfer_xml).to be_a_valid_ebics_doc }
-  end
-
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_transfer_xml'
 end

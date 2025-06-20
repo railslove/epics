@@ -1,11 +1,14 @@
 RSpec.describe Epics::Z53 do
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  subject { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-  subject { described_class.new(client, from: "2014-09-01", to: "2014-09-30") }
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>Z53</OrderType>') }
   end
 
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
 end
