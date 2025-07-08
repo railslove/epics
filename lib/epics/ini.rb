@@ -26,6 +26,7 @@ class Epics::INI < Epics::GenericRequest
     Nokogiri::XML::Builder.new do |xml|
       xml.SignaturePubKeyOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'http://www.ebics.org/S001') {
         xml.SignaturePubKeyInfo {
+          x509_data_xml(xml, client.x_509_certificate(:a))
           xml.PubKeyValue {
             xml.send('ds:RSAKeyValue') {
               xml.send('ds:Modulus', Base64.strict_encode64([client.a.n].pack("H*")))
