@@ -200,6 +200,75 @@ that are hiding some strange names from you:
 If you need more sophisticated EBICS order types, please read the next section
 about the supported functionalities.
 
+### Using X.509 Certificates
+
+Epics supports using X.509 self-signed certificates for INI and HIA requests, as required by some banks. This is in addition to the classic key-based workflow.
+
+#### When to Use
+
+Some banks require X.509 certificates for EBICS initialization (INI/HIA).
+
+You can generate your own X.509 certificate using Ruby’s OpenSSL library:
+
+```ruby
+key = client.a.key # or e key, or x key
+name = OpenSSL::X509::Name.parse('/CN=Test Certificate/O=MyOrg/C=DE')
+cert = OpenSSL::X509::Certificate.new
+cert.version = 2
+cert.serial = SecureRandom.random_number(2**64)
+cert.subject = name
+cert.issuer = name
+cert.public_key = key.public_key
+cert.not_before = Time.current
+cert.not_after = cert.not_before + 1.year
+
+ef = OpenSSL::X509::ExtensionFactory.new
+ef.subject_certificate = cert
+ef.issuer_certificate = cert
+cert.add_extension(ef.create_extension('basicConstraints', 'CA:FALSE', true))
+cert.add_extension(ef.create_extension('keyUsage', 'digitalSignature,nonRepudiation,keyEncipherment', true))
+
+cert.sign(key, OpenSSL::Digest.new('SHA256'))
+cert
+
+# Save to file
+File.write("cert_a.pem", cert.to_pem)
+```
+You can now use the contents of `cert.pem` as your\
+`x_509_certificate_a_content`, `x_509_certificate_x_content`, or `x_509_certificate_e_content`\
+in the client initialization.
+
+**Note:** For production environments, your bank may require certificates issued by a trusted authority. Be sure to confirm your bank’s requirements before proceeding.
+
+#### Initializing the Client with X.509 Certificates
+```ruby
+# Load your certificate data (PEM or DER encoded)
+certificate_a = File.read("cert_a.pem")
+certificate_x = File.read("cert_x.pem")
+certificate_e = File.read("cert_e.pem")
+
+client = Epics::Client.new(
+  keys,                # your key data as before
+  'passphrase',
+  'url',
+  'host',
+  'user',
+  'partner',
+  x_509_certificate_a_content: certificate_a,
+  x_509_certificate_x_content: certificate_x,
+  x_509_certificate_e_content: certificate_e,
+  debug_mode: true # Optional: enables verbose logging of EBICS requests/responses
+)
+```
+### Example: Generating the Initialization Letter with Certificates
+
+```ruby
+renderer = Epics::LetterRenderer.new(client)
+letter = renderer.render("Your Bank Name")
+File.write("initialization_letter.txt", letter)
+```
+If all three certificates are present, the INI letter will use certificate hashes as required for certificate-based registration.
+
 ## Issues and Feature Requests
 
 [Railslove](http://railslove.com) is commited to provide the best developer tools for integrating
