@@ -210,7 +210,7 @@ Some banks require X.509 certificates for EBICS initialization (INI/HIA).
 
 You can generate your own X.509 certificate using Ruby’s OpenSSL library:
 
-This examples showcases the generation of the x.509 Certificate A file and can be applied the same way for the others.
+This examples showcases the generation of the X.509 certificate A file and can be applied the same way for the others.
 ```ruby
 key = client.a.key # or e key, or x key
 name = OpenSSL::X509::Name.parse('/CN=Test Certificate/O=MyOrg/C=DE')

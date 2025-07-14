@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 2.10.0
+
 - [ENHANCEMENT] Added X.509 certificates support for INI and HIA (thanks to @vnoviskyi)
 - [ENHANCEMENT] Added Z01 order type (thanks to @Nymuxyzo)
 
