@@ -210,6 +210,7 @@ Some banks require X.509 certificates for EBICS initialization (INI/HIA).
 
 You can generate your own X.509 certificate using Ruby’s OpenSSL library:
 
+This examples showcases the generation of the x.509 Certificate A file and can be applied the same way for the others.
 ```ruby
 key = client.a.key # or e key, or x key
 name = OpenSSL::X509::Name.parse('/CN=Test Certificate/O=MyOrg/C=DE')
@@ -234,8 +235,8 @@ cert
 # Save to file
 File.write("cert_a.pem", cert.to_pem)
 ```
-You can now use the contents of `cert.pem` as your\
-`x_509_certificate_a_content`, `x_509_certificate_x_content`, or `x_509_certificate_e_content`\
+You can now use the contents of the generated certificate file in PEM format as your
+`x_509_certificate_a_content`, `x_509_certificate_x_content`, or `x_509_certificate_e_content`
 in the client initialization.
 
 **Note:** For production environments, your bank may require certificates issued by a trusted authority. Be sure to confirm your bank’s requirements before proceeding.
@@ -327,8 +328,8 @@ EPICS_VERIFY_SSL=false
 ## Contributing
 Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/master/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/).
 
-After checking out the repo, run `bin/setup` to install dependencies. 
-Then, run `rspec` to run the tests. 
+After checking out the repo, run `bin/setup` to install dependencies.
+Then, run `rspec` to run the tests.
 You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 0. Contact team@railslove.com for information about the CLA
