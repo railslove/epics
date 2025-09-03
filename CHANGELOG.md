@@ -1,5 +1,9 @@
 ### Unreleased
 
+### 2.11.0
+
+- [ENHANCEMENT] Added FUL order type (thanks to @scollon-pl)
+
 ### 2.10.0
 
 - [ENHANCEMENT] Added X.509 certificates support for INI and HIA (thanks to @vnoviskyi)
