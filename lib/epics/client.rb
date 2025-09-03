@@ -194,7 +194,7 @@ class Epics::Client
   end
 
   def FUL(document)
-    upload(Epics::FUL, document: document)
+    upload(Epics::FUL, document)
   end
 
   def STA(from = nil, to = nil)
