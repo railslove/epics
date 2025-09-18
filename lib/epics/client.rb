@@ -317,17 +317,96 @@ class Epics::Client
     return res.transaction_id, [res.order_id, order_id].detect { |id| id.to_s.chars.any? }
   end
 
-  def download(order_type, *args, **options)
-    document = order_type.new(self, *args, **options)
-    res = post(url, document.to_xml).body
-    document.transaction_id = res.transaction_id
-
+def download(order_type, *args, **options)
+  document = order_type.new(self, *args, **options)
+  res = post(url, document.to_xml).body
+  document.transaction_id = res.transaction_id
+  
+  if res.segmented? && !res.last_segment?
+    puts "[#{order_type}] Multi-segment download detected" if debug_mode
+    
+    # Step 1: Get and decrypt transaction key from first segment
+    transaction_key = res.transaction_key
+    if transaction_key.nil?
+      puts "[#{order_type}] ERROR: No transaction key in first segment!" if debug_mode
+      return nil
+    end
+    puts "[#{order_type}] Transaction key obtained: #{transaction_key.bytesize} bytes" if debug_mode
+    
+    # Array to store binary segments (NOT decrypted)
+    binary_segments = []
+    
+    # Step 2: Get binary data from first segment (NOT decrypted)
+    first_segment_binary = res.order_data_binary
+    binary_segments << first_segment_binary if first_segment_binary
+    puts "[#{order_type}] Segment 1 binary: #{first_segment_binary&.bytesize} bytes" if debug_mode
+    
+    current_segment = 2
+    total_segments = res.num_segments
+    max_segments = total_segments > 0 ? total_segments : 100
+    
+    # Step 3: Fetch all other segments as binary (NOT decrypted)
+    while current_segment <= max_segments
+      puts "[#{order_type}] Fetching segment #{current_segment}/#{max_segments}..." if debug_mode
+      
+      segment_xml = document.to_segment_request_xml(current_segment)
+      segment_res = post(url, segment_xml).body
+      
+      if segment_res.technical_error? || segment_res.business_error?
+        puts "[#{order_type}] Error in segment #{current_segment}" if debug_mode
+        break
+      end
+      
+      # Get binary data (NOT decrypted)
+      segment_binary = segment_res.order_data_binary
+      binary_segments << segment_binary if segment_binary
+      puts "[#{order_type}] Segment #{current_segment} binary: #{segment_binary&.bytesize} bytes" if debug_mode
+      
+      if segment_res.last_segment?
+        puts "[#{order_type}] Last segment reached" if debug_mode
+        post(url, document.to_receipt_xml).body
+        break
+      end
+      
+      current_segment += 1
+    end
+    
+    # Step 4: Combine all binary segments
+    combined_encrypted_data = binary_segments.compact.join
+    puts "[#{order_type}] Combined encrypted binary: #{combined_encrypted_data.bytesize} bytes" if debug_mode
+    
+    # Step 5: Decrypt the combined data with transaction key
+    begin
+      cipher = OpenSSL::Cipher.new("aes-128-cbc")
+      cipher.decrypt
+      cipher.padding = 0
+      cipher.key = transaction_key
+      cipher.iv = "\x00" * 16  # EBICS uses zero IV
+      
+      decrypted_data = cipher.update(combined_encrypted_data) + cipher.final
+      puts "[#{order_type}] Decrypted combined data: #{decrypted_data.bytesize} bytes" if debug_mode
+      
+      # Step 6: Decompress the decrypted data
+      decompressed = Zlib::Inflate.new.inflate(decrypted_data)
+      puts "[#{order_type}] Final decompressed data: #{decompressed.bytesize} bytes" if debug_mode
+      decompressed
+      
+    rescue OpenSSL::Cipher::CipherError => e
+      puts "[#{order_type}] Decryption error: #{e.message}" if debug_mode
+      nil
+    rescue Zlib::DataError => e
+      puts "[#{order_type}] Decompression error: #{e.message}" if debug_mode
+      # Return decrypted data if decompression fails
+      decrypted_data
+    end
+  else
+    # Single segment - use normal order_data
     if res.segmented? && res.last_segment?
       post(url, document.to_receipt_xml).body
     end
-
     res.order_data
   end
+end
 
   def download_and_unzip(order_type, *args, **options)
     [].tap do |entries|
