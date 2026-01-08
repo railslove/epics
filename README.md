@@ -124,6 +124,25 @@ You can choose to configure some default values like this
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', locale: :fr, product_name: 'Mon Epic Client EBICS')
 ```
 
+#### Timeout Configuration
+
+You can configure custom timeout values for HTTP requests:
+
+```ruby
+e = Epics::Client.new(
+  keys,
+  'passphrase',
+  'url',
+  'host',
+  'user',
+  'partner',
+  timeout: 120,      # Request timeout in seconds (default: nil - uses Faraday default)
+  open_timeout: 30   # Connection timeout in seconds (default: nil - uses Faraday default)
+)
+```
+
+This is useful when dealing with slow bank servers or network conditions that require longer timeouts.
+
 ## Features
 
 ### Initialization
