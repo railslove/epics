@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'base64'
   spec.add_dependency 'bigdecimal'
-  spec.add_dependency 'faraday',  '>= 1.10.0'
+  spec.add_dependency 'faraday',  '1.10.5'
   spec.add_dependency 'i18n',     '>= 1.1.0'
   spec.add_dependency 'nokogiri', '>= 1.16.7'
   spec.add_dependency 'rubyzip',  '>= 2.3.2'
