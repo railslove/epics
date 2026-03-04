@@ -18,6 +18,14 @@ RSpec.describe Epics::HPD do
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 download request', order_type: 'HPD'
+    include_examples 'a valid ebicsRequest download', order_type: 'HPD'
+  end
+
+  describe 'H003 request structure' do
+    let(:version) { Epics::Keyring::VERSION_24 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+    include_examples 'a valid ebicsRequest download', order_type: 'HPD', ebics_version: 'H003'
   end
 end
