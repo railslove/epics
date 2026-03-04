@@ -118,7 +118,11 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def create_z01(start_date, end_date)
-    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', service_option: 'CH003GEN', start_date:, end_date:)
+  end
+
+  def create_ful(*, **)
+    raise Epics::VersionSupportError, 2.5
   end
 
   def create_zsr(start_date, end_date)

@@ -1,5 +1,5 @@
 class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::Base
-  ['btd btu'].each do |type|
+  %w[btd btu].each do |type|
     define_method("create_#{type}") { |*| raise Epics::VersionSupportError, 3.0 }
   end
 
