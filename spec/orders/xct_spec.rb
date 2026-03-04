@@ -20,7 +20,7 @@ RSpec.describe Epics::XCT do
     let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
     include_examples 'a valid ebicsRequest H005 upload',
-      service_name: 'XCT', msg_name: 'dtazv'
+      service_name: 'XCT', msg_name: 'dtazv', scope: 'DE'
   end
 
   describe 'H005 transfer structure' do
