@@ -12,11 +12,9 @@ RSpec.describe Epics::FUL do
     it { expect(subject.to_xml).to include('<FileFormat>pain.001.001.02</FileFormat>') }
   end
 
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 upload support not yet implemented'
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FUL replaced by BTU in H005'
-  include_examples '#to_transfer_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 upload support not yet implemented'
-  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_transfer_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FUL replaced by BTU in H005'
 
   describe 'H004 request structure' do
@@ -40,7 +38,6 @@ RSpec.describe Epics::FUL do
   end
 
   describe 'H003 request structure' do
-    before { pending 'H003 upload support not yet implemented' }
     let(:version) { Epics::Keyring::VERSION_24 }
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }

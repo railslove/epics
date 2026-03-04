@@ -11,6 +11,6 @@ RSpec.describe Epics::XDS do
     it { expect(subject.to_xml).to include('<OrderType>XDS</OrderType>') }
   end
 
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_transfer_xml'
 end

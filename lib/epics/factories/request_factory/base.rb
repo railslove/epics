@@ -6,7 +6,11 @@ class Epics::Factories::RequestFactory::Base
     vmk wss xct xds xe2 xe3 xek z01 z52 z53 z54 zsr
   ].freeze
 
-  (ORDER_TYPES - %w[fdl ful h3k haa hac hev hia hkd hpb hpd htd ini ptk spr]).each do |type|
+  (ORDER_TYPES - %w[
+    b2b bka c2s c5n c52 c53 c54 ccs cct cd1 cdb cdd cds cdz cip crz
+    fdl ful h3k haa hac hev hia hkd hpb hpd htd ini ptk spr
+    sta vmk wss xds xe2 xe3 z01 z52 z53 z54
+  ]).each do |type|
     define_method("create_#{type}") { |*| raise NotImplementedError }
   end
 
