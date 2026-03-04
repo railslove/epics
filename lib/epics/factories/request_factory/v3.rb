@@ -117,6 +117,10 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     create_btd(service_name: 'EOP', msg_name: 'pdf', container_type: 'ZIP', start_date:, end_date:)
   end
 
+  def create_z01(start_date, end_date)
+    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+  end
+
   def create_zsr(start_date, end_date)
     create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
   end
