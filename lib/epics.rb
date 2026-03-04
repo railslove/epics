@@ -23,7 +23,6 @@ require 'epics/letter_renderer'
 require "epics/middleware/parse_ebics"
 require "epics/generic_request"
 require "epics/generic_upload_request"
-require "epics/header_request"
 require "epics/azv"
 require "epics/hpb"
 require "epics/hkd"

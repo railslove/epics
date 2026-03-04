@@ -160,10 +160,6 @@ class Epics::Client
     path
   end
 
-  def header_request
-    @header_request ||= Epics::HeaderRequest.new(self)
-  end
-
   def credit(document)
     self.CCT(document)
   end
