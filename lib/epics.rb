@@ -64,7 +64,6 @@ require "epics/xct"
 require "epics/hia"
 require "epics/ini"
 require "epics/hev"
-require "epics/signer"
 require "epics/client"
 
 require 'epics/builders'
