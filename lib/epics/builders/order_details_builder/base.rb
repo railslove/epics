@@ -40,6 +40,13 @@ class Epics::Builders::OrderDetailsBuilder::Base
     self
   end
 
+  def add_ful_order_params(format)
+    @xml.FULOrderParams do |xml|
+      xml.FileFormat format
+    end
+    self
+  end
+
   def add_btd_order_params
     raise NotImplementedError
   end

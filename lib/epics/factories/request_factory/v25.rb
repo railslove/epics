@@ -123,6 +123,13 @@ class Epics::Factories::RequestFactory::V25 < Epics::Factories::RequestFactory::
     build_upload_request('XE3', transaction_key, signature_data, 1, true)
   end
 
+  def create_ful(digest, transaction_key, file_format:)
+    signature_data = @user_signature_handle.handle(digest).to_xml
+    build_upload_request('FUL', transaction_key, signature_data, 1) do |order_details_builder|
+      order_details_builder.add_ful_order_params(file_format)
+    end
+  end
+
   private
 
   def build_download_request(order_type, start_date: nil, end_date: nil, &)
@@ -142,7 +149,11 @@ class Epics::Factories::RequestFactory::V25 < Epics::Factories::RequestFactory::
           static_builder.add_product @client.product_name, @client.locale
           static_builder.add_order_details do |order_details_builder|
             add_order_type(order_details_builder, order_type, with_es)
-            order_details_builder.add_standard_order_params
+            if block_given?
+              yield order_details_builder
+            else
+              order_details_builder.add_standard_order_params
+            end
           end
           static_builder.add_bank_pubbey_digests(
             @client.keyring.bank_authentication.version,
