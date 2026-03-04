@@ -131,7 +131,7 @@ class Epics::Factories::RequestFactory::Base
     end
   end
 
-  def create_ful(*, **)
+  def create_ful(digest, transaction_key, file_format:)
     raise NotImplementedError
   end
 
