@@ -87,18 +87,12 @@ RSpec.describe Epics::Keyring do
       expect(keyring.bank_encryption).to eq(sig)
     end
 
-    it 'stores and retrieves password' do
-      keyring.password = 'secret'
-      expect(keyring.password).to eq('secret')
-    end
-
     it 'all key slots are nil by default' do
       expect(keyring.user_signature).to be_nil
       expect(keyring.user_authentication).to be_nil
       expect(keyring.user_encryption).to be_nil
       expect(keyring.bank_authentication).to be_nil
       expect(keyring.bank_encryption).to be_nil
-      expect(keyring.password).to be_nil
     end
   end
 

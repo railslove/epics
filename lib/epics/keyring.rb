@@ -8,7 +8,6 @@ class Epics::Keyring
   attr_reader :version
   attr_accessor :user_signature, :user_encryption, :user_authentication
   attr_accessor :bank_encryption, :bank_authentication
-  attr_accessor :password
 
   def initialize(version)
     raise ArgumentError, "Unsupported version: #{version}" unless VERSIONS.include?(version)
