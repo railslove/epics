@@ -20,7 +20,7 @@ RSpec.describe Epics::CDD do
     let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
     include_examples 'a valid ebicsRequest H005 upload',
-      service_name: 'SDD', msg_name: 'pain.008', service_option: 'COR'
+      service_name: 'SDD', msg_name: 'pain.008', service_option: 'COR', scope: 'GLB'
   end
 
   describe 'H005 transfer structure' do
