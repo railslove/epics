@@ -10,8 +10,7 @@ RSpec.describe Epics::HKD do
     it { expect(subject.to_xml).to include('<OrderType>HKD</OrderType>') }
   end
 
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+  include_examples '#to_xml'
 
   describe 'H004 request structure' do
     let(:version) { Epics::Keyring::VERSION_25 }

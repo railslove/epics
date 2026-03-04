@@ -26,13 +26,12 @@ class Epics::Services::CryptService
     aes.encrypt(data)
   end
 
-  # TODO: to be implemented
   def sign(signature, data)
     case signature.version
     when Epics::Signature::A_VERSION_6
-      # emsaPssEncode
+      signature.key.key.sign_pss('SHA256', data, salt_length: 32, mgf1_hash: 'SHA256')
     when Epics::Signature::A_VERSION_5
-      # emsaPkcs1V15Encode
+      signature.key.key.sign('SHA256', data)
     end
   end
 

@@ -1,4 +1,8 @@
 require 'epics/cd1'
 
 class Epics::AZV < Epics::CD1
+  def to_xml
+    builder = request_factory.create_azv(document_digest, transaction_key)
+    builder.to_xml
+  end
 end

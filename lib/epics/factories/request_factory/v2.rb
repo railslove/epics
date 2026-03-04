@@ -90,6 +90,10 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_upload_request('CDS', transaction_key, signature_data, 1, false)
   end
 
+  def create_azv(digest, transaction_key)
+    create_cd1(digest, transaction_key)
+  end
+
   def create_cd1(digest, transaction_key)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CD1', transaction_key, signature_data, 1, true)

@@ -10,8 +10,16 @@ RSpec.describe Epics::BKA do
     it { expect(subject.to_xml).to include('<OrderType>BKA</OrderType>') }
   end
 
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
+  include_examples '#to_xml'
+
+  describe 'H005 request structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest H005 download with date range',
+      service_name: 'EOP', msg_name: 'camt.053', scope: 'DE', from: '2014-09-01', to: '2014-09-30'
+  end
 
   describe 'H004 request structure' do
     let(:version) { Epics::Keyring::VERSION_25 }

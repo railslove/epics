@@ -6,9 +6,11 @@ RSpec.describe Epics::FDL do
     subject(:order) { described_class.new(client, file_format: file_format) }
 
     include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+    describe '#to_xml H005' do
+      let(:version) { Epics::Keyring::VERSION_30 }
+      it('raises VersionSupportError') { expect { subject.to_xml }.to raise_error(Epics::VersionSupportError) }
+    end
     include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -62,10 +64,12 @@ RSpec.describe Epics::FDL do
       subject(:order) { described_class.new(client, file_format: file_format, from: Date.new(2024, 1, 1), to: Date.new(2024, 1, 2)) }
 
       include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-      include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+      describe '#to_xml H005' do
+      let(:version) { Epics::Keyring::VERSION_30 }
+      it('raises VersionSupportError') { expect { subject.to_xml }.to raise_error(Epics::VersionSupportError) }
+    end
       include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-      include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
-
+  
       describe '#to_xml' do
         let(:version) { Epics::Keyring::VERSION_25 }
 
@@ -129,9 +133,11 @@ RSpec.describe Epics::FDL do
     end
 
     include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+    describe '#to_xml H005' do
+      let(:version) { Epics::Keyring::VERSION_30 }
+      it('raises VersionSupportError') { expect { subject.to_xml }.to raise_error(Epics::VersionSupportError) }
+    end
     include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
