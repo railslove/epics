@@ -22,7 +22,7 @@ RSpec.describe Epics::HAC do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request with date range',
+      include_examples 'a valid ebicsRequest download with date range',
         order_type: 'HAC', from: '2014-09-01', to: '2014-09-30'
     end
 
@@ -34,7 +34,27 @@ RSpec.describe Epics::HAC do
       end
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 receipt request'
+      include_examples 'a valid ebicsRequest receipt'
+    end
+
+    describe 'H003 request structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest download with date range',
+        order_type: 'HAC', from: '2014-09-01', to: '2014-09-30', ebics_version: 'H003'
+    end
+
+    describe 'H003 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
     end
   end
 
@@ -66,7 +86,7 @@ RSpec.describe Epics::HAC do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request', order_type: 'HAC'
+      include_examples 'a valid ebicsRequest download', order_type: 'HAC'
     end
 
     describe 'H004 receipt structure' do
@@ -77,7 +97,26 @@ RSpec.describe Epics::HAC do
       end
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 receipt request'
+      include_examples 'a valid ebicsRequest receipt'
+    end
+
+    describe 'H003 request structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest download', order_type: 'HAC', ebics_version: 'H003'
+    end
+
+    describe 'H003 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
     end
   end
 end

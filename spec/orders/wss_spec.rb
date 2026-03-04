@@ -19,6 +19,6 @@ RSpec.describe Epics::WSS do
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 download request', order_type: 'WSS'
+    include_examples 'a valid ebicsRequest download', order_type: 'WSS'
   end
 end

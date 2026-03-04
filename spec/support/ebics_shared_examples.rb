@@ -66,17 +66,29 @@ RSpec.shared_examples '#to_receipt_xml pending' do |versions:, reason: 'not yet 
   end
 end
 
-# Structural shared examples for H004 requests
+# Structural shared examples for EBICS V2 requests (H003 and H004)
 # These parse the XML with Nokogiri/XPath and validate each key element.
-# Consumers must define: let(:xml) { Nokogiri::XML(subject.to_xml) }
-#                         let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+# Consumers must define:
+#   let(:xml) { Nokogiri::XML(subject.to_xml) }
+#   let(:ns)  { { 'e' => 'urn:org:ebics:H004' } }  # or 'http://www.ebics.org/H003'
+#
+# ebics_version defaults to 'H004'. Pass ebics_version: 'H003' for H003 tests.
 
-RSpec.shared_examples 'a valid H004 request header' do |order_type:, order_attribute:|
-  it 'has ebicsRequest root with H004 namespace and Version' do
+# Helper to derive the expected namespace href from a version string.
+module EbicsSharedExampleHelpers
+  def self.expected_namespace(ebics_version)
+    ebics_version == 'H003' ? "http://www.ebics.org/H003" : "urn:org:ebics:#{ebics_version}"
+  end
+end
+
+RSpec.shared_examples 'a valid ebicsRequest header' do |order_type:, order_attribute:, ebics_version: 'H004'|
+  expected_ns_href = EbicsSharedExampleHelpers.expected_namespace(ebics_version)
+
+  it "has ebicsRequest root with #{ebics_version} namespace and Version" do
     root = xml.root
     expect(root.name).to eq('ebicsRequest')
-    expect(root.namespace.href).to eq('urn:org:ebics:H004')
-    expect(root['Version']).to eq('H004')
+    expect(root.namespace.href).to eq(expected_ns_href)
+    expect(root['Version']).to eq(ebics_version)
     expect(root['Revision']).to eq('1')
   end
 
@@ -144,9 +156,9 @@ RSpec.shared_examples 'a valid H004 request header' do |order_type:, order_attri
   end
 end
 
-RSpec.shared_examples 'a valid H004 download request' do |order_type:, order_attribute: 'DZHNN'|
-  include_examples 'a valid H004 request header',
-    order_type: order_type, order_attribute: order_attribute
+RSpec.shared_examples 'a valid ebicsRequest download' do |order_type:, order_attribute: 'DZHNN', ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest header',
+    order_type: order_type, order_attribute: order_attribute, ebics_version: ebics_version
 
   it 'has an empty body (no DataTransfer)' do
     body = xml.at_xpath('//e:body', ns)
@@ -155,9 +167,9 @@ RSpec.shared_examples 'a valid H004 download request' do |order_type:, order_att
   end
 end
 
-RSpec.shared_examples 'a valid H004 upload request' do |order_type:, order_attribute: 'OZHNN'|
-  include_examples 'a valid H004 request header',
-    order_type: order_type, order_attribute: order_attribute
+RSpec.shared_examples 'a valid ebicsRequest upload' do |order_type:, order_attribute: 'OZHNN', ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest header',
+    order_type: order_type, order_attribute: order_attribute, ebics_version: ebics_version
 
   it 'has StandardOrderParams' do
     expect(xml.at_xpath('//e:header/e:static/e:OrderDetails/e:StandardOrderParams', ns)).not_to be_nil
@@ -190,8 +202,9 @@ RSpec.shared_examples 'a valid H004 upload request' do |order_type:, order_attri
   end
 end
 
-RSpec.shared_examples 'a valid H004 download request with date range' do |order_type:, from:, to:|
-  include_examples 'a valid H004 download request', order_type: order_type
+RSpec.shared_examples 'a valid ebicsRequest download with date range' do |order_type:, from:, to:, ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest download',
+    order_type: order_type, ebics_version: ebics_version
 
   it 'has DateRange with correct Start and End dates' do
     date_range = xml.at_xpath('//e:header/e:static/e:OrderDetails/e:StandardOrderParams/e:DateRange', ns)
@@ -201,12 +214,14 @@ RSpec.shared_examples 'a valid H004 download request with date range' do |order_
   end
 end
 
-RSpec.shared_examples 'a valid H004 receipt request' do
-  it 'has ebicsRequest root with H004 namespace and Version' do
+RSpec.shared_examples 'a valid ebicsRequest receipt' do |ebics_version: 'H004'|
+  expected_ns_href = EbicsSharedExampleHelpers.expected_namespace(ebics_version)
+
+  it "has ebicsRequest root with #{ebics_version} namespace and Version" do
     root = xml.root
     expect(root.name).to eq('ebicsRequest')
-    expect(root.namespace.href).to eq('urn:org:ebics:H004')
-    expect(root['Version']).to eq('H004')
+    expect(root.namespace.href).to eq(expected_ns_href)
+    expect(root['Version']).to eq(ebics_version)
     expect(root['Revision']).to eq('1')
   end
 
@@ -242,12 +257,14 @@ RSpec.shared_examples 'a valid H004 receipt request' do
   end
 end
 
-RSpec.shared_examples 'a valid H004 transfer request' do
-  it 'has ebicsRequest root with H004 namespace and Version' do
+RSpec.shared_examples 'a valid ebicsRequest transfer' do |ebics_version: 'H004'|
+  expected_ns_href = EbicsSharedExampleHelpers.expected_namespace(ebics_version)
+
+  it "has ebicsRequest root with #{ebics_version} namespace and Version" do
     root = xml.root
     expect(root.name).to eq('ebicsRequest')
-    expect(root.namespace.href).to eq('urn:org:ebics:H004')
-    expect(root['Version']).to eq('H004')
+    expect(root.namespace.href).to eq(expected_ns_href)
+    expect(root['Version']).to eq(ebics_version)
     expect(root['Revision']).to eq('1')
   end
 
@@ -286,8 +303,9 @@ RSpec.shared_examples 'a valid H004 transfer request' do
   end
 end
 
-RSpec.shared_examples 'a valid H004 download request with FDLOrderParams' do |order_type: 'FDL', file_format:|
-  include_examples 'a valid H004 download request', order_type: order_type
+RSpec.shared_examples 'a valid ebicsRequest download with FDLOrderParams' do |order_type: 'FDL', file_format:, ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest download',
+    order_type: order_type, ebics_version: ebics_version
 
   it "has FDLOrderParams with FileFormat #{file_format}" do
     fdl_params = xml.at_xpath('//e:header/e:static/e:OrderDetails/e:FDLOrderParams', ns)
@@ -297,9 +315,9 @@ RSpec.shared_examples 'a valid H004 download request with FDLOrderParams' do |or
   end
 end
 
-RSpec.shared_examples 'a valid H004 download request with FDLOrderParams and date range' do |order_type: 'FDL', file_format:, from:, to:|
-  include_examples 'a valid H004 download request with FDLOrderParams',
-    order_type: order_type, file_format: file_format
+RSpec.shared_examples 'a valid ebicsRequest download with FDLOrderParams and date range' do |order_type: 'FDL', file_format:, from:, to:, ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest download with FDLOrderParams',
+    order_type: order_type, file_format: file_format, ebics_version: ebics_version
 
   it 'has DateRange within FDLOrderParams' do
     date_range = xml.at_xpath('//e:header/e:static/e:OrderDetails/e:FDLOrderParams/e:DateRange', ns)
@@ -309,9 +327,9 @@ RSpec.shared_examples 'a valid H004 download request with FDLOrderParams and dat
   end
 end
 
-RSpec.shared_examples 'a valid H004 upload request with FULOrderParams' do |order_type: 'FUL', order_attribute: 'DZHNN', file_format:|
-  include_examples 'a valid H004 request header',
-    order_type: order_type, order_attribute: order_attribute
+RSpec.shared_examples 'a valid ebicsRequest upload with FULOrderParams' do |order_type: 'FUL', order_attribute: 'DZHNN', file_format:, ebics_version: 'H004'|
+  include_examples 'a valid ebicsRequest header',
+    order_type: order_type, order_attribute: order_attribute, ebics_version: ebics_version
 
   it "has FULOrderParams with FileFormat #{file_format}" do
     ful_params = xml.at_xpath('//e:header/e:static/e:OrderDetails/e:FULOrderParams', ns)

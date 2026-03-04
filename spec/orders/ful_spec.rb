@@ -24,7 +24,7 @@ RSpec.describe Epics::FUL do
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 upload request with FULOrderParams',
+    include_examples 'a valid ebicsRequest upload with FULOrderParams',
       order_type: 'FUL', order_attribute: 'DZHNN', file_format: 'pain.001.001.02'
   end
 
@@ -36,6 +36,6 @@ RSpec.describe Epics::FUL do
     end
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 transfer request'
+    include_examples 'a valid ebicsRequest transfer'
   end
 end

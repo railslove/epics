@@ -23,7 +23,7 @@ RSpec.describe Epics::CIP do
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 upload request', order_type: 'CIP', order_attribute: 'OZHNN'
+    include_examples 'a valid ebicsRequest upload', order_type: 'CIP', order_attribute: 'OZHNN'
   end
 
   describe 'H004 transfer structure' do
@@ -34,7 +34,7 @@ RSpec.describe Epics::CIP do
     end
     let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-    include_examples 'a valid H004 transfer request'
+    include_examples 'a valid ebicsRequest transfer'
   end
 end
 

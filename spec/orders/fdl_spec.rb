@@ -24,7 +24,7 @@ RSpec.describe Epics::FDL do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request with FDLOrderParams',
+      include_examples 'a valid ebicsRequest download with FDLOrderParams',
         order_type: 'FDL', file_format: 'camt.xxx.cfonb120.stm.Oby'
     end
 
@@ -36,7 +36,18 @@ RSpec.describe Epics::FDL do
       end
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 receipt request'
+      include_examples 'a valid ebicsRequest receipt'
+    end
+
+    describe 'H003 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
     end
 
     context 'with DateRange' do
@@ -61,7 +72,7 @@ RSpec.describe Epics::FDL do
         let(:xml) { Nokogiri::XML(subject.to_xml) }
         let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-        include_examples 'a valid H004 download request with FDLOrderParams and date range',
+        include_examples 'a valid ebicsRequest download with FDLOrderParams and date range',
           order_type: 'FDL', file_format: 'camt.xxx.cfonb120.stm.Oby',
           from: '2024-01-01', to: '2024-01-02'
       end
@@ -74,7 +85,18 @@ RSpec.describe Epics::FDL do
         end
         let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-        include_examples 'a valid H004 receipt request'
+        include_examples 'a valid ebicsRequest receipt'
+      end
+
+      describe 'H003 receipt structure' do
+        let(:version) { Epics::Keyring::VERSION_24 }
+        let(:xml) do
+          subject.transaction_id = SecureRandom.hex(16)
+          Nokogiri::XML(subject.to_receipt_xml)
+        end
+        let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+        include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
       end
     end
   end
@@ -108,7 +130,7 @@ RSpec.describe Epics::FDL do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request', order_type: 'FDL'
+      include_examples 'a valid ebicsRequest download', order_type: 'FDL'
     end
 
     describe 'H004 receipt structure' do
@@ -119,7 +141,18 @@ RSpec.describe Epics::FDL do
       end
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 receipt request'
+      include_examples 'a valid ebicsRequest receipt'
+    end
+
+    describe 'H003 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_24 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+      include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
     end
   end
 end

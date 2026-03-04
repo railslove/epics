@@ -21,7 +21,7 @@ RSpec.describe Epics::CDZ do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request with date range',
+      include_examples 'a valid ebicsRequest download with date range',
         order_type: 'CDZ', from: '2014-09-01', to: '2014-09-30'
     end
   end
@@ -53,7 +53,7 @@ RSpec.describe Epics::CDZ do
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
 
-      include_examples 'a valid H004 download request', order_type: 'CDZ'
+      include_examples 'a valid ebicsRequest download', order_type: 'CDZ'
     end
   end
 end
