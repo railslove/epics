@@ -40,18 +40,6 @@ class Epics::LetterRenderer
   end
 
   def use_x_509_certificate_template?
-    x_509_certificate_a_hash && x_509_certificate_x_hash && x_509_certificate_e_hash
-  end
-  
-  def x_509_certificate_a_hash
-    @client.x_509_certificate_hash(:a)
-  end
-  
-  def x_509_certificate_x_hash
-    @client.x_509_certificate_hash(:x)
-  end
-  
-  def x_509_certificate_e_hash
-    @client.x_509_certificate_hash(:e)
+    [keyring.user_signature, keyring.user_authentication, keyring.user_encryption].all? { |s| s.certificate }
   end
 end

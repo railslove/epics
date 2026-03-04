@@ -65,7 +65,6 @@ require "epics/hia"
 require "epics/ini"
 require "epics/hev"
 require "epics/signer"
-require "epics/x_509_certificate"
 require "epics/client"
 
 require 'epics/builders'
