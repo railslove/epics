@@ -10,5 +10,16 @@ RSpec.describe Epics::VMK do
     it { expect(subject.to_xml).to include('<OrderType>VMK</OrderType>') }
   end
 
+  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
   include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+
+  describe 'H004 request structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid H004 download request with date range',
+      order_type: 'VMK', from: '2014-09-01', to: '2014-09-30'
+  end
 end

@@ -13,8 +13,10 @@ RSpec.describe Epics::HAA do
     it { expect(subject.to_xml).to include('<OrderType>HAA</OrderType>') }
   end
 
-  include_examples '#to_xml'
-  include_examples '#to_receipt_xml'
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+  include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+  include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
 
   describe '#to_xml' do
     let(:version) { Epics::Keyring::VERSION_25 }
@@ -42,5 +44,24 @@ RSpec.describe Epics::HAA do
         expect(Nokogiri::XML(subject.to_receipt_xml)).to be_equivalent_to(signature_order_data)
       end
     end
+  end
+
+  describe 'H004 request structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid H004 download request', order_type: 'HAA'
+  end
+
+  describe 'H004 receipt structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_receipt_xml)
+    end
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid H004 receipt request'
   end
 end

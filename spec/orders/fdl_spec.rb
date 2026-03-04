@@ -5,8 +5,11 @@ RSpec.describe Epics::FDL do
   context 'with file_format' do
     subject(:order) { described_class.new(client, file_format: file_format) }
 
-    include_examples '#to_xml'
-    include_examples '#to_receipt_xml'
+    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+    include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -16,11 +19,34 @@ RSpec.describe Epics::FDL do
       end
     end
 
+    describe 'H004 request structure' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+      include_examples 'a valid H004 download request with FDLOrderParams',
+        order_type: 'FDL', file_format: 'camt.xxx.cfonb120.stm.Oby'
+    end
+
+    describe 'H004 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+      include_examples 'a valid H004 receipt request'
+    end
+
     context 'with DateRange' do
       subject(:order) { described_class.new(client, file_format: file_format, from: Date.new(2024, 1, 1), to: Date.new(2024, 1, 2)) }
 
-      include_examples '#to_xml'
-      include_examples '#to_receipt_xml'
+      include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
+      include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+      include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+      include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+      include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
 
       describe '#to_xml' do
         let(:version) { Epics::Keyring::VERSION_25 }
@@ -28,6 +54,27 @@ RSpec.describe Epics::FDL do
         it 'does includes a date range as optional order parameter' do
           expect(order.to_xml).to include('<FDLOrderParams><DateRange><Start>2024-01-01</Start><End>2024-01-02</End></DateRange><FileFormat>camt.xxx.cfonb120.stm.Oby</FileFormat></FDLOrderParams>')
         end
+      end
+
+      describe 'H004 request structure' do
+        let(:version) { Epics::Keyring::VERSION_25 }
+        let(:xml) { Nokogiri::XML(subject.to_xml) }
+        let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+        include_examples 'a valid H004 download request with FDLOrderParams and date range',
+          order_type: 'FDL', file_format: 'camt.xxx.cfonb120.stm.Oby',
+          from: '2024-01-01', to: '2024-01-02'
+      end
+
+      describe 'H004 receipt structure' do
+        let(:version) { Epics::Keyring::VERSION_25 }
+        let(:xml) do
+          subject.transaction_id = SecureRandom.hex(16)
+          Nokogiri::XML(subject.to_receipt_xml)
+        end
+        let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+        include_examples 'a valid H004 receipt request'
       end
     end
   end
@@ -42,8 +89,11 @@ RSpec.describe Epics::FDL do
       it { expect(subject.to_xml).to include('<OrderType>FDL</OrderType>') }
     end
 
-    include_examples '#to_xml'
-    include_examples '#to_receipt_xml'
+    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
+    include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'FDL replaced by BTD in H005'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -51,6 +101,25 @@ RSpec.describe Epics::FDL do
       it 'does not include a standard order parameter' do
         expect(order.to_xml).to include('<FDLOrderParams><FileFormat/></FDLOrderParams>')
       end
+    end
+
+    describe 'H004 request structure' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+      include_examples 'a valid H004 download request', order_type: 'FDL'
+    end
+
+    describe 'H004 receipt structure' do
+      let(:version) { Epics::Keyring::VERSION_25 }
+      let(:xml) do
+        subject.transaction_id = SecureRandom.hex(16)
+        Nokogiri::XML(subject.to_receipt_xml)
+      end
+      let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+      include_examples 'a valid H004 receipt request'
     end
   end
 end
