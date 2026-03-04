@@ -109,9 +109,9 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= @client.x_509_certificates_content[:a] %></code></pre>
+  <pre class="code"><code><%= keyring.user_signature.certificate.to_pem %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
-  <p class="code"><code><%= x_509_certificate_a_hash.scan(/../).join(":") %></code></p>
+  <p class="code"><code><%= keyring.user_signature.certificate.fingerprint.scan(/../).join(":") %></code></p>
   <p><%= t('confirmation') %></p>
   <br/>
   <br/>
@@ -218,9 +218,9 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= @client.x_509_certificates_content[:x] %></code></pre>
+  <pre class="code"><code><%= keyring.user_authentication.certificate.to_pem %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
-  <p class="code"><code><%= x_509_certificate_x_hash.scan(/../).join(":") %></code></p>
+  <p class="code"><code><%= keyring.user_authentication.certificate.fingerprint.scan(/../).join(":") %></code></p>
 </div>
 <div style="page-break-after:always"></div>
 <div>
@@ -298,9 +298,9 @@
     </tr>
   </table>
   <p><%= t('certificate') %> :</p>
-  <pre class="code"><code><%= @client.x_509_certificates_content[:e] %></code></pre>
+  <pre class="code"><code><%= keyring.user_encryption.certificate.to_pem %></code></pre>
   <p><%= t('hash') %> (SHA-256) :</p>
-  <p class="code"><code><%= x_509_certificate_e_hash.scan(/../).join(":") %></code></p>
+  <p class="code"><code><%= keyring.user_encryption.certificate.fingerprint.scan(/../).join(":") %></code></p>
   <p><%= t('confirmation') %></p>
   <br/>
   <br/>

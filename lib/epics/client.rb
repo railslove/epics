@@ -2,7 +2,7 @@ class Epics::Client
   extend Forwardable
 
   attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys_content, :locale, :product_name, :current_order_id,
-                :x_509_certificates_content, :debug_mode
+                :debug_mode
   attr_reader :keyring
   attr_writer :iban, :bic, :name
 
@@ -17,17 +17,15 @@ class Epics::Client
     self.partner_id = partner_id
     self.locale = options[:locale] || Epics::DEFAULT_LOCALE
     self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
-    self.debug_mode = !!options[:debug_mode]
-    self.x_509_certificates_content = {
-      a: options[:x_509_certificate_a_content],
-      x: options[:x_509_certificate_x_content],
-      e: options[:x_509_certificate_e_content]
-    }
     self.current_order_id = options[:order_id] || 466560
     @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
+    self.debug_mode = !!options[:debug_mode]
     extract_keys if keys_content
+    keyring.user_signature&.certificate = parse_certificate(options[:x_509_certificate_a_content])
+    keyring.user_authentication&.certificate = parse_certificate(options[:x_509_certificate_x_content])
+    keyring.user_encryption&.certificate = parse_certificate(options[:x_509_certificate_e_content])
 
     yield self if block_given?
   end
@@ -375,20 +373,13 @@ class Epics::Client
     File.write(path, dump_keys)
   end
 
-  def x_509_certificate(type)
-    content = x_509_certificates_content[type.to_sym]
-    return if content.nil? || content.empty?
-    Epics::X509Certificate.new(content)
-  end
-
-  def x_509_certificate_hash(type)
-    content = x_509_certificates_content[type.to_sym]
-    return if content.nil? || content.empty?
-    cert = OpenSSL::X509::Certificate.new(content)
-    Digest::SHA256.hexdigest(cert.to_der).upcase
-  end
-
   private
+
+  def parse_certificate(content)
+    return if content.nil? || content.empty?
+    Epics::Crypt::X509.new(content)
+  rescue OpenSSL::X509::CertificateError
+  end
 
   def upload(order_type, document)
     order = order_type.new(self, document)

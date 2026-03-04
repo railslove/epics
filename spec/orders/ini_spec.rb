@@ -41,16 +41,15 @@ RSpec.describe Epics::INI do
 
     context 'with x509 certificate' do
       let(:client) do
-        client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
-        client.x_509_certificates_content = {a: generate_x_509_crt(client.a.key, '/C=GB/O=TestOrg/CN=test.example.org')}
+        client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+        client.keyring.user_signature.certificate = Epics::Crypt::X509.new(generate_x_509_crt(client.signature_key.key, '/C=GB/O=TestOrg/CN=test.example.org'))
         client
       end
 
       it 'includes x509 certificate' do
-        a_crt = Epics::X509Certificate.new(client.x_509_certificates_content[:a])
         expect(subject.key_signature).to include('<ds:X509IssuerName>/C=GB/O=TestOrg/CN=test.example.org</ds:X509IssuerName>')
         expect(subject.key_signature).to include('<ds:X509SerialNumber>2</ds:X509SerialNumber>')
-        expect(subject.key_signature).to include("<ds:X509Certificate>#{a_crt.data}</ds:X509Certificate>")
+        expect(subject.key_signature).to include("<ds:X509Certificate>#{client.keyring.user_signature.certificate.data}</ds:X509Certificate>")
       end
     end
   end

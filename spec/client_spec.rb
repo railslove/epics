@@ -20,10 +20,6 @@ RSpec.describe Epics::Client do
       ))
     end
 
-    it 'assigns x_509_certificates_content' do
-      subject.x_509_certificates_content = { a: 'cert_a', x: 'cert_x', e: 'cert_e' }
-      expect(subject.x_509_certificates_content).to eq({ a: 'cert_a', x: 'cert_x', e: 'cert_e' })
-    end
   end
 
   context 'environment settings' do
@@ -251,77 +247,26 @@ RSpec.describe Epics::Client do
     end
   end
 
-  describe '#x_509_certificate' do
-    let(:epics_client) do
-      Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+  describe 'x509 certificate assignment via options' do
+    it 'assigns certificates to signatures from constructor options' do
+      epics_client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS',
+        x_509_certificate_a_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
+        x_509_certificate_x_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
+        x_509_certificate_e_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org')
+      )
+
+      expect(epics_client.keyring.user_signature.certificate).to be_a(Epics::Crypt::X509)
+      expect(epics_client.keyring.user_authentication.certificate).to be_a(Epics::Crypt::X509)
+      expect(epics_client.keyring.user_encryption.certificate).to be_a(Epics::Crypt::X509)
     end
 
-    context 'with valid certificates content' do
-      it 'returns an instance of Epics::X509Certificate' do
-        epics_client.x_509_certificates_content = {
-          a: generate_x_509_crt(epics_client.signature_key.key, '/C=GB/O=TestOrg/CN=test.example.org'),
-          x: generate_x_509_crt(epics_client.authentication_key.key, '/C=GB/O=TestOrg/CN=test.example.org'),
-          e: generate_x_509_crt(epics_client.encryption_key.key, '/C=GB/O=TestOrg/CN=test.example.org')
-        }
+    it 'leaves certificates nil when no options provided' do
+      epics_client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
 
-        expect(epics_client.x_509_certificate(:a)).to be_a(Epics::X509Certificate)
-        expect(epics_client.x_509_certificate(:x)).to be_a(Epics::X509Certificate)
-        expect(epics_client.x_509_certificate(:e)).to be_a(Epics::X509Certificate)
-      end
-    end
-
-    context 'with nil or empty content' do
-      it 'returns nil when content is nil' do
-        epics_client.x_509_certificates_content = { a: nil, x: nil, e: nil }
-        expect(epics_client.x_509_certificate(:a)).to be_nil
-        expect(epics_client.x_509_certificate(:x)).to be_nil
-        expect(epics_client.x_509_certificate(:e)).to be_nil
-      end
-
-      it 'returns nil when content is empty string' do
-        epics_client.x_509_certificates_content = { a: '', x: '', e: '' }
-        expect(epics_client.x_509_certificate(:a)).to be_nil
-        expect(epics_client.x_509_certificate(:x)).to be_nil
-        expect(epics_client.x_509_certificate(:e)).to be_nil
-      end
+      expect(epics_client.keyring.user_signature.certificate).to be_nil
+      expect(epics_client.keyring.user_authentication.certificate).to be_nil
+      expect(epics_client.keyring.user_encryption.certificate).to be_nil
     end
   end
 
-  describe '#x_509_certificate_hash' do
-    let(:epics_client) do
-      Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
-    end
-    context 'with valid certificates content' do
-      it 'returns SHA256 hash' do
-        epics_client.x_509_certificates_content = {
-          a: generate_x_509_crt(epics_client.signature_key.key, '/C=GB/O=TestOrg/CN=test.example.org'),
-          x: generate_x_509_crt(epics_client.authentication_key.key, '/C=GB/O=TestOrg/CN=test.example.org'),
-          e: generate_x_509_crt(epics_client.encryption_key.key, '/C=GB/O=TestOrg/CN=test.example.org')
-        }
-
-        expect(epics_client.x_509_certificate_hash(:a)).to be_a(String)
-        expect(epics_client.x_509_certificate_hash(:x)).to be_a(String)
-        expect(epics_client.x_509_certificate_hash(:e)).to be_a(String)
-        expect(epics_client.x_509_certificate_hash(:a).size).to eq(64)
-        expect(epics_client.x_509_certificate_hash(:x).size).to eq(64)
-        expect(epics_client.x_509_certificate_hash(:e).size).to eq(64)
-      end
-    end
-
-    context 'with nil or empty content' do
-      it 'returns nil when content is nil' do
-        epics_client.x_509_certificates_content = { a: nil, x: nil, e: nil }
-        expect(epics_client.x_509_certificate_hash(:a)).to be_nil
-        expect(epics_client.x_509_certificate_hash(:x)).to be_nil
-        expect(epics_client.x_509_certificate_hash(:e)).to be_nil
-      end
-
-      it 'returns nil when content is empty string' do
-        epics_client.x_509_certificates_content = { a: '', x: '', e: '' }
-        expect(epics_client.x_509_certificate_hash(:a)).to be_nil
-        expect(epics_client.x_509_certificate_hash(:x)).to be_nil
-        expect(epics_client.x_509_certificate_hash(:e)).to be_nil
-      end
-    end
-  end
 end
