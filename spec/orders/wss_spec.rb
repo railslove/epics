@@ -11,7 +11,11 @@ RSpec.describe Epics::WSS do
   end
 
   include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
+
+  describe '#to_xml H005' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    it('raises VersionSupportError') { expect { subject.to_xml }.to raise_error(Epics::VersionSupportError) }
+  end
 
   describe 'H004 request structure' do
     let(:version) { Epics::Keyring::VERSION_25 }

@@ -4,10 +4,8 @@ RSpec.describe Epics::HAC do
   context 'with date range' do
     subject(:order) { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
-    include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+    include_examples '#to_xml'
+    include_examples '#to_receipt_xml'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -68,10 +66,8 @@ RSpec.describe Epics::HAC do
       it { expect(subject.to_xml).to include('<OrderType>HAC</OrderType>') }
     end
 
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
-    include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+    include_examples '#to_xml'
+    include_examples '#to_receipt_xml'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }

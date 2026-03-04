@@ -4,8 +4,7 @@ RSpec.describe Epics::CRZ do
   context 'with date range' do
     subject { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
+    include_examples '#to_xml'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -13,6 +12,15 @@ RSpec.describe Epics::CRZ do
       it 'does includes a date range as standard order parameter' do
         expect(subject.to_xml).to include('<StandardOrderParams><DateRange><Start>2014-09-01</Start><End>2014-09-30</End></DateRange></StandardOrderParams>')
       end
+    end
+
+    describe 'H005 request structure' do
+      let(:version) { Epics::Keyring::VERSION_30 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+      include_examples 'a valid ebicsRequest H005 download with date range',
+        service_name: 'REP', msg_name: 'pain.002', scope: 'DE', service_option: 'SCT', from: '2014-09-01', to: '2014-09-30'
     end
 
     describe 'H004 request structure' do
@@ -44,8 +52,7 @@ RSpec.describe Epics::CRZ do
       it { expect(subject.to_xml).to include('<OrderType>CRZ</OrderType>') }
     end
 
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
+    include_examples '#to_xml'
 
     describe '#to_xml' do
       let(:version) { Epics::Keyring::VERSION_25 }
@@ -53,6 +60,15 @@ RSpec.describe Epics::CRZ do
       it 'does not include a standard order parameter' do
         expect(subject.to_xml).to include('<StandardOrderParams/>')
       end
+    end
+
+    describe 'H005 request structure' do
+      let(:version) { Epics::Keyring::VERSION_30 }
+      let(:xml) { Nokogiri::XML(subject.to_xml) }
+      let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+      include_examples 'a valid ebicsRequest H005 download',
+        service_name: 'REP', msg_name: 'pain.002', scope: 'DE', service_option: 'SCT'
     end
 
     describe 'H004 request structure' do

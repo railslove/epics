@@ -7,6 +7,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def create_btd(options = {})
+    auth_signature_handler = Epics::Handlers::AuthSignatureHandler.new(@client.keyring)
     request_builder.add_container_secured do |xml_builder|
       xml_builder.add_header do |header_builder|
         header_builder.add_static do |static_builder|
@@ -33,6 +34,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
         end
       end
       xml_builder.add_body
+      auth_signature_handler.handle(xml_builder)
     end
   end
 
@@ -121,7 +123,59 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', service_option: 'CH003GEN', start_date:, end_date:)
   end
 
+  def create_bka(start_date, end_date)
+    create_btd(service_name: 'EOP', scope: 'DE', msg_name: 'camt.053', container_type: 'ZIP', start_date:, end_date:)
+  end
+
+  def create_c5n(start_date, end_date)
+    create_btd(service_name: 'STM', scope: 'DE', service_option: 'SCI', msg_name: 'camt.054', container_type: 'ZIP', start_date:, end_date:)
+  end
+
+  def create_cdz(start_date, end_date)
+    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SDD', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+  end
+
+  def create_crz(start_date, end_date)
+    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SCT', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+  end
+
+  def create_azv(digest, transaction_key)
+    create_btu(transaction_key, digest, 1, service_name: 'XCT', scope: 'DE', msg_name: 'dtazv', filename: 'azv.dtazv.xxx.xml')
+  end
+
+  def create_b2b(digest, transaction_key)
+    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', service_option: 'B2B', msg_name: 'pain.008', filename: 'b2b.pain.008.xxx.xml')
+  end
+
+  def create_ccs(digest, transaction_key)
+    create_btu(transaction_key, digest, 1, service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'ccs.pain.001.xxx.xml')
+  end
+
+  def create_cds(digest, transaction_key)
+    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'cds.pain.008.xxx.xml')
+  end
+
+  def create_c2s(digest, transaction_key)
+    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'c2s.pain.008.xxx.xml')
+  end
+
   def create_ful(*, **)
+    raise Epics::VersionSupportError, 2.5
+  end
+
+  def create_fdl(*, **)
+    raise Epics::VersionSupportError, 2.5
+  end
+
+  def create_cd1(*, **)
+    raise Epics::VersionSupportError, 2.5
+  end
+
+  def create_wss(*, **)
+    raise Epics::VersionSupportError, 2.5
+  end
+
+  def create_xds(*, **)
     raise Epics::VersionSupportError, 2.5
   end
 

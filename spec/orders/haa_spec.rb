@@ -13,10 +13,8 @@ RSpec.describe Epics::HAA do
     it { expect(subject.to_xml).to include('<OrderType>HAA</OrderType>') }
   end
 
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
-  include_examples '#to_receipt_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_receipt_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+  include_examples '#to_xml'
+  include_examples '#to_receipt_xml'
 
   describe '#to_xml' do
     let(:version) { Epics::Keyring::VERSION_25 }

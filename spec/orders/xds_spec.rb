@@ -12,5 +12,11 @@ RSpec.describe Epics::XDS do
   end
 
   include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_transfer_xml'
+  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
+
+  describe '#to_xml H005' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    it('raises VersionSupportError') { expect { subject.to_xml }.to raise_error(Epics::VersionSupportError) }
+  end
+
 end

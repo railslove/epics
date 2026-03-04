@@ -11,10 +11,28 @@ RSpec.describe Epics::CCT do
     it { expect(subject.to_xml).to include('<OrderType>CCT</OrderType>') }
   end
 
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
-  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
-  include_examples '#to_transfer_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 certificate support not yet implemented'
+  include_examples '#to_xml'
+  include_examples '#to_transfer_xml'
+
+  describe 'H005 request structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest H005 upload',
+      service_name: 'SCT', msg_name: 'pain.001'
+  end
+
+  describe 'H005 transfer structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_transfer_xml)
+    end
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest H005 transfer'
+  end
 
   describe 'H004 request structure' do
     let(:version) { Epics::Keyring::VERSION_25 }
