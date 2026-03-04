@@ -11,11 +11,9 @@ RSpec.describe Epics::CD1 do
     it { expect(subject.to_xml).to include('<OrderType>CD1</OrderType>') }
   end
 
-  include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 upload support not yet implemented'
-  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTU mapping not yet implemented'
-  include_examples '#to_transfer_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 upload support not yet implemented'
-  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_25]
+  include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_transfer_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTU mapping not yet implemented'
 
   describe 'H004 request structure' do
@@ -38,7 +36,6 @@ RSpec.describe Epics::CD1 do
   end
 
   describe 'H003 request structure' do
-    before { pending 'H003 upload support not yet implemented' }
     let(:version) { Epics::Keyring::VERSION_24 }
     let(:xml) { Nokogiri::XML(subject.to_xml) }
     let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }

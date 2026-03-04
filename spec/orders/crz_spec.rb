@@ -4,8 +4,7 @@ RSpec.describe Epics::CRZ do
   context 'with date range' do
     subject { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
     include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
 
     describe '#to_xml' do
@@ -26,7 +25,6 @@ RSpec.describe Epics::CRZ do
     end
 
     describe 'H003 request structure' do
-      before { pending 'H003 download support not yet implemented' }
       let(:version) { Epics::Keyring::VERSION_24 }
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
@@ -46,8 +44,7 @@ RSpec.describe Epics::CRZ do
       it { expect(subject.to_xml).to include('<OrderType>CRZ</OrderType>') }
     end
 
-    include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_24], reason: 'H003 download support not yet implemented'
-    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_25]
+    include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
     include_examples '#to_xml pending', versions: [Epics::Keyring::VERSION_30], reason: 'H005 BTD mapping not yet implemented'
 
     describe '#to_xml' do
@@ -67,7 +64,6 @@ RSpec.describe Epics::CRZ do
     end
 
     describe 'H003 request structure' do
-      before { pending 'H003 download support not yet implemented' }
       let(:version) { Epics::Keyring::VERSION_24 }
       let(:xml) { Nokogiri::XML(subject.to_xml) }
       let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }

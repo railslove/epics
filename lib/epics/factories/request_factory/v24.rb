@@ -7,11 +7,6 @@ class Epics::Factories::RequestFactory::V24 < Epics::Factories::RequestFactory::
     define_method("create_#{type}") { |*| raise NotImplementedError }
   end
 
-  def initialize(client)
-    @digest_resolver = Epics::Services::DigestResolver::V2.new
-    super
-  end
-
   protected
 
   def xml_builder
@@ -23,7 +18,11 @@ class Epics::Factories::RequestFactory::V24 < Epics::Factories::RequestFactory::
     when 'INI', 'HIA'
       Epics::Builders::OrderDetailsBuilder::ORDER_ATTRIBUTE_DZNNN
     else
-      Epics::Builders::OrderDetailsBuilder::ORDER_ATTRIBUTE_DZHNN
+      if with_es
+        Epics::Builders::OrderDetailsBuilder::ORDER_ATTRIBUTE_OZHNN
+      else
+        Epics::Builders::OrderDetailsBuilder::ORDER_ATTRIBUTE_DZHNN
+      end
     end
 
     order_details_builder.add_order_type order_type
