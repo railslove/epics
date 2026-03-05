@@ -31,15 +31,7 @@ class Epics::LetterRenderer
   alias_method :x, :authentication_key
 
   def render(bankname)
-    template_path = File.join(File.dirname(__FILE__), '../letter/', template_filename)
+    template_path = File.join(File.dirname(__FILE__), '../letter/ini.erb')
     ERB.new(File.read(template_path)).result(binding)
-  end
-
-  def template_filename
-    use_x_509_certificate_template? ? 'ini_with_certs.erb' : 'ini.erb'
-  end
-
-  def use_x_509_certificate_template?
-    [keyring.user_signature, keyring.user_authentication, keyring.user_encryption].all? { |s| s.certificate }
   end
 end

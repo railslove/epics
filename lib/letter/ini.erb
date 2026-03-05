@@ -108,12 +108,19 @@
           </td>
         </tr>
       </table>
+      <% if keyring.user_signature.certificate %>
+      <p><%= t('certificate') %> :</p>
+      <pre class="code"><code><%= keyring.user_signature.certificate.to_pem %></code></pre>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= keyring.user_signature.certificate.fingerprint.scan(/../).join(":") %></code></p>
+      <% else %>
       <p><%= t('exponent') %> (<%= t('bit', bit: a.key.e.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= a.e %></code></p>
       <p><%= t('modulus') %> (<%= t('bit', bit: a.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= a.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
       <p class="code"><code><%= confirm_digest(keyring.user_signature).upcase.scan(/.{2}/).join(' ') %></code></p>
+      <% end %>
       <p><%= t('confirmation') %></p>
       <br/>
       <br/>
@@ -219,12 +226,19 @@
           </td>
         </tr>
       </table>
+      <% if keyring.user_authentication.certificate %>
+      <p><%= t('certificate') %> :</p>
+      <pre class="code"><code><%= keyring.user_authentication.certificate.to_pem %></code></pre>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= keyring.user_authentication.certificate.fingerprint.scan(/../).join(":") %></code></p>
+      <% else %>
       <p><%= t('exponent') %> (<%= t('bit', bit: x.key.e.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= x.e %></code></p>
       <p><%= t('modulus') %> (<%= t('bit', bit: x.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= x.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
       <p class="code"><code><%= confirm_digest(keyring.user_authentication).upcase.scan(/.{2}/).join(' ') %></code></p>
+      <% end %>
     </div>
     <div style="page-break-after:always"></div>
     <div>
@@ -301,12 +315,19 @@
           </td>
         </tr>
       </table>
+      <% if keyring.user_encryption.certificate %>
+      <p><%= t('certificate') %> :</p>
+      <pre class="code"><code><%= keyring.user_encryption.certificate.to_pem %></code></pre>
+      <p><%= t('hash') %> (SHA-256) :</p>
+      <p class="code"><code><%= keyring.user_encryption.certificate.fingerprint.scan(/../).join(":") %></code></p>
+      <% else %>
       <p><%= t('exponent') %> (<%= t('bit', bit: e.key.e.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= e.e %></code></p>
       <p><%= t('modulus') %> (<%= t('bit', bit: e.key.n.num_bytes * 8) %>) :</p>
       <p class="code"><code><%= e.n.scan(/.{2}/).join(' ') %></code></p>
       <p><%= t('hash') %> (SHA-256) :</p>
       <p class="code"><code><%= confirm_digest(keyring.user_encryption).upcase.scan(/.{2}/).join(' ') %></code></p>
+      <% end %>
       <p><%= t('confirmation') %></p>
       <br/>
       <br/>
