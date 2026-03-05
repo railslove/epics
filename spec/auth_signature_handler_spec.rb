@@ -15,7 +15,7 @@ RSpec.describe Epics::Handlers::AuthSignatureHandler do
 
   describe '#digest!' do
     it 'creates a digest of the *[authorized=true] nodes' do
-      expect(digest_node.content).to eq('iXchWJ3xMy508YBhzx0Fn9cYNyyAiS+X8CB8zb7tyfM=')
+      expect(digest_node.content).to eq('j0WiGMS9D6Bt1xw92ZAOWUsAJ+OBlUYKtHRQI7TbpbY=')
     end
 
     it 'bar' do
@@ -25,7 +25,7 @@ RSpec.describe Epics::Handlers::AuthSignatureHandler do
 
   describe '#sign!' do
     it 'signs the complete ds:SignedInfo node' do
-      expect(signature_value_node.content).to eq('o6G7zeU6IhEkQ51Mp5/aIhPcYiZAG1rERxFad+rVdbRCYJGUn6/BNath1cdTgoHQ+ZWn9+Y6IgFsKUYFp8QHrhYBJNhd38fi5wj2Eqv+J4nsfmSD9x6YFa8Q13cJ9/CakHp/C59bgFSJj77BzRFUPnW1Y1NuHj8n1OJ3iFTyF1vF6H6oRKHoE4cbK4jhD3f6udRvGglhW5J+TUFBM+2aE8njpzBZFjyQlct+5XUx3o+1GvaMUk5riH5sCQ95PAKuGTXFu0OLZvECDMA3kOia/l3VF09QUGsjxYF0jUn5WG6TnLy8+Odrh9tUgV9bS/swSeQ41Cah4Ehb0qTYFZoJ+w==')
+      expect(signature_value_node.content).to eq('K3FNqdg90AoFqgc1bM2CgAKHNfy7SWWcrm03CXEfu9XF4q4/2QWRyOAShcoF+kG60lnKjADqMqLTpMqXMTKg2AX9IItdl3p8IDocaZ4fVBdL8yUvE4/iH9569oj8QX4gvndwwS46TRVVYyZno1l44r9aEuUfaaqATp3ITQcyM3xDXFsNwVdJuUjzYHPTEOMXGxZlD/wIcLTQwMLLn0D/gitgsXQKqvGH3VI80bAG7aIxmLpcPEBqrAaZGCIghZWvJK2CBfgjSstcdmIK5YRCYF5UjCqoEywnp8ELaFtWMTcLPtq0GfJ1e84vGCVSNRdIH30dNRKINDWl+4YtzJpa5A==')
     end
 
     it 'can be verified with the same key' do
