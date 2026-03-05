@@ -62,12 +62,18 @@ class Epics::Builders::XmlBuilder::Base
     raise NotImplementedError
   end
 
+  def h00x_schema_location
+    raise NotImplementedError
+  end
+
   private
 
   def create_h00x(container, secured = false)
     namespaces = { xmlns: h00x_namespace }
     namespaces['xmlns:ds'] = 'http://www.w3.org/2000/09/xmldsig#' if secured
+    namespaces['xmlns:xsi'] = 'http://www.w3.org/2001/XMLSchema-instance'
     attributes = { Version: h00x_version, Revision: '1' }
+    attributes['xsi:schemaLocation'] = "#{h00x_namespace} #{h00x_schema_location}"
     @xml.send(container, **namespaces, **attributes) do
       yield self
     end

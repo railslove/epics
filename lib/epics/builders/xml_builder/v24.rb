@@ -24,4 +24,8 @@ class Epics::Builders::XmlBuilder::V24 < Epics::Builders::XmlBuilder::Base
   def h00x_namespace
     'http://www.ebics.org/H003'
   end
+
+  def h00x_schema_location
+    'http://www.ebics.org/H003/ebics_H003.xsd'
+  end
 end

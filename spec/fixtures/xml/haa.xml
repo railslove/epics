@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsRequest xmlns="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Version="H004" Revision="1">
+<ebicsRequest xmlns="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="H004" Revision="1" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_H004.xsd">
   <header authenticate="true">
     <static>
       <HostID>SIZBN001</HostID>
@@ -32,10 +32,10 @@
           <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
         </ds:Transforms>
         <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-        <ds:DigestValue>DF9b8gl4Kuf8imi/OrMCEU8dZjI6Fshac55BuMAYlR4=</ds:DigestValue>
+        <ds:DigestValue>ZtwT2xdGcZNdxc/gPPLgJG++xyaV2Wmj5adAfo2NVBM=</ds:DigestValue>
       </ds:Reference>
     </ds:SignedInfo>
-    <ds:SignatureValue>a5pG2Y7q6lP8MdNquU1QPhVIefQ3TtFObGLLFoQsvKkh9BQn4PkGwcp8rPIfDbx3J4y6xhkz6CBvQoHp8LmH3IuYsPRZtGVvvKtL8Ser1YpSEkkJeChDkMzDUEeLKrMVCLSaQhhUxGSXCxVBYp4hDu/BfmU9pnMWKKWqDNFb5EB9WvK+2Ipec8AijuQGTPrAFd+ux92S/vUjilgR20S8SmIhDkeO9p/yURDcC6sUrmolDVVOodC1HBJMJzAZeQPzZmt6KnGcZs4BZF2lJuPhdA7RbxYVJ7avqaGHi8uccEGyBIlW0nrfRORqvczn1XD2e+iABoAIssoEy6h/vAkfDw==</ds:SignatureValue>
+    <ds:SignatureValue>bIExhIWtRJOGvLxs5H3jWD8DNqB/X3X/N3kNecmkJoRPODnZWBx7naAIXuPnR1E90T/gtRVjs8LEMLAsKn6GaMFSgIPKY3rarZy5YZSqHNsGl0/pVXa/tlogjp2z1ug1IBYkAgFJlsBFNaMMkgoTKeASE+zJT5tdq/5HIl4G6YMOkvbaYqdD1npoj3Q3/GcSTFvbURfRZVj+2E+ziUPfJA2e72nzKYHw1tw5NvtJQOeZ6p1OP292hayHAyUcliD5vbgDUx+Cs+TKX7vfw9fVm0njhc6Tbg1H3i7z5Neavo31WnadoFmuGZfXbVSRRckwn3qXb1c7sjfG1E+cGdGUzw==</ds:SignatureValue>
   </AuthSignature>
   <body/>
 </ebicsRequest>
