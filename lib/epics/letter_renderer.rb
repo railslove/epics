@@ -19,7 +19,7 @@ class Epics::LetterRenderer
 
   alias t translate
 
-  def_delegators @digest_resolver, :confirm_digest
+  def_delegators :@digest_resolver, :confirm_digest
   def_delegators :@client, :keyring,
                  :host_id, :user_id, :partner_id,
                  :signature_version, :signature_key,
