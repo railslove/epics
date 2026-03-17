@@ -352,10 +352,24 @@ class Epics::Client
 
   def HTD
     Nokogiri::XML(download(Epics::HTD)).tap do |htd|
-      @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: urn_schema).text rescue nil
-      @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: urn_schema).text rescue nil
-      @name        ||= htd.at_xpath("//xmlns:Name", xmlns: urn_schema).text rescue nil
-      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: urn_schema).map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+      @iban ||= begin
+        htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: urn_schema).text
+      rescue StandardError
+        nil
+      end
+      @bic ||= begin
+        htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: urn_schema).text
+      rescue StandardError
+        nil
+      end
+      @name ||= begin
+        htd.at_xpath('//xmlns:Name', xmlns: urn_schema).text
+      rescue StandardError
+        nil
+      end
+      @order_types ||= htd.search('//xmlns:OrderTypes', xmlns: urn_schema).map do |o|
+        o.content.split(/\s/)
+      end.delete_if { |o| o == '' }.flatten
     end.to_xml
   end
 
