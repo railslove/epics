@@ -83,8 +83,8 @@ class Epics::Handlers::OrderDataHandler::Base
 
     @xml.send('ds:X509Data') do
       @xml.send('ds:X509IssuerSerial') do
-        @xml.send('ds:X509IssuerName', signature.certificate.issuer)
-        @xml.send('ds:X509SerialNumber', signature.certificate.version)
+        @xml.send('ds:X509IssuerName', signature.certificate.issuer.to_s(OpenSSL::X509::Name::RFC2253))
+        @xml.send('ds:X509SerialNumber', signature.certificate.serial)
       end
       @xml.send('ds:X509Certificate', Base64.strict_encode64(signature.certificate.to_der))
     end
