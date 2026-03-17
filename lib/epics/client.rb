@@ -44,11 +44,11 @@ class Epics::Client
   end
 
   def inspect
-    "#<#{self.class}:#{self.object_id}
-     @version=#{self.keyring.version},
-     @keys=#{self.keys.keys},
-     @user_id=\"#{self.user_id}\",
-     @partner_id=\"#{self.partner_id}\""
+    "#<#{self.class}:#{object_id}
+     @version=#{keyring.version},
+     @keys=#{keys.keys},
+     @user_id=\"#{user_id}\",
+     @partner_id=\"#{partner_id}\""
   end
 
   def next_order_id
@@ -179,11 +179,11 @@ class Epics::Client
   end
 
   def debit(document, type = :CDD)
-    self.public_send(type, document)
+    public_send(type, document)
   end
 
   def statements(from, to, type = :STA)
-    self.public_send(type, from: from, to: to)
+    public_send(type, from: from, to: to)
   end
 
   def HIA
@@ -444,7 +444,7 @@ class Epics::Client
   end
 
   def extract_keys
-    JSON.load(self.keys_content).each do |signature_version, key|
+    JSON.load(keys_content).each do |signature_version, key|
       next unless key
 
       is_bank_key = signature_version.start_with?("#{host_id.upcase}.")
@@ -497,7 +497,7 @@ class Epics::Client
   def encrypt(data)
     salt = OpenSSL::Random.random_bytes(8)
 
-    cipher = setup_cipher(:encrypt, self.passphrase, salt)
+    cipher = setup_cipher(:encrypt, passphrase, salt)
     Base64.strict_encode64([salt, cipher.update(data) + cipher.final].join)
   end
 
@@ -506,7 +506,7 @@ class Epics::Client
     salt = data[0..7]
     data = data[8..-1]
 
-    cipher = setup_cipher(:decrypt, self.passphrase, salt)
+    cipher = setup_cipher(:decrypt, passphrase, salt)
     cipher.update(data) + cipher.final
   end
 
