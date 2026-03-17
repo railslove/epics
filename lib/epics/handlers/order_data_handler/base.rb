@@ -45,14 +45,12 @@ class Epics::Handlers::OrderDataHandler::Base
     end
   end
 
-  def create_hia_request_order_data
+  def create_hia_request_order_data(&block)
     Nokogiri::XML::Builder.new do |xml|
       @xml = xml
       namespaces = { xmlns: h00x_namespace }
       namespaces['xmlns:ds'] = 'http://www.w3.org/2000/09/xmldsig#'
-      @xml.HIARequestOrderData **namespaces do
-        yield
-      end
+      @xml.HIARequestOrderData(**namespaces, &block)
     end
   end
 

@@ -11,13 +11,13 @@ class Epics::Client
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
-    self.url  = url
+    self.url = url
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
     self.locale = options[:locale] || Epics::DEFAULT_LOCALE
     self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
-    self.current_order_id = options[:order_id] || 466560
+    self.current_order_id = options[:order_id] || 466_560
     @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
@@ -52,7 +52,8 @@ class Epics::Client
   end
 
   def next_order_id
-    raise 'Order ID overflow' if current_order_id >= 1679615
+    raise 'Order ID overflow' if current_order_id >= 1_679_615
+
     self.current_order_id += 1
   end
 
@@ -97,7 +98,8 @@ class Epics::Client
   end
 
   def keys
-    user_signature = [keyring.user_signature, keyring.user_authentication, keyring.user_encryption].each_with_object({}) do |signature, keys|
+    user_signature = [keyring.user_signature, keyring.user_authentication,
+                      keyring.user_encryption].each_with_object({}) do |signature, keys|
       keys[signature.version] = signature.key if signature
     end
     bank_signature = [keyring.bank_authentication, keyring.bank_encryption].each_with_object({}) do |signature, keys|
@@ -108,19 +110,31 @@ class Epics::Client
   end
 
   def name
-    @name ||= (self.HTD; @name)
+    @name ||= begin
+      self.HTD
+      @name
+    end
   end
 
   def iban
-    @iban ||= (self.HTD; @iban)
+    @iban ||= begin
+      self.HTD
+      @iban
+    end
   end
 
   def bic
-    @bic ||= (self.HTD; @bic)
+    @bic ||= begin
+      self.HTD
+      @bic
+    end
   end
 
   def order_types
-    @order_types ||= (self.HTD; @order_types)
+    @order_types ||= begin
+      self.HTD
+      @order_types
+    end
   end
 
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, options = {}, &block)
@@ -182,7 +196,7 @@ class Epics::Client
 
   def HEV
     res = post(url, Epics::HEV.new(self).to_xml).body
-    res.doc.xpath("//xmlns:VersionNumber", xmlns: 'http://www.ebics.org/H000').each_with_object({}) do |node, versions|
+    res.doc.xpath('//xmlns:VersionNumber', xmlns: 'http://www.ebics.org/H000').each_with_object({}) do |node, versions|
       versions[node['ProtocolVersion']] = node.content
     end
   end
@@ -281,7 +295,7 @@ class Epics::Client
   end
 
   def FDL(format, from = nil, to = nil)
-    download(Epics::FDL, file_format: format, from: from, to: to )
+    download(Epics::FDL, file_format: format, from: from, to: to)
   end
 
   def VMK(from = nil, to = nil)
@@ -333,7 +347,7 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: urn_schema).content.split(/\s/)
+    Nokogiri::XML(download(Epics::HAA)).at_xpath('//xmlns:OrderTypes', xmlns: urn_schema).content.split(/\s/)
   end
 
   def HTD
@@ -373,6 +387,7 @@ class Epics::Client
 
   def parse_certificate(content)
     return if content.nil? || content.empty?
+
     Epics::Crypt::X509.new(content)
   rescue OpenSSL::X509::CertificateError
   end
@@ -384,7 +399,7 @@ class Epics::Client
 
     res = post(url, order.to_transfer_xml).body
 
-    return res.transaction_id, [res.order_id, session.order_id].detect { |id| id.to_s.chars.any? }
+    [res.transaction_id, [res.order_id, session.order_id].detect { |id| id.to_s.chars.any? }]
   end
 
   def download(order_type, *args, **options)
@@ -392,9 +407,7 @@ class Epics::Client
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
 
-    if res.segmented? && res.last_segment?
-      post(url, document.to_receipt_xml).body
-    end
+    post(url, document.to_receipt_xml).body if res.segmented? && res.last_segment?
 
     res.order_data
   end
@@ -408,8 +421,9 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT }, ssl: { verify: verify_ssl? }) do |faraday|
-      faraday.use Epics::ParseEbics, { client: self}
+    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: USER_AGENT },
+                                ssl: { verify: verify_ssl? }) do |faraday|
+      faraday.use Epics::ParseEbics, { client: self }
       # faraday.use MyAdapter
       faraday.response :logger, ::Logger.new(STDOUT), bodies: true if debug_mode # log requests/response to STDOUT
     end
