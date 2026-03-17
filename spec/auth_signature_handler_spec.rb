@@ -33,4 +33,26 @@ RSpec.describe Epics::Handlers::AuthSignatureHandler do
     end
   end
 
+  describe 'XML structure' do
+    it 'inserts AuthSignature before body element' do
+      body_node = subject.at('body')
+      auth_signature_node = subject.at('AuthSignature')
+      expect(auth_signature_node).not_to be_nil
+      expect(body_node.previous).to eq(auth_signature_node)
+    end
+
+    it 'replaces placeholder with actual signature value' do
+      expect(signature_value_node.content).not_to eq('PLACEHOLDER')
+      expect(signature_value_node.content).not_to be_empty
+      expect(signature_value_node.content).to match(%r{\A[A-Za-z0-9+/=]+\z})
+    end
+
+    it 'canonicalizes SignedInfo in main document context' do
+      signed_info_canonicalized = signature_node.canonicalize
+      expect(signed_info_canonicalized).to include('ds:SignedInfo')
+      expect(signed_info_canonicalized).to include('ds:CanonicalizationMethod')
+      expect(signed_info_canonicalized).to include('ds:SignatureMethod')
+      expect(signed_info_canonicalized).to include('ds:Reference')
+    end
+  end
 end
