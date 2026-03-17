@@ -12,14 +12,13 @@ RSpec.describe Epics::Client do
 
     it 'holds all keys, user and bank' do
       expect(subject.keys).to match(a_hash_including(
-        "E002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
-        "X002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
-        "A006" => be_a(Epics::SignatureAlgorithm::RsaPss),
-        "SIZBN001.E002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
-        "SIZBN001.X002" => be_a(Epics::SignatureAlgorithm::RsaPkcs1)
-      ))
+                                      'E002' => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+                                      'X002' => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+                                      'A006' => be_a(Epics::SignatureAlgorithm::RsaPss),
+                                      'SIZBN001.E002' => be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+                                      'SIZBN001.X002' => be_a(Epics::SignatureAlgorithm::RsaPkcs1)
+                                    ))
     end
-
   end
 
   context 'environment settings' do
@@ -54,31 +53,31 @@ RSpec.describe Epics::Client do
 
   describe '#encryption_key' do
     it 'the encryption key' do
-      expect(subject.encryption_key.public_digest).to eq("rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=")
+      expect(subject.encryption_key.public_digest).to eq('rwIxSUJAVEFDQ0sdYe+CybdspMllDG6ArNtdCzUbT1E=')
     end
   end
 
   describe '#authentication_key' do
     it 'the authentication key' do
-      expect(subject.authentication_key.public_digest).to eq("Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=")
+      expect(subject.authentication_key.public_digest).to eq('Jjcu97qg595PPn+0OvqBOBIskMIiStNYYXyjgWHeBhE=')
     end
   end
 
   describe '#signature_key' do
     it 'the signing key' do
-      expect(subject.signature_key.public_digest).to eq("9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=")
+      expect(subject.signature_key.public_digest).to eq('9ay3tc+I3MgJBaroeD7XJfOtHcq7IR23fljWefl0dzk=')
     end
   end
 
   describe '#bank_encryption_key' do
     it 'the banks encryption key' do
-      expect(subject.bank_encryption_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_encryption_key.public_digest).to eq('dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=')
     end
   end
 
   describe '#bank_authentication_key' do
     it 'the banks signing key' do
-      expect(subject.bank_authentication_key.public_digest).to eq("dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=")
+      expect(subject.bank_authentication_key.public_digest).to eq('dFAYe281vj9NB7w+VoWIdfHnjY9hNbZLbHsDOu76QAE=')
     end
   end
 
@@ -96,7 +95,8 @@ RSpec.describe Epics::Client do
 
   describe '#HPB' do
     let(:e_key) do
-      Epics::SignatureAlgorithm::RsaPss.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_e.pem'))))
+      Epics::SignatureAlgorithm::RsaPss.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__),
+                                                                                       'fixtures', 'bank_e.pem'))))
     end
 
     before do
@@ -291,10 +291,9 @@ RSpec.describe Epics::Client do
   describe 'x509 certificate assignment via options' do
     it 'assigns certificates to signatures from constructor options' do
       epics_client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS',
-        x_509_certificate_a_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
-        x_509_certificate_x_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
-        x_509_certificate_e_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org')
-      )
+                                       x_509_certificate_a_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
+                                       x_509_certificate_x_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'),
+                                       x_509_certificate_e_content: generate_x_509_crt(OpenSSL::PKey::RSA.new(2048), '/C=GB/O=TestOrg/CN=test.example.org'))
 
       expect(epics_client.keyring.user_signature.certificate).to be_a(Epics::Crypt::X509)
       expect(epics_client.keyring.user_authentication.certificate).to be_a(Epics::Crypt::X509)
@@ -302,12 +301,12 @@ RSpec.describe Epics::Client do
     end
 
     it 'leaves certificates nil when no options provided' do
-      epics_client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+      epics_client = Epics::Client.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX',
+                                       'EBICS')
 
       expect(epics_client.keyring.user_signature.certificate).to be_nil
       expect(epics_client.keyring.user_authentication.certificate).to be_nil
       expect(epics_client.keyring.user_encryption.certificate).to be_nil
     end
   end
-
 end
