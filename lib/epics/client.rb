@@ -202,7 +202,10 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath('//xmlns:PubKeyValue', xmlns: urn_schema).each do |node|
+    response_xml = download(Epics::HPB)
+    doc = Nokogiri::XML(response_xml)
+
+    doc.xpath('//xmlns:PubKeyValue', xmlns: urn_schema).each do |node|
       signature_version = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
@@ -229,6 +232,36 @@ class Epics::Client
       end
     rescue Epics::Signature::UnknownTypeError
     rescue Epics::Signature::UnknownVersionError
+    end
+
+    doc.xpath('//ds:X509Certificate', xmlns: urn_schema,
+                                      ds: 'http://www.w3.org/2000/09/xmldsig#').each do |cert_node|
+      cert_pem = "-----BEGIN CERTIFICATE-----\n#{cert_node.content}\n-----END CERTIFICATE-----"
+      cert = OpenSSL::X509::Certificate.new(cert_pem)
+
+      info_element = cert_node.parent&.parent
+      auth_version = info_element&.at_xpath('.//*[local-name() = "AuthenticationVersion"]')&.content
+      enc_version = info_element&.at_xpath('.//*[local-name() = "EncryptionVersion"]')&.content
+      version = auth_version || enc_version
+
+      next unless version
+
+      begin
+        signature = Epics::Signature.new(
+          version,
+          Epics::SignatureAlgorithm::RsaPkcs1.new(cert.public_key)
+        )
+        signature.certificate = Epics::Crypt::X509.new(cert_pem)
+
+        case signature.type
+        when Epics::Signature::TYPE_E
+          keyring.bank_encryption = signature
+        when Epics::Signature::TYPE_X
+          keyring.bank_authentication = signature
+        end
+      rescue Epics::Signature::UnknownTypeError
+      rescue Epics::Signature::UnknownVersionError
+      end
     end
 
     [bank_authentication_key, bank_encryption_key]

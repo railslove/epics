@@ -131,6 +131,47 @@ RSpec.describe Epics::Client do
       it { expect(subject.keys['SIZBN001.E002'].public_digest).to eq(e_key.public_digest) }
       it { expect(subject.keys['SIZBN001.X002'].public_digest).to eq(e_key.public_digest) }
     end
+
+    describe 'with X.509 certificates (EBICS 3.0 / H005 format)' do
+      let(:bank_cert) { OpenSSL::X509::Certificate.new(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'bank_x509.pem'))) }
+
+      before do
+        allow(subject).to receive(:download).with(Epics::HPB).and_return(File.read(File.join(File.dirname(__FILE__),
+                                                                                             'fixtures', 'xml', 'hpb_response_x509.xml')))
+      end
+
+      it 'parses X002 bank authentication key from certificate' do
+        subject.HPB
+        expect(subject.bank_authentication_key).not_to be_nil
+        expect(subject.bank_authentication_key).to be_a(Epics::SignatureAlgorithm::RsaPkcs1)
+      end
+
+      it 'parses E002 bank encryption key from certificate' do
+        subject.HPB
+        expect(subject.bank_encryption_key).not_to be_nil
+        expect(subject.bank_encryption_key).to be_a(Epics::SignatureAlgorithm::RsaPkcs1)
+      end
+
+      it 'stores certificate in keyring for bank authentication' do
+        subject.HPB
+        expect(subject.keyring.bank_authentication.certificate).not_to be_nil
+      end
+
+      it 'stores certificate in keyring for bank encryption' do
+        subject.HPB
+        expect(subject.keyring.bank_encryption.certificate).not_to be_nil
+      end
+
+      it 'returns authentication and encryption keys' do
+        expect(subject.HPB).to match([be_a(Epics::SignatureAlgorithm::RsaPkcs1),
+                                      be_a(Epics::SignatureAlgorithm::RsaPkcs1)])
+      end
+
+      it 'parses public key from certificate correctly' do
+        subject.HPB
+        expect(subject.bank_authentication_key.key.to_pem).to eq(bank_cert.public_key.to_pem)
+      end
+    end
   end
 
   describe '#CDB' do
