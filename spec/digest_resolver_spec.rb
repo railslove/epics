@@ -115,9 +115,11 @@ RSpec.describe 'DigestResolver' do
         expect(result.encoding).to eq(Encoding::BINARY)
       end
 
-      it 'raises error without certificate' do
+      it 'falls back to key when certificate is nil' do
         sig = Epics::Signature.new(Epics::Signature::A_VERSION_6, rsa_algo)
-        expect { resolver.sign_digest(sig) }.to raise_error(NoMethodError)
+        result = resolver.sign_digest(sig)
+        expected = crypt_service.calculate_digest(rsa_algo, 'sha256')
+        expect(result).to eq(expected)
       end
     end
 
@@ -132,6 +134,13 @@ RSpec.describe 'DigestResolver' do
       it 'returns a hex string (lowercase, 64 chars for SHA256)' do
         result = resolver.confirm_digest(sig_with_cert)
         expect(result).to match(/\A[0-9a-f]{64}\z/)
+      end
+
+      it 'falls back to key when certificate is nil' do
+        sig = Epics::Signature.new(Epics::Signature::A_VERSION_6, rsa_algo)
+        result = resolver.confirm_digest(sig)
+        expected = crypt_service.calculate_digest(rsa_algo, 'sha256').unpack1('H*')
+        expect(result).to eq(expected)
       end
     end
 
