@@ -55,17 +55,17 @@ RSpec.describe 'Builders' do
 
     context 'V24 (H003)' do
       include_examples 'an XmlBuilder version',
-        Epics::Builders::XmlBuilder::V24, 'H003', 'http://www.ebics.org/H003'
+                       Epics::Builders::XmlBuilder::V24, 'H003', 'http://www.ebics.org/H003'
     end
 
     context 'V25 (H004)' do
       include_examples 'an XmlBuilder version',
-        Epics::Builders::XmlBuilder::V25, 'H004', 'urn:org:ebics:H004'
+                       Epics::Builders::XmlBuilder::V25, 'H004', 'urn:org:ebics:H004'
     end
 
     context 'V3 (H005)' do
       include_examples 'an XmlBuilder version',
-        Epics::Builders::XmlBuilder::V3, 'H005', 'urn:org:ebics:H005'
+                       Epics::Builders::XmlBuilder::V3, 'H005', 'urn:org:ebics:H005'
     end
 
     describe '::Base#create_hev' do
@@ -133,21 +133,21 @@ RSpec.describe 'Builders' do
       end
 
       it 'raises VersionSupportError for add_admin_order_type' do
-        expect {
+        expect do
           described_class::V2.new { |b| b.add_admin_order_type 'BTD' }
-        }.to raise_error(Epics::VersionSupportError)
+        end.to raise_error(Epics::VersionSupportError)
       end
 
       it 'raises VersionSupportError for add_btd_order_params' do
-        expect {
+        expect do
           described_class::V2.new { |b| b.add_btd_order_params }
-        }.to raise_error(Epics::VersionSupportError)
+        end.to raise_error(Epics::VersionSupportError)
       end
 
       it 'raises VersionSupportError for add_btu_order_params' do
-        expect {
+        expect do
           described_class::V2.new { |b| b.add_btu_order_params }
-        }.to raise_error(Epics::VersionSupportError)
+        end.to raise_error(Epics::VersionSupportError)
       end
 
       it 'creates StandardOrderParams with DateRange' do
@@ -212,15 +212,15 @@ RSpec.describe 'Builders' do
       end
 
       it 'raises VersionSupportError for add_order_type' do
-        expect {
+        expect do
           described_class::V3.new { |b| b.add_order_type 'CCT' }
-        }.to raise_error(Epics::VersionSupportError)
+        end.to raise_error(Epics::VersionSupportError)
       end
 
       it 'raises VersionSupportError for add_order_attribute' do
-        expect {
+        expect do
           described_class::V3.new { |b| b.add_order_attribute 'DZHNN' }
-        }.to raise_error(Epics::VersionSupportError)
+        end.to raise_error(Epics::VersionSupportError)
       end
 
       describe '#add_btd_order_params' do

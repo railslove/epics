@@ -9,22 +9,17 @@ class Epics::Handlers::OrderDataHandler::V3 < Epics::Handlers::OrderDataHandler:
     'urn:org:ebics:H005'
   end
 
-  def create_signature_pubbey_order_data
+  def create_signature_pubbey_order_data(&block)
     super do
       namespaces = { xmlns: 'http://www.ebics.org/S002' }
       namespaces['xmlns:ds'] = 'http://www.w3.org/2000/09/xmldsig#'
-      @xml.SignaturePubKeyOrderData **namespaces do
-        yield
-      end
+      @xml.SignaturePubKeyOrderData(**namespaces, &block)
     end
   end
 
-  def handle_ini_signature_pubkey(signature, timestamp)
-  end
+  def handle_ini_signature_pubkey(signature, timestamp); end
 
-  def handle_hia_authentication_pubkey(authentication, timestamp)
-  end
+  def handle_hia_authentication_pubkey(authentication, timestamp); end
 
-  def handle_hia_encryption_pubkey(encryption, timestamp)
-  end
+  def handle_hia_encryption_pubkey(encryption, timestamp); end
 end

@@ -178,7 +178,10 @@ RSpec.describe Epics::Keyring do
   end
 
   describe 'Client#next_order_id' do
-    let(:client) { Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+    let(:client) do
+      Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                        'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+    end
 
     it 'increments on each call' do
       first = client.next_order_id
@@ -187,18 +190,22 @@ RSpec.describe Epics::Keyring do
     end
 
     it 'raises on overflow (>= 1679615)' do
-      client.current_order_id = 1679615
+      client.current_order_id = 1_679_615
       expect { client.next_order_id }.to raise_error(RuntimeError, /overflow/)
     end
 
     it 'can be set via options' do
-      client2 = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', order_id: 100)
+      client2 = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                                  'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', order_id: 100)
       expect(client2.next_order_id).to eq(101)
     end
   end
 
   describe 'Client key extraction from fixture' do
-    let(:client) { Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+    let(:client) do
+      Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                        'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+    end
 
     it 'extracts all 5 key slots' do
       expect(client.keyring.user_signature).not_to be_nil
@@ -225,19 +232,22 @@ RSpec.describe Epics::Keyring do
 
   describe 'Client#version and #urn_schema' do
     it 'returns H003 URN for VERSION_24' do
-      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_24)
+      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                                 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_24)
       expect(client.version).to eq('H003')
       expect(client.urn_schema).to eq('http://www.ebics.org/H003')
     end
 
     it 'returns H004 URN for VERSION_25' do
-      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_25)
+      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                                 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_25)
       expect(client.version).to eq('H004')
       expect(client.urn_schema).to eq('urn:org:ebics:H004')
     end
 
     it 'returns H005 URN for VERSION_30' do
-      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_30)
+      client = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
+                                 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version: Epics::Keyring::VERSION_30)
       expect(client.version).to eq('H005')
       expect(client.urn_schema).to eq('urn:org:ebics:H005')
     end
