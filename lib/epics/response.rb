@@ -24,7 +24,10 @@ class Epics::Response
   end
 
   def business_error?
-    !["", "000000"].include?(business_code)
+    code = business_code
+    return false if code.empty? || code == '000000'
+
+    %w[01].include?(code[0, 2]) ? false : true
   end
 
   def business_code
