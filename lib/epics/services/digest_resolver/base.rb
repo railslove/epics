@@ -14,6 +14,6 @@ class Epics::Services::DigestResolver::Base
   private
 
   def bin2hex(date)
-    date.unpack('H*').first
+    date.unpack1('H*')
   end
 end
