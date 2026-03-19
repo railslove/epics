@@ -425,7 +425,7 @@ RSpec.describe 'Builders' do
 
     describe '::V3' do
       it 'add_data_digest creates DataDigest element with SignatureVersion' do
-        digest = OpenSSL::Digest::SHA256.digest('test')
+        digest = OpenSSL::Digest.digest('SHA256', 'test')
         instance = described_class::V3.new do |b|
           b.add_data_digest('A006', digest)
         end
@@ -462,7 +462,7 @@ RSpec.describe 'Builders' do
 
           it 'add_order_data compresses, encrypts, and Base64-encodes with transaction key' do
             crypt = Epics::Services::CryptService.new
-            transaction_key = OpenSSL::Cipher::AES.new(128, :CBC).random_key
+            transaction_key = OpenSSL::Cipher.new('aes-128-cbc').random_key
             instance = klass.new do |b|
               b.add_order_data('secret data', transaction_key)
             end
@@ -475,7 +475,7 @@ RSpec.describe 'Builders' do
 
           it 'add_signature_data compresses, encrypts, and Base64-encodes' do
             crypt = Epics::Services::CryptService.new
-            transaction_key = OpenSSL::Cipher::AES.new(128, :CBC).random_key
+            transaction_key = OpenSSL::Cipher.new('aes-128-cbc').random_key
             instance = klass.new do |b|
               b.add_signature_data('<SignatureData>test</SignatureData>', transaction_key)
             end
@@ -499,6 +499,7 @@ RSpec.describe 'Builders' do
       kr = double('keyring')
       bank_enc = Epics::Signature.new(Epics::Signature::E_VERSION_2, rsa_algo)
       allow(kr).to receive(:bank_encryption).and_return(bank_enc)
+      allow(kr).to receive(:version).and_return(Epics::Keyring::VERSION_25)
       kr
     end
 
