@@ -10,7 +10,8 @@ class Epics::Builders::DataEncryptionInfoBuilder
   end
 
   def add_encryption_pubkey_digest(keyring, algorithm = 'sha256')
-    certificate_digest = @crypt_service.calculate_digest(keyring.bank_encryption.key, algorithm)
+    resolver = Epics::Services::DigestResolver::Base.for_version(keyring.version)
+    certificate_digest = resolver.sign_digest(keyring.bank_encryption, algorithm)
     attribues = { Version: keyring.bank_encryption.version, Algorithm: "http://www.w3.org/2001/04/xmlenc##{algorithm}" }
     @xml.EncryptionPubKeyDigest Base64.strict_encode64(certificate_digest), **attribues
     self

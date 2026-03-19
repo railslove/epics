@@ -477,8 +477,17 @@ class Epics::Client
   end
 
   def extract_keys
-    JSON.load(keys_content).each do |signature_version, key|
-      next unless key
+    JSON.load(keys_content).each do |signature_version, value|
+      next unless value
+
+      # Handle new format: { "key" => "...", "cert" => "..." }
+      if value.is_a?(Hash)
+        key_pem = decrypt(value['key'])
+        cert_pem = value['cert'] ? decrypt(value['cert']) : nil
+      else
+        key_pem = decrypt(value)
+        cert_pem = nil
+      end
 
       is_bank_key = signature_version.start_with?("#{host_id.upcase}.")
       signature_version = signature_version.sub("#{host_id.upcase}.", '') if is_bank_key
@@ -487,11 +496,13 @@ class Epics::Client
         signature_version,
         case signature_version
         when Epics::Signature::A_VERSION_6
-          Epics::SignatureAlgorithm::RsaPss.new(decrypt(key))
+          Epics::SignatureAlgorithm::RsaPss.new(key_pem)
         when Epics::Signature::A_VERSION_5, Epics::Signature::E_VERSION_2, Epics::Signature::X_VERSION_2
-          Epics::SignatureAlgorithm::RsaPkcs1.new(decrypt(key))
+          Epics::SignatureAlgorithm::RsaPkcs1.new(key_pem)
         end
       )
+
+      signature.certificate = Epics::Crypt::X509.new(cert_pem) if cert_pem
 
       if is_bank_key
         case signature.type
@@ -516,9 +527,27 @@ class Epics::Client
   end
 
   def dump_keys
-    JSON.pretty_generate(keys.each_with_object({}) do |(version, signature), keys|
-      keys[version] = encrypt(signature.key.to_pem)
-    end, JSON.dump_default_options)
+    data = {}
+
+    [keyring.user_signature, keyring.user_authentication,
+     keyring.user_encryption].each do |sig|
+      next unless sig
+
+      data[sig.version] = encrypt(sig.key.key.to_pem)
+    end
+
+    [keyring.bank_authentication, keyring.bank_encryption].each do |sig|
+      next unless sig
+
+      key_id = "#{host_id.upcase}.#{sig.version}"
+      data[key_id] = if sig.certificate
+                       { 'key' => encrypt(sig.key.key.to_pem), 'cert' => encrypt(sig.certificate.to_pem) }
+                     else
+                       encrypt(sig.key.key.to_pem)
+                     end
+    end
+
+    JSON.pretty_generate(data, JSON.dump_default_options)
   end
 
   def new_cipher
