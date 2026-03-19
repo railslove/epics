@@ -88,7 +88,7 @@ class Epics::Handlers::AuthSignatureHandler
            else
              raise UnknownAlgorithmException, algorithm
            end
-    xml.doc.at_xpath(path).canonicalize(mode, nil, with_comments)
+    xml.doc.xpath(path).map { |node| node.canonicalize(mode, nil, with_comments) }.join
   end
 
   class UnknownAlgorithmException < StandardError
