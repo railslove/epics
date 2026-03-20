@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTDResponseOrderData xmlns="urn:org:ebics:H005" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H005 http://www.ebics.org/H005/ebics_orders_H005.xsd">
+  <PartnerInfo>
+    <AddressInfo>
+      <Name>Test Company AG</Name>
+      <Country>Schweiz</Country>
+    </AddressInfo>
+    <BankInfo>
+      <HostID>ZKBISOTB</HostID>
+    </BankInfo>
+    <AccountInfo ID="1">
+      <AccountNumber international="true">CH5604835012345678000</AccountNumber>
+      <BankCode international="true">ZKBKCHZZ80A</BankCode>
+    </AccountInfo>
+  </PartnerInfo>
+  <UserInfo>
+    <UserID Status="1">EBIX</UserID>
+    <Name>Test User</Name>
+    <Service>
+      <ServiceName>OTH</ServiceName>
+      <Scope>BIL</Scope>
+      <ServiceOption>CH004TPE</ServiceOption>
+      <Container containerType="ZIP"/>
+      <MsgName>msc</MsgName>
+    </Service>
+    <Service>
+      <ServiceName>STM</ServiceName>
+      <Scope>BIL</Scope>
+      <ServiceOption>CH004TPE</ServiceOption>
+      <Container containerType="ZIP"/>
+      <MsgName>pain.001</MsgName>
+    </Service>
+    <Service>
+      <ServiceName>SCT</ServiceName>
+      <Scope>BIL</Scope>
+      <ServiceOption>CH004TPE</ServiceOption>
+      <Container containerType="ZIP"/>
+      <MsgName>pain.008</MsgName>
+    </Service>
+    <Service>
+      <ServiceName>CAMT</ServiceName>
+      <Scope>BIL</Scope>
+      <ServiceOption>CH004TPE</ServiceOption>
+      <Container containerType="ZIP"/>
+      <MsgName>camt.052</MsgName>
+    </Service>
+    <Service>
+      <ServiceName>CAMT</ServiceName>
+      <Scope>BIL</Scope>
+      <ServiceOption>CH004TPE</ServiceOption>
+      <Container containerType="ZIP"/>
+      <MsgName>camt.053</MsgName>
+    </Service>
+  </UserInfo>
+</HTDResponseOrderData>

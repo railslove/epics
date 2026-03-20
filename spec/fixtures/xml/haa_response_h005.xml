@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HAAResponseOrderData xmlns="urn:org:ebics:H005" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H005 http://www.ebics.org/H005/ebics_orders_H005.xsd">
+  <Service>
+    <ServiceName>OTH</ServiceName>
+    <Scope>BIL</Scope>
+    <ServiceOption>CH004TPE</ServiceOption>
+    <Container containerType="ZIP"/>
+    <MsgName>msc</MsgName>
+  </Service>
+  <Service>
+    <ServiceName>STM</ServiceName>
+    <Scope>BIL</Scope>
+    <ServiceOption>CH004TPE</ServiceOption>
+    <Container containerType="ZIP"/>
+    <MsgName>pain.001</MsgName>
+  </Service>
+  <Service>
+    <ServiceName>SCT</ServiceName>
+    <Scope>BIL</Scope>
+    <ServiceOption>CH004TPE</ServiceOption>
+    <Container containerType="ZIP"/>
+    <MsgName>pain.008</MsgName>
+  </Service>
+  <Service>
+    <ServiceName>CAMT</ServiceName>
+    <Scope>BIL</Scope>
+    <ServiceOption>CH004TPE</ServiceOption>
+    <Container containerType="ZIP"/>
+    <MsgName>camt.052</MsgName>
+  </Service>
+  <Service>
+    <ServiceName>CAMT</ServiceName>
+    <Scope>BIL</Scope>
+    <ServiceOption>CH004TPE</ServiceOption>
+    <Container containerType="ZIP"/>
+    <MsgName>camt.053</MsgName>
+  </Service>
+</HAAResponseOrderData>

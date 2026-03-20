@@ -1,31 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="H004" Revision="1" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_H004.xsd">
- <header authenticate="true">
-   <static>
-     <HostID>SIZBN001</HostID>
-     <TransactionID/>
-   </static>
-   <mutable>
-     <TransactionPhase>Receipt</TransactionPhase>
-   </mutable>
- </header>
- <AuthSignature>
-   <ds:SignedInfo>
-     <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
-     <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
-     <ds:Reference URI="#xpointer(//*[@authenticate='true'])">
-       <ds:Transforms>
-         <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
-       </ds:Transforms>
-       <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-       <ds:DigestValue>fPpgWm50TWT1tzQA8uiontIqKe3syy6kwkWHTNasYas=</ds:DigestValue>
-     </ds:Reference>
-   </ds:SignedInfo>
-   <ds:SignatureValue>ko06Wg4QNQPLdDGdsKTPDEYptP5UvgfasgfZ6Mg7h3W8hbcspkR10TcWfOEs0uf4Z4V6K6bjX1WuqHhsJBoFtpkWk9ukNdbR9gDsER8ku0VdbhEkt7LbIBXvN0NY/mMt77XGwMEScMH6PI0gt1BlYBwvlPOn63HKrNxMmwixGYh2c2iI5/K1XWFgXO2YPKD7B1N/EGjLgcFoXO9h0GGNAiXFhimqIcLR/PFTBlSL8gzCBuXL+adk5Hns2pXBxSmMQZyc7ZFXYVmEfyRkFfW3cCu8/nep+W96TFFNbP1mHLYtJmZQwKYkR0NbZP7/ataaqvIckAY+Ft0X6vxAJ0CstQ==</ds:SignatureValue>
- </AuthSignature>
- <body>
-   <TransferReceipt authenticate="true">
-     <ReceiptCode>0</ReceiptCode>
-   </TransferReceipt>
- </body>
+<ebicsRequest xmlns="urn:org:ebics:H004" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="H004" Revision="1"
+  xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_H004.xsd">
+  <header authenticate="true">
+    <static>
+      <HostID>SIZBN001</HostID>
+      <TransactionID />
+    </static>
+    <mutable>
+      <TransactionPhase>Receipt</TransactionPhase>
+    </mutable>
+  </header>
+  <AuthSignature>
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+      <ds:Reference URI="#xpointer(//*[@authenticate='true'])">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+        <ds:DigestValue>e2cxKqCpCGsFYRixCcMI3+prCnCu6DmSvJ5qxkmPZ64=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>
+      IpMw+IXeUPrVpH8bmEly96N4Jsi2MMxlKyUcKn1i3kPBSpNKgjbuuXGZ/mVLJykb/fr6kZ599rNgS6EMd3AsptizPdAltUwa2iQKy0wA6EhOs9RHRx0tH6TMg7YyLt4/ckd56YS7Wx5a1lwsoYszIIZehLv7cMj6POIhWecR7KgxICRPkVpr1ULLmXtWhRmHyk4jA/eb3gG4BAE/1gkNt0XMcpaXO/CGHbMAPgHmubFb6ZQPYUBf7cGhoihI1H1VsDzbMnBDUIXJJPgN08dY87tXY896QKJznM0fZMDq2ygWnyeqsme3z9b/8pGd4vZQGg1VdmYvou+CI1cRclWMdQ==</ds:SignatureValue>
+  </AuthSignature>
+  <body>
+    <TransferReceipt authenticate="true">
+      <ReceiptCode>0</ReceiptCode>
+    </TransferReceipt>
+  </body>
 </ebicsRequest>

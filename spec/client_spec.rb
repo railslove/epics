@@ -262,6 +262,73 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#HTD (H005)' do
+    let(:subject) do
+      Epics::Client.new(key, 'secret', 'https://zkbisotb.zkb.ch/ebicsweb/ebicsweb', 'ZKBISOTB', 'EBIX', 'EBICS',
+                        version: Epics::Keyring::VERSION_30)
+    end
+
+    before do
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                          'htd_order_data_h005.xml')))
+    end
+
+    it 'parses H005 Service elements and returns array of service hashes' do
+      subject.HTD
+      expect(subject.instance_variable_get('@order_types')).to match_array([
+                                                                             { service_name: 'OTH', scope: 'BIL',
+                                                                               service_option: 'CH004TPE', container: 'ZIP', msg_name: 'msc' },
+                                                                             { service_name: 'STM', scope: 'BIL',
+                                                                               service_option: 'CH004TPE', container: 'ZIP', msg_name: 'pain.001' },
+                                                                             { service_name: 'SCT', scope: 'BIL',
+                                                                               service_option: 'CH004TPE', container: 'ZIP', msg_name: 'pain.008' },
+                                                                             { service_name: 'CAMT', scope: 'BIL',
+                                                                               service_option: 'CH004TPE', container: 'ZIP', msg_name: 'camt.052' },
+                                                                             { service_name: 'CAMT', scope: 'BIL',
+                                                                               service_option: 'CH004TPE', container: 'ZIP', msg_name: 'camt.053' }
+                                                                           ])
+    end
+  end
+
+  describe '#HAA' do
+    before do
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                          'haa_response_h004.xml')))
+    end
+
+    it 'returns order types as array of strings for H004' do
+      expect(subject.HAA).to match_array(%w[PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE
+                                            HVS CCS CCT CIP CD1 CDB CDD])
+    end
+  end
+
+  describe '#HAA (H005)' do
+    let(:subject) do
+      Epics::Client.new(key, 'secret', 'https://zkbisotb.zkb.ch/ebicsweb/ebicsweb', 'ZKBISOTB', 'EBIX', 'EBICS',
+                        version: Epics::Keyring::VERSION_30)
+    end
+
+    before do
+      allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                                          'haa_response_h005.xml')))
+    end
+
+    it 'parses H005 Service elements and returns array of service hashes' do
+      expect(subject.HAA).to match_array([
+                                           { service_name: 'OTH', scope: 'BIL', service_option: 'CH004TPE',
+                                             container: 'ZIP', msg_name: 'msc' },
+                                           { service_name: 'STM', scope: 'BIL', service_option: 'CH004TPE',
+                                             container: 'ZIP', msg_name: 'pain.001' },
+                                           { service_name: 'SCT', scope: 'BIL', service_option: 'CH004TPE',
+                                             container: 'ZIP', msg_name: 'pain.008' },
+                                           { service_name: 'CAMT', scope: 'BIL', service_option: 'CH004TPE',
+                                             container: 'ZIP', msg_name: 'camt.052' },
+                                           { service_name: 'CAMT', scope: 'BIL', service_option: 'CH004TPE',
+                                             container: 'ZIP', msg_name: 'camt.053' }
+                                         ])
+    end
+  end
+
   describe '#C53/C52/C54/Z52/Z53/Z54 types with zipped data' do
     before do
       allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures',

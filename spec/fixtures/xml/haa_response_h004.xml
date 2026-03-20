@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HAAResponseOrderData xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_orders_H004.xsd">
+  <OrderTypes>PTK HPD HTD STA HVD HPB HAA HVT HVU HVZ INI SPR PUB HIA HCA HSA HVE HVS CCS CCT CIP CD1 CDB CDD</OrderTypes>
+</HAAResponseOrderData>

@@ -81,4 +81,59 @@ RSpec.describe Epics::HAA do
 
     include_examples 'a valid ebicsRequest receipt', ebics_version: 'H003'
   end
+
+  describe 'H005 receipt structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_receipt_xml)
+    end
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest receipt', ebics_version: 'H005'
+  end
+
+  describe 'H005 request structure validation' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    it 'has ebicsRequest root with H005 namespace and Version' do
+      root = xml.root
+      expect(root.name).to eq('ebicsRequest')
+      expect(root.namespace.href).to eq('urn:org:ebics:H005')
+      expect(root['Version']).to eq('H005')
+      expect(root['Revision']).to eq('1')
+    end
+
+    it 'has header with authenticate=true' do
+      header = xml.at_xpath('//e:header', ns)
+      expect(header).not_to be_nil
+      expect(header['authenticate']).to eq('true')
+    end
+
+    it 'has AdminOrderType HAA' do
+      expect(xml.at_xpath('//e:header/e:static/e:OrderDetails/e:AdminOrderType', ns).text).to eq('HAA')
+    end
+
+    it 'does not have OrderType or OrderAttribute' do
+      expect(xml.at_xpath('//e:header/e:static/e:OrderDetails/e:OrderType', ns)).to be_nil
+      expect(xml.at_xpath('//e:header/e:static/e:OrderDetails/e:OrderAttribute', ns)).to be_nil
+    end
+
+    it 'has PartnerID and UserID' do
+      expect(xml.at_xpath('//e:header/e:static/e:PartnerID', ns)).not_to be_nil
+      expect(xml.at_xpath('//e:header/e:static/e:UserID', ns)).not_to be_nil
+    end
+
+    it 'has AuthSignature element' do
+      expect(xml.at_xpath('//e:AuthSignature', ns)).not_to be_nil
+    end
+
+    it 'has an empty body (no DataTransfer)' do
+      body = xml.at_xpath('//e:body', ns)
+      expect(body).not_to be_nil
+      expect(body.at_xpath('e:DataTransfer', ns)).to be_nil
+    end
+  end
 end

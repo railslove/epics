@@ -380,7 +380,23 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath('//xmlns:OrderTypes', xmlns: urn_schema).content.split(/\s/)
+    doc = Nokogiri::XML(download(Epics::HAA))
+    ns = { xmlns: urn_schema }
+
+    case version
+    when Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25
+      doc.at_xpath('//xmlns:OrderTypes', ns).content.split(/\s/)
+    when Epics::Keyring::VERSION_30
+      doc.xpath('//xmlns:Service', ns).map do |service|
+        {
+          service_name: service.at_xpath('xmlns:ServiceName', ns)&.text,
+          scope: service.at_xpath('xmlns:Scope', ns)&.text,
+          service_option: service.at_xpath('xmlns:ServiceOption', ns)&.text,
+          container: service.at_xpath('xmlns:Container', ns)&.[]('containerType'),
+          msg_name: service.at_xpath('xmlns:MsgName', ns)&.text
+        }.compact
+      end
+    end
   end
 
   def HTD
@@ -400,9 +416,23 @@ class Epics::Client
       rescue StandardError
         nil
       end
-      @order_types ||= htd.search('//xmlns:OrderTypes', xmlns: urn_schema).map do |o|
-        o.content.split(/\s/)
-      end.delete_if { |o| o == '' }.flatten
+      @order_types ||= case version
+                       when Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25
+                         htd.search('//xmlns:OrderTypes', xmlns: urn_schema).map do |o|
+                           o.content.split(/\s/)
+                         end.delete_if { |o| o == '' }.flatten
+                       when Epics::Keyring::VERSION_30
+                         htd.xpath('//xmlns:Service', xmlns: urn_schema).map do |service|
+                           ns = { xmlns: urn_schema }
+                           {
+                             service_name: service.at_xpath('xmlns:ServiceName', ns)&.text,
+                             scope: service.at_xpath('xmlns:Scope', ns)&.text,
+                             service_option: service.at_xpath('xmlns:ServiceOption', ns)&.text,
+                             container: service.at_xpath('xmlns:Container', ns)&.[]('containerType'),
+                             msg_name: service.at_xpath('xmlns:MsgName', ns)&.text
+                           }.compact
+                         end
+                       end
     end.to_xml
   end
 
