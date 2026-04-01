@@ -184,11 +184,11 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def create_cct(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SCT', msg_name: 'pain.001', filename: 'cct.pain.001.xxx.xml')
+    create_btu(transaction_key, digest, 1, service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'cct.pain.001.xxx.xml')
   end
 
   def create_cdd(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'GLB', msg_name: 'pain.008', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml')
+    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'DE', msg_name: 'pain.008', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml')
   end
 
   def create_cdb(digest, transaction_key)

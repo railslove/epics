@@ -1,5 +1,5 @@
 class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBuilder::Base
-  def add_order_type(order_type)
+  def add_order_type(_order_type)
     raise Epics::VersionSupportError, 2.5, 'below'
   end
 
@@ -7,14 +7,13 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
     @xml.AdminOrderType order_type
   end
 
-  def add_order_attribute(order_attribute)
+  def add_order_attribute(_order_attribute)
     raise Epics::VersionSupportError, 2.5, 'below'
   end
 
   def add_btd_order_params(
-    service_name:, scope: nil, service_option: nil,
-    container_flag: nil, container_type: nil, start_date: nil, end_date: nil,
-    msg_name:, msg_name_version: nil, msg_name_variant: nil, msg_name_format: nil
+    service_name:, msg_name:, scope: nil, service_option: nil,
+    container_flag: nil, container_type: nil, start_date: nil, end_date: nil, msg_name_version: nil, msg_name_variant: nil, msg_name_format: nil
   )
     @xml.BTDOrderParams do |xml|
       xml.Service do
@@ -34,8 +33,7 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
   end
 
   def add_btu_order_params(
-    filename:, service_name:, scope: nil, service_option: nil, container_flag: nil,
-    msg_name:, msg_name_version: nil, msg_name_variant: nil, msg_name_format: nil
+    filename:, service_name:, msg_name:, scope: nil, service_option: nil, container_flag: nil, container_type: nil, msg_name_version: nil, msg_name_variant: nil, msg_name_format: nil
   )
     @xml.BTUOrderParams fileName: filename do |xml|
       xml.Service do
@@ -43,6 +41,7 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
         xml.Scope scope if scope
         xml.ServiceOption service_option if service_option
         xml.ContainerFlag container_flag if container_flag
+        xml.Container '', containerType: container_type if container_type
         msg_name_attributes = {}
         msg_name_attributes[:version] = msg_name_version if msg_name_version
         msg_name_attributes[:variant] = msg_name_variant if msg_name_variant

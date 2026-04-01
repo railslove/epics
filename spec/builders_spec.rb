@@ -307,6 +307,22 @@ RSpec.describe 'Builders' do
           expect(params.at('Service/Scope')).to be_nil
           expect(params.at('Service/ServiceOption')).to be_nil
           expect(params.at('Service/ContainerFlag')).to be_nil
+          expect(params.at('Service/Container')).to be_nil
+        end
+
+        it 'generates Container element with containerType attribute' do
+          instance = described_class::V3.new do |b|
+            b.add_btu_order_params(
+              filename: 'cct.pain.001.xxx.xml',
+              service_name: 'SCT', scope: 'DE', msg_name: 'pain.001',
+              container_type: 'ZIP'
+            )
+          end
+          xml = parse_doc(instance)
+          params = xml.at('OrderDetails/BTUOrderParams')
+          container = params.at('Service/Container')
+          expect(container).not_to be_nil
+          expect(container['containerType']).to eq('ZIP')
         end
       end
     end

@@ -346,8 +346,8 @@ RSpec.describe 'RequestFactory' do
 
     describe 'BTU upload requests' do
       btu_uploads = {
-        'cct' => { service_name: 'SCT', msg_name: 'pain.001', filename: 'cct.pain.001.xxx.xml' },
-        'cdd' => { service_name: 'SDD', msg_name: 'pain.008', scope: 'GLB', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml' },
+        'cct' => { service_name: 'SCT', msg_name: 'pain.001', scope: 'DE', filename: 'cct.pain.001.xxx.xml' },
+        'cdd' => { service_name: 'SDD', msg_name: 'pain.008', scope: 'DE', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml' },
         'cdb' => { service_name: 'SDD', msg_name: 'pain.008', service_option: 'B2B', filename: 'cdb.pain.008.xxx.xml' },
         'cip' => { service_name: 'SCI', msg_name: 'pain.001', filename: 'cip.pain.001.xxx.xml' },
         'xe2' => { service_name: 'MCT', msg_name: 'pain.001', filename: 'xe2.pain.001.xxx.xml' },

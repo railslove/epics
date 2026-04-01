@@ -20,7 +20,7 @@ RSpec.describe Epics::CCT do
     let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
     include_examples 'a valid ebicsRequest H005 upload',
-      service_name: 'SCT', msg_name: 'pain.001'
+      service_name: 'SCT', msg_name: 'pain.001', scope: 'DE'
   end
 
   describe 'H005 transfer structure' do
