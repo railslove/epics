@@ -267,60 +267,60 @@ class Epics::Client
     [bank_authentication_key, bank_encryption_key]
   end
 
-  def AZV(document)
-    upload(Epics::AZV, document)
+  def AZV(document, **options)
+    upload(Epics::AZV, document, **options)
   end
 
-  def CD1(document)
-    upload(Epics::CD1, document)
+  def CD1(document, **options)
+    upload(Epics::CD1, document, **options)
   end
 
-  def CDB(document)
-    upload(Epics::CDB, document)
+  def CDB(document, **options)
+    upload(Epics::CDB, document, **options)
   end
 
-  def C2S(document)
-    upload(Epics::C2S, document)
+  def C2S(document, **options)
+    upload(Epics::C2S, document, **options)
   end
 
-  def CDD(document)
-    upload(Epics::CDD, document)
+  def CDD(document, **options)
+    upload(Epics::CDD, document, **options)
   end
 
-  def XE2(document)
-    upload(Epics::XE2, document)
+  def XE2(document, **options)
+    upload(Epics::XE2, document, **options)
   end
 
-  def XE3(document)
-    upload(Epics::XE3, document)
+  def XE3(document, **options)
+    upload(Epics::XE3, document, **options)
   end
 
-  def CDS(document)
-    upload(Epics::CDS, document)
+  def CDS(document, **options)
+    upload(Epics::CDS, document, **options)
   end
 
-  def XDS(document)
-    upload(Epics::XDS, document)
+  def XDS(document, **options)
+    upload(Epics::XDS, document, **options)
   end
 
-  def CCT(document)
-    upload(Epics::CCT, document)
+  def CCT(document, **options)
+    upload(Epics::CCT, document, **options)
   end
 
-  def CIP(document)
-    upload(Epics::CIP, document)
+  def CIP(document, **options)
+    upload(Epics::CIP, document, **options)
   end
 
-  def CCS(document)
-    upload(Epics::CCS, document)
+  def CCS(document, **options)
+    upload(Epics::CCS, document, **options)
   end
 
-  def XCT(document)
-    upload(Epics::XCT, document)
+  def XCT(document, **options)
+    upload(Epics::XCT, document, **options)
   end
 
-  def FUL(document)
-    upload(Epics::FUL, document)
+  def FUL(document, **options)
+    upload(Epics::FUL, document, **options)
   end
 
   def STA(from = nil, to = nil)
@@ -469,8 +469,8 @@ class Epics::Client
   rescue OpenSSL::X509::CertificateError
   end
 
-  def upload(order_type, document)
-    order = order_type.new(self, document)
+  def upload(order_type, document, **options)
+    order = order_type.new(self, document, **options)
     session = post(url, order.to_xml).body
     order.transaction_id = session.transaction_id
 

@@ -405,5 +405,39 @@ RSpec.describe 'RequestFactory' do
         expect(data_digest['SignatureVersion']).to eq(client.keyring.user_signature.version)
       end
     end
+
+    describe 'BTU upload override passthrough' do
+      it 'create_cct accepts service_option override' do
+        xml = parse(factory.create_cct(digest, transaction_key, service_option: 'VOO'))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('Service/ServiceName').text).to eq('SCT')
+        expect(params.at('Service/ServiceOption').text).to eq('VOO')
+        expect(params.at('Service/Scope').text).to eq('DE')
+      end
+
+      it 'create_cct without override has no ServiceOption' do
+        xml = parse(factory.create_cct(digest, transaction_key))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('Service/ServiceOption')).to be_nil
+      end
+
+      it 'create_cdd override replaces default service_option' do
+        xml = parse(factory.create_cdd(digest, transaction_key, service_option: 'NEW'))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('Service/ServiceOption').text).to eq('NEW')
+      end
+
+      it 'create_cdb override can change scope' do
+        xml = parse(factory.create_cdb(digest, transaction_key, scope: 'CH'))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('Service/Scope').text).to eq('CH')
+      end
+
+      it 'override can change filename' do
+        xml = parse(factory.create_cct(digest, transaction_key, filename: 'custom.xml'))
+        params = xml.at('//BTUOrderParams')
+        expect(params['fileName']).to eq('custom.xml')
+      end
+    end
   end
 end

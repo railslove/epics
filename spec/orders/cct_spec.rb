@@ -71,4 +71,25 @@ RSpec.describe Epics::CCT do
 
     include_examples 'a valid ebicsRequest transfer', ebics_version: 'H003'
   end
+
+  describe 'H005 request with service_option override' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+
+    subject { described_class.new(client, document, service_option: 'VOO') }
+
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    it 'includes ServiceOption in BTU params' do
+      xml.remove_namespaces!
+      expect(xml.at('//BTUOrderParams/Service/ServiceOption').text).to eq('VOO')
+    end
+
+    it 'preserves default service params' do
+      xml.remove_namespaces!
+      expect(xml.at('//BTUOrderParams/Service/ServiceName').text).to eq('SCT')
+      expect(xml.at('//BTUOrderParams/Service/Scope').text).to eq('DE')
+      expect(xml.at('//BTUOrderParams/Service/MsgName').text).to eq('pain.001')
+    end
+  end
 end

@@ -139,24 +139,24 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     create_btd(service_name: 'REP', scope: 'DE', service_option: 'SCT', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
   end
 
-  def create_azv(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'XCT', scope: 'DE', msg_name: 'dtazv', filename: 'azv.dtazv.xxx.xml')
+  def create_azv(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'XCT', scope: 'DE', msg_name: 'dtazv', filename: 'azv.dtazv.xxx.xml' }.merge(overrides))
   end
 
-  def create_b2b(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', service_option: 'B2B', msg_name: 'pain.008', filename: 'b2b.pain.008.xxx.xml')
+  def create_b2b(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', scope: 'BIL', service_option: 'B2B', msg_name: 'pain.008', filename: 'b2b.pain.008.xxx.xml' }.merge(overrides))
   end
 
-  def create_ccs(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'ccs.pain.001.xxx.xml')
+  def create_ccs(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'ccs.pain.001.xxx.xml' }.merge(overrides))
   end
 
-  def create_cds(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'cds.pain.008.xxx.xml')
+  def create_cds(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'cds.pain.008.xxx.xml' }.merge(overrides))
   end
 
-  def create_c2s(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'c2s.pain.008.xxx.xml')
+  def create_c2s(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', scope: 'BIL', msg_name: 'pain.008', filename: 'c2s.pain.008.xxx.xml' }.merge(overrides))
   end
 
   def create_ful(*, **)
@@ -183,32 +183,32 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
   end
 
-  def create_cct(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'cct.pain.001.xxx.xml')
+  def create_cct(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', filename: 'cct.pain.001.xxx.xml' }.merge(overrides))
   end
 
-  def create_cdd(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', scope: 'DE', msg_name: 'pain.008', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml')
+  def create_cdd(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', scope: 'DE', msg_name: 'pain.008', service_option: 'COR', filename: 'cdd.pain.008.xxx.xml' }.merge(overrides))
   end
 
-  def create_cdb(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', msg_name: 'pain.008', service_option: 'B2B', filename: 'cdb.pain.008.xxx.xml')
+  def create_cdb(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', msg_name: 'pain.008', service_option: 'B2B', filename: 'cdb.pain.008.xxx.xml' }.merge(overrides))
   end
 
-  def create_cip(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SCI', msg_name: 'pain.001', filename: 'cip.pain.001.xxx.xml')
+  def create_cip(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SCI', msg_name: 'pain.001', filename: 'cip.pain.001.xxx.xml' }.merge(overrides))
   end
 
-  def create_xe2(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'MCT', msg_name: 'pain.001', filename: 'xe2.pain.001.xxx.xml')
+  def create_xe2(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'MCT', msg_name: 'pain.001', filename: 'xe2.pain.001.xxx.xml' }.merge(overrides))
   end
 
-  def create_xe3(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'SDD', msg_name: 'pain.008', filename: 'xe3.pain.008.xxx.xml')
+  def create_xe3(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'SDD', msg_name: 'pain.008', filename: 'xe3.pain.008.xxx.xml' }.merge(overrides))
   end
 
-  def create_yct(digest, transaction_key)
-    create_btu(transaction_key, digest, 1, service_name: 'MCT', scope: 'BIL', msg_name: 'pain.001', filename: 'yct.pain.001.xxx.xml')
+  def create_yct(digest, transaction_key, **overrides)
+    create_btu(transaction_key, digest, 1, **{ service_name: 'MCT', scope: 'BIL', msg_name: 'pain.001', filename: 'yct.pain.001.xxx.xml' }.merge(overrides))
   end
 
   protected

@@ -65,66 +65,66 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_download_request('Z54', start_date:, end_date:)
   end
 
-  def create_b2b(digest, transaction_key)
+  def create_b2b(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('B2B', transaction_key, signature_data, 1, true)
   end
 
-  def create_c2s(digest, transaction_key)
+  def create_c2s(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('C2S', transaction_key, signature_data, 1, false)
   end
 
-  def create_ccs(digest, transaction_key)
+  def create_ccs(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CCS', transaction_key, signature_data, 1, false)
   end
 
-  def create_cct(digest, transaction_key)
+  def create_cct(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CCT', transaction_key, signature_data, 1, true)
   end
 
-  def create_cds(digest, transaction_key)
+  def create_cds(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CDS', transaction_key, signature_data, 1, false)
   end
 
-  def create_azv(digest, transaction_key)
+  def create_azv(digest, transaction_key, **)
     create_cd1(digest, transaction_key)
   end
 
-  def create_cd1(digest, transaction_key)
+  def create_cd1(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CD1', transaction_key, signature_data, 1, true)
   end
 
-  def create_cdd(digest, transaction_key)
+  def create_cdd(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CDD', transaction_key, signature_data, 1, true)
   end
 
-  def create_cdb(digest, transaction_key)
+  def create_cdb(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CDB', transaction_key, signature_data, 1, true)
   end
 
-  def create_cip(digest, transaction_key)
+  def create_cip(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('CIP', transaction_key, signature_data, 1, true)
   end
 
-  def create_xds(digest, transaction_key)
+  def create_xds(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('XDS', transaction_key, signature_data, 1, true)
   end
 
-  def create_xe2(digest, transaction_key)
+  def create_xe2(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('XE2', transaction_key, signature_data, 1, true)
   end
 
-  def create_xe3(digest, transaction_key)
+  def create_xe3(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('XE3', transaction_key, signature_data, 1, true)
   end
