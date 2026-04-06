@@ -87,8 +87,16 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     create_btd(service_name: 'STM', msg_name: 'camt.052', start_date:, end_date:)
   end
 
-  def create_c53(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP', start_date:, end_date:)
+  def create_c53(start_date, end_date, scope: nil, msg_name_version: nil)
+    create_btd(
+      service_name: 'EOP',
+      msg_name: 'camt.053',
+      container_type: 'ZIP',
+      scope: scope,
+      msg_name_version: msg_name_version,
+      start_date:,
+      end_date:
+    )
   end
 
   def create_c54(start_date, end_date)

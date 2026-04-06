@@ -351,8 +351,8 @@ class Epics::Client
     download_and_unzip(Epics::C52, from: from, to: to)
   end
 
-  def C53(from, to)
-    download_and_unzip(Epics::C53, from: from, to: to)
+  def C53(from, to, scope: nil, msg_name_version: nil)
+    download_and_unzip(Epics::C53, from: from, to: to, scope: scope, msg_name_version: msg_name_version)
   end
 
   def C54(from, to)
