@@ -17,11 +17,11 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_download_request('Z01', start_date:, end_date:)
   end
 
-  def create_c52(start_date, end_date)
+  def create_c52(start_date, end_date, **)
     build_download_request('C52', start_date:, end_date:)
   end
 
-  def create_c53(start_date, end_date)
+  def create_c53(start_date, end_date, **)
     build_download_request('C53', start_date:, end_date:)
   end
 
