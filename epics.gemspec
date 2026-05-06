@@ -49,7 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday',  '>= 1.10.0'
   spec.add_dependency 'i18n',     '>= 1.1.0'
   spec.add_dependency 'nokogiri', '>= 1.16.7'
-  spec.add_dependency 'rubyzip',  '>= 2.3.2'
+  spec.add_dependency 'rubyzip',  '3.3.0'
   spec.add_dependency 'rexml',    '>= 3.3.7'
 
   spec.add_development_dependency 'bundler', '>= 2.5.19'
