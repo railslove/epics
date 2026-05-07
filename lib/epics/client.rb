@@ -1,8 +1,8 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :locale, :product_name,
-                :x_509_certificates_content, :debug_mode
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys, :keys_content, :timeout, :open_timeout,
+                :locale, :product_name, :x_509_certificates_content, :debug_mode
 
   attr_writer :iban, :bic, :name
   
@@ -16,14 +16,16 @@ class Epics::Client
     self.host_id    = host_id
     self.user_id    = user_id
     self.partner_id = partner_id
+    self.timeout = options[:timeout]
+    self.open_timeout = options[:open_timeout]
     self.locale = options[:locale] || Epics::DEFAULT_LOCALE
     self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
-    self.debug_mode = !!options[:debug_mode]
     self.x_509_certificates_content = {
       a: options[:x_509_certificate_a_content],
       x: options[:x_509_certificate_x_content],
       e: options[:x_509_certificate_e_content]
     }
+    self.debug_mode = !!options[:debug_mode]
   end
 
   def inspect
@@ -338,11 +340,22 @@ class Epics::Client
   end
 
   def connection
-    @connection ||= Faraday.new(headers: { 'Content-Type' => 'text/xml', user_agent: "EPICS v#{Epics::VERSION}"}, ssl: { verify: verify_ssl? }) do |faraday|
-      faraday.use Epics::XMLSIG, { client: self }
-      faraday.use Epics::ParseEbics, { client: self}
-      # faraday.use MyAdapter
-      faraday.response :logger, ::Logger.new(STDOUT), bodies: true if debug_mode # log requests/response to STDOUT
+    @connection ||= begin
+      connection_options = {
+        headers: { 'Content-Type' => 'text/xml', user_agent: "EPICS v#{Epics::VERSION}"},
+        ssl: { verify: verify_ssl? }
+      }
+
+      request_options = {}
+      request_options[:timeout] = timeout if timeout
+      request_options[:open_timeout] = open_timeout if open_timeout
+      connection_options[:request] = request_options unless request_options.empty?
+
+      Faraday.new(connection_options) do |faraday|
+        faraday.use Epics::XMLSIG, { client: self }
+        faraday.use Epics::ParseEbics, { client: self}
+        faraday.response :logger, ::Logger.new(STDOUT), bodies: true if debug_mode
+      end
     end
   end
 

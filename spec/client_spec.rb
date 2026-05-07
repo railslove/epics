@@ -48,6 +48,49 @@ RSpec.describe Epics::Client do
     end
   end
 
+  context 'timeout configuration' do
+    let(:client_with_timeouts) do
+      described_class.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS',
+                         timeout: 60, open_timeout: 10)
+    end
+
+    let(:client_without_timeouts) do
+      described_class.new(key, 'secret', 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS')
+    end
+
+    it 'accepts timeout option' do
+      expect(client_with_timeouts.timeout).to eq(60)
+    end
+
+    it 'accepts open_timeout option' do
+      expect(client_with_timeouts.open_timeout).to eq(10)
+    end
+
+    it 'allows nil timeout when not specified' do
+      expect(client_without_timeouts.timeout).to be_nil
+    end
+
+    it 'allows nil open_timeout when not specified' do
+      expect(client_without_timeouts.open_timeout).to be_nil
+    end
+
+    it 'applies timeout to Faraday connection when specified' do
+      connection = client_with_timeouts.send(:connection)
+      expect(connection.options.timeout).to eq(60)
+    end
+
+    it 'applies open_timeout to Faraday connection when specified' do
+      connection = client_with_timeouts.send(:connection)
+      expect(connection.options.open_timeout).to eq(10)
+    end
+
+    it 'does not set request options when timeouts are not specified' do
+      connection = client_without_timeouts.send(:connection)
+      expect(connection.options.timeout).to be_nil
+      expect(connection.options.open_timeout).to be_nil
+    end
+  end
+
   describe '#inspect' do
     it 'will not print the complete object' do
       expect(subject.inspect).to include("@keys=#{subject.keys.keys}")
