@@ -1,11 +1,41 @@
 RSpec.describe Epics::Z01 do
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  subject { described_class.new(client, from: Date.parse('2014-09-01'), to: Date.parse('2014-09-30')) }
 
-  subject { described_class.new(client, from: "2014-09-01", to: "2014-09-30") }
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>Z01</OrderType>') }
   end
 
+  include_examples '#to_xml'
+
+  describe 'H005 request structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest H005 download with date range',
+      service_name: 'PSR', msg_name: 'pain.002', service_option: 'CH003GEN', from: '2014-09-01', to: '2014-09-30'
+  end
+
+  describe 'H004 request structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid ebicsRequest download with date range',
+      order_type: 'Z01', from: '2014-09-01', to: '2014-09-30'
+  end
+
+  describe 'H003 request structure' do
+    let(:version) { Epics::Keyring::VERSION_24 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+    include_examples 'a valid ebicsRequest download with date range',
+      order_type: 'Z01', from: '2014-09-01', to: '2014-09-30', ebics_version: 'H003'
+  end
 end

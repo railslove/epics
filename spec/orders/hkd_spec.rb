@@ -1,11 +1,30 @@
 RSpec.describe Epics::HKD do
-
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
 
   subject { described_class.new(client) }
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+  describe 'order attributes' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>HKD</OrderType>') }
   end
 
+  include_examples '#to_xml'
+
+  describe 'H004 request structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid ebicsRequest download', order_type: 'HKD'
+  end
+
+  describe 'H003 request structure' do
+    let(:version) { Epics::Keyring::VERSION_24 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+    include_examples 'a valid ebicsRequest download', order_type: 'HKD', ebics_version: 'H003'
+  end
 end

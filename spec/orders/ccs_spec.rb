@@ -1,21 +1,74 @@
 RSpec.describe Epics::CCS do
-
-  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS') }
+  let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
   let(:document) { File.read( File.join( File.dirname(__FILE__), '..', 'fixtures', 'xml', 'cd1.xml') ) }
+
   subject { described_class.new(client, document) }
 
   describe 'order attributes' do
-    it { expect(subject.header.to_s).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
-    it { expect(subject.header.to_s).to include('<OrderType>CCS</OrderType>') }
+    let(:version) { Epics::Keyring::VERSION_25 }
+
+    it { expect(subject.to_xml).to include('<OrderAttribute>DZHNN</OrderAttribute>') }
+    it { expect(subject.to_xml).to include('<OrderType>CCS</OrderType>') }
   end
 
-  describe '#to_xml' do
-    specify { expect(subject.to_xml).to be_a_valid_ebics_doc }
+  include_examples '#to_xml'
+  include_examples '#to_transfer_xml'
+
+  describe 'H005 request structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
+
+    include_examples 'a valid ebicsRequest H005 upload',
+      service_name: 'SCT', msg_name: 'pain.001', scope: 'DE'
   end
 
-  describe '#to_transfer_xml' do
-    before { subject.transaction_id = SecureRandom.hex(16) }
+  describe 'H005 transfer structure' do
+    let(:version) { Epics::Keyring::VERSION_30 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_transfer_xml)
+    end
+    let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
-    specify { expect(subject.to_transfer_xml).to be_a_valid_ebics_doc }
+    include_examples 'a valid ebicsRequest H005 transfer'
+  end
+
+  describe 'H004 request structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid ebicsRequest upload', order_type: 'CCS', order_attribute: 'DZHNN'
+  end
+
+  describe 'H004 transfer structure' do
+    let(:version) { Epics::Keyring::VERSION_25 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_transfer_xml)
+    end
+    let(:ns) { { 'e' => 'urn:org:ebics:H004' } }
+
+    include_examples 'a valid ebicsRequest transfer'
+  end
+
+  describe 'H003 request structure' do
+    let(:version) { Epics::Keyring::VERSION_24 }
+    let(:xml) { Nokogiri::XML(subject.to_xml) }
+    let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+    include_examples 'a valid ebicsRequest upload', order_type: 'CCS', order_attribute: 'DZHNN', ebics_version: 'H003'
+  end
+
+  describe 'H003 transfer structure' do
+    let(:version) { Epics::Keyring::VERSION_24 }
+    let(:xml) do
+      subject.transaction_id = SecureRandom.hex(16)
+      Nokogiri::XML(subject.to_transfer_xml)
+    end
+    let(:ns) { { 'e' => 'http://www.ebics.org/H003' } }
+
+    include_examples 'a valid ebicsRequest transfer', ebics_version: 'H003'
   end
 end

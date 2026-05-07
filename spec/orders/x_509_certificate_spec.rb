@@ -1,4 +1,4 @@
-RSpec.describe Epics::X509Certificate do
+RSpec.describe Epics::Crypt::X509 do
   subject(:x_509_certificate) { described_class.new(crt_content) }
 
   let(:key) { OpenSSL::PKey::RSA.new(2048) }
@@ -21,6 +21,14 @@ RSpec.describe Epics::X509Certificate do
     it 'returns the base64 encoded certificate data' do
       expect(x_509_certificate.data).to start_with('MIIDDzCCAfegAwIBAgIBATANBgkqhkiG9w0BA')
       expect(x_509_certificate.data).to end_with('==')
+    end
+  end
+
+  describe '#fingerprint' do
+    it 'returns uppercase SHA256 hex digest' do
+      expect(x_509_certificate.fingerprint).to be_a(String)
+      expect(x_509_certificate.fingerprint.size).to eq(64)
+      expect(x_509_certificate.fingerprint).to match(/\A[0-9A-F]{64}\z/)
     end
   end
 end

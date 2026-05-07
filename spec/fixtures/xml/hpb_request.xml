@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ebicsNoPubKeyDigestsRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:org:ebics:H004" Version="H004" Revision="1">
+<ebicsNoPubKeyDigestsRequest xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="urn:org:ebics:H004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="H004" Revision="1" xsi:schemaLocation="urn:org:ebics:H004 http://www.ebics.org/H004/ebics_H004.xsd">
   <header authenticate="true">
     <static>
       <HostID>HOST</HostID>
