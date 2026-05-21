@@ -1,5 +1,16 @@
 ### Unreleased
 
+## [2.12.0]
+
+### Fixed
+- Fixed multi-segment download handling for C53 and other order types
+- Transaction key is now properly cached from first segment and reused
+- Segments are combined before decryption (matching EBICS specification)
+- Added proper support for zero IV in AES-128-CBC decryption
+
+### Changed
+- Refactored download method to better handle multi-segment responses
+
 ### 2.11.0
 
 - [ENHANCEMENT] Added FUL order type (thanks to @scollon-pl)
