@@ -411,14 +411,16 @@ class Epics::Client
 
   def bank_key_from_info(info)
     cert = info.at_xpath(".//ds:X509Certificate", ds: DSIG_NS)
-    if cert
-      OpenSSL::X509::Certificate.new(Base64.decode64(cert.content)).public_key
-    else
-      # Fallback: some banks additionally include a raw RSAKeyValue.
-      modulus  = Base64.decode64(info.at_xpath(".//*[local-name() = 'Modulus']").content)
-      exponent = Base64.decode64(info.at_xpath(".//*[local-name() = 'Exponent']").content)
-      rsa_from_modulus_exponent(modulus, exponent)
+    return OpenSSL::X509::Certificate.new(Base64.decode64(cert.content)).public_key if cert
+
+    # Fallback: some banks additionally include a raw RSAKeyValue.
+    modulus  = info.at_xpath(".//*[local-name() = 'Modulus']")
+    exponent = info.at_xpath(".//*[local-name() = 'Exponent']")
+    unless modulus && exponent
+      raise "HPB response: #{info.name} contains neither an X509Certificate nor an RSAKeyValue — cannot import the bank key"
     end
+
+    rsa_from_modulus_exponent(Base64.decode64(modulus.content), Base64.decode64(exponent.content))
   end
 
   # Parses a BTF <Service> element (from HAA/HTD responses) into an Epics::BTF.

@@ -144,6 +144,27 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
       expect(client.bank_e).to be_a(Epics::Key)
       expect(client.bank_e.key.n).to eq(bank_enc.n)
     end
+
+    context 'when a PubKeyInfo carries neither certificate nor RSAKeyValue' do
+      let(:hpb_response) do
+        <<~XML
+          <?xml version="1.0" encoding="UTF-8"?>
+          <HPBResponseOrderData xmlns="urn:org:ebics:H005" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <AuthenticationPubKeyInfo>
+              <AuthenticationVersion>X002</AuthenticationVersion>
+            </AuthenticationPubKeyInfo>
+            <EncryptionPubKeyInfo>
+              <EncryptionVersion>E002</EncryptionVersion>
+            </EncryptionPubKeyInfo>
+            <HostID>SIZBN001</HostID>
+          </HPBResponseOrderData>
+        XML
+      end
+
+      it 'raises a descriptive error' do
+        expect { client.HPB }.to raise_error(/neither an X509Certificate nor an RSAKeyValue/)
+      end
+    end
   end
 
   describe 'HAA lists available BTF services (H005)' do
