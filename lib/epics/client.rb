@@ -387,17 +387,22 @@ class Epics::Client
 
   DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#'.freeze
 
+  HPB_KEY_INFOS = {
+    'AuthenticationPubKeyInfo' => 'AuthenticationVersion',
+    'EncryptionPubKeyInfo'     => 'EncryptionVersion',
+  }.freeze
+
   # EBICS 3.0 (H005) HPB response: the bank's authentication and encryption keys
   # are transmitted only as X.509 certificates (ds:X509Data). Extract the public
   # key from each certificate rather than from a PubKeyValue/RSAKeyValue.
   def hpb_h005(doc)
-    %w[AuthenticationPubKeyInfo EncryptionPubKeyInfo].each do |element|
+    HPB_KEY_INFOS.each do |element, version_element|
       info = doc.at_xpath("//xmlns:#{element}", xmlns: namespace)
       next unless info
 
-      # The version element (AuthenticationVersion / EncryptionVersion) is the
-      # last child and gives the key suffix (X002 / E002).
-      type = info.element_children.last.content
+      type = info.at_xpath("./xmlns:#{version_element}", xmlns: namespace)&.content
+      next unless type
+
       self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank_key_from_info(info))
     end
 

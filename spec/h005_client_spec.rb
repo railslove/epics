@@ -120,6 +120,7 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
           <AuthenticationPubKeyInfo>
             <ds:X509Data><ds:X509Certificate>#{cert_data(bank_auth)}</ds:X509Certificate></ds:X509Data>
             <AuthenticationVersion>X002</AuthenticationVersion>
+            <ext:Extra xmlns:ext="urn:example:ext">allowed by the schema's any-wildcard</ext:Extra>
           </AuthenticationPubKeyInfo>
           <EncryptionPubKeyInfo>
             <ds:X509Data><ds:X509Certificate>#{cert_data(bank_enc)}</ds:X509Certificate></ds:X509Data>
