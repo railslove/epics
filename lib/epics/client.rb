@@ -147,19 +147,16 @@ class Epics::Client
   end
 
   def HPB
-    Nokogiri::XML(download(Epics::HPB)).xpath("//xmlns:PubKeyValue", xmlns: namespace).each do |node|
+    doc = Nokogiri::XML(download(Epics::HPB))
+    return hpb_h005(doc) if h005?
+
+    doc.xpath("//xmlns:PubKeyValue", xmlns: namespace).each do |node|
       type = node.parent.last_element_child.content
 
       modulus  = Base64.decode64(node.at_xpath(".//*[local-name() = 'Modulus']").content)
       exponent = Base64.decode64(node.at_xpath(".//*[local-name() = 'Exponent']").content)
 
-      sequence = []
-      sequence << OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(modulus, 2))
-      sequence << OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(exponent, 2))
-
-      bank = OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
-
-      self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank)
+      self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(rsa_from_modulus_exponent(modulus, exponent))
     end
 
     [bank_x, bank_e]
@@ -355,6 +352,45 @@ class Epics::Client
   end
 
   private
+
+  DSIG_NS = 'http://www.w3.org/2000/09/xmldsig#'.freeze
+
+  # EBICS 3.0 (H005) HPB response: the bank's authentication and encryption keys
+  # are transmitted only as X.509 certificates (ds:X509Data). Extract the public
+  # key from each certificate rather than from a PubKeyValue/RSAKeyValue.
+  def hpb_h005(doc)
+    %w[AuthenticationPubKeyInfo EncryptionPubKeyInfo].each do |element|
+      info = doc.at_xpath("//xmlns:#{element}", xmlns: namespace)
+      next unless info
+
+      # The version element (AuthenticationVersion / EncryptionVersion) is the
+      # last child and gives the key suffix (X002 / E002).
+      type = info.element_children.last.content
+      self.keys["#{host_id.upcase}.#{type}"] = Epics::Key.new(bank_key_from_info(info))
+    end
+
+    [bank_x, bank_e]
+  end
+
+  def bank_key_from_info(info)
+    cert = info.at_xpath(".//ds:X509Certificate", ds: DSIG_NS)
+    if cert
+      OpenSSL::X509::Certificate.new(Base64.decode64(cert.content)).public_key
+    else
+      # Fallback: some banks additionally include a raw RSAKeyValue.
+      modulus  = Base64.decode64(info.at_xpath(".//*[local-name() = 'Modulus']").content)
+      exponent = Base64.decode64(info.at_xpath(".//*[local-name() = 'Exponent']").content)
+      rsa_from_modulus_exponent(modulus, exponent)
+    end
+  end
+
+  def rsa_from_modulus_exponent(modulus, exponent)
+    sequence = [
+      OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(modulus, 2)),
+      OpenSSL::ASN1::Integer.new(OpenSSL::BN.new(exponent, 2)),
+    ]
+    OpenSSL::PKey::RSA.new(OpenSSL::ASN1::Sequence(sequence).to_der)
+  end
 
   KEY_FOR_CERT_TYPE = { a: 'A006', x: 'X002', e: 'E002' }.freeze
 

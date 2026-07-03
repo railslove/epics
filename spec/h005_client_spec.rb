@@ -82,6 +82,46 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
     end
   end
 
+  describe 'HPB imports bank keys from X.509 certificates (H005)' do
+    let(:bank_auth) { OpenSSL::PKey::RSA.generate(2048) }
+    let(:bank_enc)  { OpenSSL::PKey::RSA.generate(2048) }
+
+    def cert_data(rsa)
+      Epics::X509Certificate.generate_self_signed(rsa, subject: '/CN=bank').data
+    end
+
+    let(:hpb_response) do
+      <<~XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <HPBResponseOrderData xmlns="urn:org:ebics:H005" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <AuthenticationPubKeyInfo>
+            <ds:X509Data><ds:X509Certificate>#{cert_data(bank_auth)}</ds:X509Certificate></ds:X509Data>
+            <AuthenticationVersion>X002</AuthenticationVersion>
+          </AuthenticationPubKeyInfo>
+          <EncryptionPubKeyInfo>
+            <ds:X509Data><ds:X509Certificate>#{cert_data(bank_enc)}</ds:X509Certificate></ds:X509Data>
+            <EncryptionVersion>E002</EncryptionVersion>
+          </EncryptionPubKeyInfo>
+          <HostID>SIZBN001</HostID>
+        </HPBResponseOrderData>
+      XML
+    end
+
+    before { allow(client).to receive(:download).with(Epics::HPB).and_return(hpb_response) }
+
+    it 'stores the bank authentication key (X002) from its certificate' do
+      client.HPB
+      expect(client.bank_x).to be_a(Epics::Key)
+      expect(client.bank_x.key.n).to eq(bank_auth.n)
+    end
+
+    it 'stores the bank encryption key (E002) from its certificate' do
+      client.HPB
+      expect(client.bank_e).to be_a(Epics::Key)
+      expect(client.bank_e.key.n).to eq(bank_enc.n)
+    end
+  end
+
   describe 'convenience methods route to BTU/BTD under H005' do
     it 'CCT builds a BTU with the SCT service' do
       order = Epics::BTU.new(client, '<Document/>', service: Epics::BtfMapping.upload('CCT'))
