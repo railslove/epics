@@ -3,7 +3,7 @@ class Epics::X509Certificate
 
   attr_reader :certificate
 
-  def_delegators :certificate, :issuer, :version, :serial
+  def_delegators :certificate, :issuer, :version, :serial, :to_pem
 
   def initialize(crt_content)
     @certificate =

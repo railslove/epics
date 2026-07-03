@@ -73,6 +73,16 @@ class Epics::Client
     keys["#{host_id.upcase}.E002"]
   end
 
+  CERTIFICATE_SUFFIX = '.crt'.freeze
+
+  # X.509 certificates belonging to the user's keys, keyed like "A006.crt".
+  # Populated from the key file (entries suffixed .crt) and by generated
+  # self-signed certificates (H005); persisted alongside the keys via
+  # save_keys/dump_keys so certificates stay stable across processes.
+  def certificates
+    @certificates ||= {}
+  end
+
   def bank_x
     keys["#{host_id.upcase}.X002"]
   end
@@ -435,10 +445,14 @@ class Epics::Client
   KEY_FOR_CERT_TYPE = { a: 'A006', x: 'X002', e: 'E002' }.freeze
 
   def self_signed_certificate(type)
-    key = keys[KEY_FOR_CERT_TYPE.fetch(type.to_sym)]
+    key_name = KEY_FOR_CERT_TYPE.fetch(type.to_sym)
+    key = keys[key_name]
     return unless key
-    @self_signed_certificates ||= {}
-    @self_signed_certificates[type.to_sym] ||=
+
+    # Stored in #certificates so save_keys persists it — the certificate (and
+    # thus its fingerprint on the INI letter) must stay identical across
+    # processes, otherwise the bank cannot verify the subscriber.
+    certificates["#{key_name}#{CERTIFICATE_SUFFIX}"] ||=
       Epics::X509Certificate.generate_self_signed(
         key.key,
         subject: "/CN=#{user_id}/O=#{partner_id}/OU=#{host_id}"
@@ -501,13 +515,24 @@ class Epics::Client
   end
 
   def extract_keys
-    JSON.load(self.keys_content).each_with_object({}) do |(type, key), memo|
-      memo[type] = Epics::Key.new(decrypt(key)) if key
+    JSON.load(self.keys_content).each_with_object({}) do |(type, blob), memo|
+      next unless blob
+
+      # Entries suffixed with .crt are persisted X.509 certificates (H005
+      # self-signed certs survive process restarts this way); everything else
+      # is an RSA key.
+      if type.end_with?(CERTIFICATE_SUFFIX)
+        certificates[type] = Epics::X509Certificate.new(decrypt(blob))
+      else
+        memo[type] = Epics::Key.new(decrypt(blob))
+      end
     end
   end
 
   def dump_keys
-    JSON.dump(keys.each_with_object({}) {|(k,v),m| m[k]= encrypt(v.key.to_pem)})
+    data = keys.each_with_object({}) { |(k, v), m| m[k] = encrypt(v.key.to_pem) }
+    certificates.each { |k, v| data[k] = encrypt(v.to_pem) }
+    JSON.dump(data)
   end
 
   def new_cipher

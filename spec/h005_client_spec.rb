@@ -70,6 +70,29 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
       expect(sig).not_to include('RSAKeyValue')
     end
 
+    it 'persists self-signed certificates across dump_keys/extract_keys round trips' do
+      fingerprint = client.x_509_certificate(:a).fingerprint
+
+      reloaded = Epics::Client.new(
+        client.send(:dump_keys), 'secret', 'https://example.com', 'SIZBN001', 'EBIX', 'EBICS',
+        version: :h005
+      )
+
+      expect(reloaded.x_509_certificate(:a).fingerprint).to eq(fingerprint)
+    end
+
+    it 'does not leak certificate entries into the RSA key set' do
+      client.x_509_certificate(:a)
+
+      reloaded = Epics::Client.new(
+        client.send(:dump_keys), 'secret', 'https://example.com', 'SIZBN001', 'EBIX', 'EBICS',
+        version: :h005
+      )
+
+      expect(reloaded.keys.keys).not_to include(a_string_ending_with('.crt'))
+      expect(reloaded.certificates.keys).to include('A006.crt')
+    end
+
     context 'S002 XSD validity', if: ebics_xsd_available?(:h005) do
       let(:s002) do
         Nokogiri::XML::Schema(File.open(File.join(File.dirname(__FILE__), 'xsd', 'ebics_signature_S002.xsd')))
