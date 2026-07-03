@@ -377,10 +377,9 @@ class Epics::Client
   end
   
   def x_509_certificate_hash(type)
-    content = x_509_certificates_content[type.to_sym]
-    return if content.nil? || content.empty?
-    cert = OpenSSL::X509::Certificate.new(content)
-    Digest::SHA256.hexdigest(cert.to_der).upcase
+    # Routes through x_509_certificate so H005 self-signed certificates get a
+    # fingerprint too — the INI letter needs it for subscriber verification.
+    x_509_certificate(type)&.fingerprint
   end
 
   private

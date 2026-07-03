@@ -31,12 +31,24 @@ class Epics::LetterRenderer
   def x_509_certificate_a_hash
     @client.x_509_certificate_hash(:a)
   end
-  
+
   def x_509_certificate_x_hash
     @client.x_509_certificate_hash(:x)
   end
-  
+
   def x_509_certificate_e_hash
     @client.x_509_certificate_hash(:e)
+  end
+
+  def x_509_certificate_a_pem
+    @client.x_509_certificate(:a)&.to_pem
+  end
+
+  def x_509_certificate_x_pem
+    @client.x_509_certificate(:x)&.to_pem
+  end
+
+  def x_509_certificate_e_pem
+    @client.x_509_certificate(:e)&.to_pem
   end
 end

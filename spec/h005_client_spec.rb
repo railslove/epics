@@ -70,6 +70,14 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
       expect(sig).not_to include('RSAKeyValue')
     end
 
+    it 'renders the INI letter with the self-signed certificate fingerprints' do
+      letter = client.ini_letter('Testbank')
+      fingerprint = client.x_509_certificate_hash(:a).scan(/../).join(':')
+
+      expect(letter).to include(fingerprint)
+      expect(letter).to include('BEGIN CERTIFICATE')
+    end
+
     it 'persists self-signed certificates across dump_keys/extract_keys round trips' do
       fingerprint = client.x_509_certificate(:a).fingerprint
 
