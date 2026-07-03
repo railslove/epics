@@ -22,6 +22,17 @@ class Epics::GenericRequest
     "ebicsRequest"
   end
 
+  # Namespace/version attributes for the request root element. Derived from the
+  # client's configured EBICS protocol version (H004 by default, H005 opt-in).
+  def root_attributes
+    {
+      'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',
+      'xmlns' => client.namespace,
+      'Version' => client.protocol_version,
+      'Revision' => client.revision,
+    }
+  end
+
   def body
     Nokogiri::XML::Builder.new do |xml|
       xml.body
@@ -53,7 +64,7 @@ class Epics::GenericRequest
 
   def to_transfer_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+      xml.send(root, root_attributes) {
         xml.header(authenticate: true) {
           xml.static {
             xml.HostID host_id
@@ -76,7 +87,7 @@ class Epics::GenericRequest
 
   def to_receipt_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+      xml.send(root, root_attributes) {
         xml.header(authenticate: true) {
           xml.static {
             xml.HostID host_id
@@ -98,7 +109,7 @@ class Epics::GenericRequest
 
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision'=> '1') {
+      xml.send(root, root_attributes) {
         xml.parent.add_child(header)
         xml.parent.add_child(auth_signature)
         xml.parent.add_child(body)

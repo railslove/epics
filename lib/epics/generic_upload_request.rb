@@ -27,14 +27,28 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
             xml.TransactionKey Base64.encode64(client.bank_e.key.public_encrypt(self.key)).gsub(/\n/,'')
           }
           xml.SignatureData(encrypted_order_signature, authenticate: true)
+          # EBICS 3.0 (H005) additionally carries the plain hash of the order
+          # data (the value that was signed) as a DataDigest element.
+          xml.DataDigest(data_digest, SignatureVersion: 'A006') if client.h005?
         }
       }
     end.doc.root
   end
 
+  # Base64-encoded SHA-256 digest of the order data — the same digest that is
+  # signed in #signature_value. Required in the H005 upload body.
+  def data_digest
+    Base64.strict_encode64(digester.digest(document.gsub(/\n|\r/, "")))
+  end
+
+  def signature_namespace
+    client.h005? ? 'http://www.ebics.org/S002' : 'http://www.ebics.org/S001'
+  end
+
   def order_signature
+    ns = signature_namespace
     Nokogiri::XML::Builder.new do |xml|
-      xml.UserSignatureData('xmlns' => 'http://www.ebics.org/S001', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.ebics.org/S001 http://www.ebics.org/S001/ebics_signature.xsd') {
+      xml.UserSignatureData('xmlns' => ns, 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => "#{ns} #{ns}/ebics_signature.xsd") {
         xml.OrderSignatureData {
           xml.SignatureVersion "A006"
           xml.SignatureValue signature_value

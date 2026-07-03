@@ -8,8 +8,10 @@ class Epics::HPB < Epics::GenericRequest
       nonce: nonce,
       timestamp: timestamp,
       order_type: 'HPB',
+      admin_order_type: 'HPB',
       order_attribute: 'DZHNN',
       with_bank_pubkey_digests: false,
+      with_order_params: false,
       mutable: {}
     )
   end

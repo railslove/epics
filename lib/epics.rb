@@ -59,6 +59,10 @@ require "epics/xct"
 require "epics/hia"
 require "epics/ini"
 require "epics/hev"
+require "epics/btf"
+require "epics/btf_mapping"
+require "epics/btd"
+require "epics/btu"
 require "epics/signer"
 require "epics/x_509_certificate"
 require "epics/client"
@@ -68,6 +72,15 @@ I18n.load_path += Dir[File.join(File.dirname(__FILE__), 'letter/locales', '*.yml
 module Epics
   DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
   DEFAULT_LOCALE = :de
+  DEFAULT_VERSION = :h004
+
+  # EBICS protocol version descriptors. The gem defaults to H004 (EBICS 2.5) so
+  # that existing users are unaffected; H005 (EBICS 3.0) is opt-in via the
+  # `version:` client option.
+  EBICS_PROTOCOLS = {
+    h004: { namespace: 'urn:org:ebics:H004', version: 'H004', revision: '1' },
+    h005: { namespace: 'urn:org:ebics:H005', version: 'H005', revision: '1' },
+  }.freeze
 end
 
 Ebics = Epics

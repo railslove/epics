@@ -124,6 +124,44 @@ You can choose to configure some default values like this
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', locale: :fr, product_name: 'Mon Epic Client EBICS')
 ```
 
+### EBICS 3.0 (H005)
+
+The gem defaults to EBICS 2.5 (`H004`). To use EBICS 3.0 (`H005`), pass `version: :h005`:
+
+```ruby
+e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', version: :h005)
+```
+
+In EBICS 3.0 the classic order types are replaced by the Business Transaction
+Format (BTF): uploads use `BTU`, downloads use `BTD`, each described by a
+`Service` instead of a `FileFormat`.
+
+```ruby
+# Upload (replaces FUL). `service` is an Epics::BTF (or a hash with the same keys).
+e.BTU(document, Epics::BTF.new(service_name: 'SCT', scope: 'DE', msg_name: 'pain.001', msg_version: '03'))
+
+# Download (replaces FDL).
+e.BTD(Epics::BTF.new(service_name: 'EOP', scope: 'DE', container: 'ZIP', msg_name: 'camt.053', msg_version: '08'), from: '2026-01-01', to: '2026-01-31')
+```
+
+The common German convenience methods (`CCT`, `CDD`, `CDB`, `STA`, `C52`, `C53`,
+`C54`, `VMK`) automatically route to `BTU`/`BTD` via `Epics::BtfMapping` when the
+client is on `:h005`. The BTF message versions in that table are commonly-used
+defaults and **are bank-specific** — verify them against your bank's BTF mapping
+("Auftragsarten" annex) and override with the raw `BTU`/`BTD` API when needed.
+
+EBICS 3.0 requires every key to be transmitted as an X.509 certificate. For
+shared-key banks (e.g. German banks) the gem generates self-signed certificates
+automatically for `INI`/`HIA` when no certificate is supplied.
+
+> Note: All generated H005 requests (INI/HIA/HPB, the admin downloads, and
+> BTU/BTD in every transaction phase) are validated against the official H005
+> XSD schema set in the test suite, and the INI key payload against the S002
+> signature schema. Full end-to-end verification against a live H005 bank
+> endpoint is the remaining step. Known limitation: the `X509IssuerSerial`
+> currently reports the certificate version rather than its serial number
+> (pre-existing behaviour shared with the H004 X.509 path).
+
 ## Features
 
 ### Initialization

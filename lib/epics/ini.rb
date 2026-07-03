@@ -6,8 +6,10 @@ class Epics::INI < Epics::GenericRequest
   def header
     client.header_request.build(
       order_type: 'INI',
+      admin_order_type: 'INI',
       order_attribute: 'DZNNN',
       with_bank_pubkey_digests: false,
+      with_order_params: false,
       mutable: {},
     )
   end
@@ -23,6 +25,8 @@ class Epics::INI < Epics::GenericRequest
   end
 
   def key_signature
+    return h005_key_signature if client.h005?
+
     Nokogiri::XML::Builder.new do |xml|
       xml.SignaturePubKeyOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'http://www.ebics.org/S001') {
         xml.SignaturePubKeyInfo {
@@ -42,9 +46,25 @@ class Epics::INI < Epics::GenericRequest
     end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
   end
 
+  # EBICS 3.0 (H005): the signature namespace is S002 and the public key is
+  # carried exclusively as an X.509 certificate (ds:X509Data) — the H004
+  # RSAKeyValue is no longer part of the structure.
+  def h005_key_signature
+    Nokogiri::XML::Builder.new do |xml|
+      xml.SignaturePubKeyOrderData('xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'http://www.ebics.org/S002') {
+        xml.SignaturePubKeyInfo {
+          x509_data_xml(xml, client.x_509_certificate(:a))
+          xml.SignatureVersion 'A006'
+        }
+        xml.PartnerID partner_id
+        xml.UserID user_id
+      }
+    end.to_xml(save_with: Nokogiri::XML::Node::SaveOptions::AS_XML, encoding: 'utf-8')
+  end
+
   def to_xml
     Nokogiri::XML::Builder.new do |xml|
-      xml.send(root, 'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#', 'xmlns' => 'urn:org:ebics:H004', 'Version' => 'H004', 'Revision' => '1') {
+      xml.send(root, root_attributes) {
         xml.parent.add_child(header)
         xml.parent.add_child(body)
       }
