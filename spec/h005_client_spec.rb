@@ -122,6 +122,94 @@ RSpec.describe 'EBICS 3.0 (H005) client' do
     end
   end
 
+  describe 'HAA lists available BTF services (H005)' do
+    let(:haa_response) do
+      <<~XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <HAAResponseOrderData xmlns="urn:org:ebics:H005">
+          <Service>
+            <ServiceName>EOP</ServiceName>
+            <Scope>DE</Scope>
+            <Container containerType="ZIP"/>
+            <MsgName version="08">camt.053</MsgName>
+          </Service>
+          <Service>
+            <ServiceName>SCT</ServiceName>
+            <MsgName version="03">pain.001</MsgName>
+          </Service>
+        </HAAResponseOrderData>
+      XML
+    end
+
+    before { allow(client).to receive(:download).with(Epics::HAA).and_return(haa_response) }
+
+    it 'returns parsed BTF services' do
+      services = client.HAA
+      expect(services.map(&:service_name)).to eq(%w[EOP SCT])
+      expect(services.first.container).to eq('ZIP')
+      expect(services.first.msg_name).to eq('camt.053')
+      expect(services.first.msg_version).to eq('08')
+    end
+  end
+
+  describe 'HTD parses account data and BTF services (H005)' do
+    let(:htd_response) do
+      <<~XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <HTDResponseOrderData xmlns="urn:org:ebics:H005">
+          <PartnerInfo>
+            <AddressInfo><Name>ACME Corp</Name></AddressInfo>
+            <BankInfo><HostID>SIZBN001</HostID></BankInfo>
+            <AccountInfo ID="1">
+              <AccountNumber international="true">DE89370400440532013000</AccountNumber>
+              <BankCode international="true">COBADEFFXXX</BankCode>
+            </AccountInfo>
+            <OrderInfo>
+              <AdminOrderType>BTD</AdminOrderType>
+              <Service>
+                <ServiceName>EOP</ServiceName>
+                <Scope>DE</Scope>
+                <Container containerType="ZIP"/>
+                <MsgName version="08">camt.053</MsgName>
+              </Service>
+              <Description>Statements</Description>
+            </OrderInfo>
+            <OrderInfo>
+              <AdminOrderType>BTU</AdminOrderType>
+              <Service>
+                <ServiceName>SCT</ServiceName>
+                <MsgName version="03">pain.001</MsgName>
+              </Service>
+              <Description>Credit transfer</Description>
+            </OrderInfo>
+            <OrderInfo>
+              <AdminOrderType>HAC</AdminOrderType>
+              <Description>Acknowledgement</Description>
+            </OrderInfo>
+          </PartnerInfo>
+          <UserInfo/>
+        </HTDResponseOrderData>
+      XML
+    end
+
+    before { allow(client).to receive(:download).with(Epics::HTD).and_return(htd_response) }
+
+    it 'parses name, iban and bic' do
+      expect(client.name).to eq('ACME Corp')
+      expect(client.iban).to eq('DE89370400440532013000')
+      expect(client.bic).to eq('COBADEFFXXX')
+    end
+
+    it 'exposes distinct admin order types' do
+      expect(client.order_types).to eq(%w[BTD BTU HAC])
+    end
+
+    it 'exposes the BTF services' do
+      expect(client.services.map(&:service_name)).to eq(%w[EOP SCT])
+      expect(client.services.first.msg_name).to eq('camt.053')
+    end
+  end
+
   describe 'convenience methods route to BTU/BTD under H005' do
     it 'CCT builds a BTU with the SCT service' do
       order = Epics::BTU.new(client, '<Document/>', service: Epics::BtfMapping.upload('CCT'))

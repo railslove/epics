@@ -93,6 +93,12 @@ class Epics::Client
     @order_types ||= (self.HTD; @order_types)
   end
 
+  # EBICS 3.0 (H005): the available business transactions as Epics::BTF services
+  # (there is no flat OrderTypes list anymore). Empty on H004.
+  def services
+    @services ||= (self.HTD; @services)
+  end
+
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, options = {})
     client = new(nil, passphrase, url, host_id, user_id, partner_id, options)
     client.keys = %w(A006 X002 E002).each_with_object({}) do |type, memo|
@@ -296,7 +302,13 @@ class Epics::Client
   end
 
   def HAA
-    Nokogiri::XML(download(Epics::HAA)).at_xpath("//xmlns:OrderTypes", xmlns: namespace).content.split(/\s/)
+    doc = Nokogiri::XML(download(Epics::HAA))
+    if h005?
+      # H005: available transactions are BTF services, not a flat OrderTypes list.
+      doc.xpath("//xmlns:Service", xmlns: namespace).map { |s| service_from_node(s) }
+    else
+      doc.at_xpath("//xmlns:OrderTypes", xmlns: namespace).content.split(/\s/)
+    end
   end
 
   def HTD
@@ -304,7 +316,17 @@ class Epics::Client
       @iban        ||= htd.at_xpath("//xmlns:AccountNumber[@international='true']", xmlns: namespace).text rescue nil
       @bic         ||= htd.at_xpath("//xmlns:BankCode[@international='true']", xmlns: namespace).text rescue nil
       @name        ||= htd.at_xpath("//xmlns:Name", xmlns: namespace).text rescue nil
-      @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: namespace).map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+
+      if h005?
+        # H005 replaces OrderTypes with OrderInfo entries: each has an
+        # AdminOrderType and, for BTU/BTD, a BTF Service.
+        order_infos    = htd.search("//xmlns:OrderInfo", xmlns: namespace)
+        @order_types ||= order_infos.map { |o| o.at_xpath("./xmlns:AdminOrderType", xmlns: namespace)&.content }.compact.uniq
+        @services    ||= order_infos.map { |o| o.at_xpath("./xmlns:Service", xmlns: namespace) }.compact.map { |s| service_from_node(s) }
+      else
+        @order_types ||= htd.search("//xmlns:OrderTypes", xmlns: namespace).map{|o| o.content.split(/\s/) }.delete_if{|o| o == ""}.flatten
+        @services    ||= []
+      end
     end.to_xml
   end
 
@@ -382,6 +404,24 @@ class Epics::Client
       exponent = Base64.decode64(info.at_xpath(".//*[local-name() = 'Exponent']").content)
       rsa_from_modulus_exponent(modulus, exponent)
     end
+  end
+
+  # Parses a BTF <Service> element (from HAA/HTD responses) into an Epics::BTF.
+  def service_from_node(node)
+    msg       = node.at_xpath("./xmlns:MsgName", xmlns: namespace)
+    container = node.at_xpath("./xmlns:Container", xmlns: namespace)
+    text = ->(name) { node.at_xpath("./xmlns:#{name}", xmlns: namespace)&.content }
+
+    Epics::BTF.new(
+      service_name:   text.call('ServiceName'),
+      scope:          text.call('Scope'),
+      service_option: text.call('ServiceOption'),
+      container:      container && (container['containerType'] || container.content),
+      msg_name:       msg&.content,
+      msg_version:    msg && msg['version'],
+      msg_variant:    msg && msg['variant'],
+      msg_format:     msg && msg['format'],
+    )
   end
 
   def rsa_from_modulus_exponent(modulus, exponent)
