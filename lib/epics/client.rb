@@ -440,12 +440,14 @@ class Epics::Client
                                    container_type: container_type)
   end
 
-  def C53(from, to, scope: nil, msg_name_version: nil)
-    download_and_unzip(Epics::C53, from: from, to: to, scope: scope, msg_name_version: msg_name_version)
+  def C53(from, to, scope: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::C53, from: from, to: to, scope: scope, msg_name_version: msg_name_version,
+                                   container_type: container_type)
   end
 
-  def C54(from, to)
-    download_and_unzip(Epics::C54, from: from, to: to)
+  def C54(from, to, scope: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::C54, from: from, to: to, scope: scope, msg_name_version: msg_name_version,
+                                   container_type: container_type)
   end
 
   def C5N(from, to)

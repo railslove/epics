@@ -20,6 +20,9 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [ENHANCEMENT] `C54` accepts `scope:`, `msg_name_version:` and `container_type:`, the
+  same options as `C52` and `C53`; `C53` gained `container_type:`. The three camt
+  retrievals now differ only in service name and message type
 - [FIX] `save_keys` discarded any key-file entry it could not map to one of the five
   keyring slots, so a `host_id` that no longer matched the stored prefix destroyed the
   bank's public keys on save. Unrecognised entries are now carried through unchanged,
