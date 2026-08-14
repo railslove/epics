@@ -68,22 +68,28 @@ class Epics::Response
     authenticated = doc.xpath("//*[@authenticate='true']").map(&:canonicalize).join
     digest_value = doc.xpath('//ds:DigestValue', ds: 'http://www.w3.org/2000/09/xmldsig#').first
 
-    digest = Base64.encode64(client.signature_key.digester.digest(authenticated)).strip
+    digest = Base64.encode64(OpenSSL::Digest.digest('sha256', authenticated)).strip
 
     digest == digest_value.content
   end
 
   def signature_valid?
+    key = client.bank_authentication_key
+    raise Epics::MissingKeyError, "The bank's authentication key" if !key
+
     signature = doc.xpath('//ds:SignedInfo', ds: 'http://www.w3.org/2000/09/xmldsig#').first.canonicalize
     signature_value = doc.xpath('//ds:SignatureValue', ds: 'http://www.w3.org/2000/09/xmldsig#').first
 
-    client.bank_authentication_key.verify(signature_value.content, signature)
+    key.verify(signature_value.content, signature)
   end
 
   def public_digest_valid?
+    key = client.encryption_key
+    raise Epics::MissingKeyError, 'The encryption key' if !key
+
     encryption_pub_key_digest = doc.xpath('//xmlns:EncryptionPubKeyDigest', xmlns: client.urn_schema).first
 
-    client.encryption_key.public_digest == encryption_pub_key_digest.content
+    key.public_digest == encryption_pub_key_digest.content
   end
 
   def order_data

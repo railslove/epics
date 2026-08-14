@@ -20,6 +20,10 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [FIX] `Response#signature_valid?` and `#public_digest_valid?` raised `NoMethodError`
+  when the key they need was not loaded; they now raise `Epics::MissingKeyError` naming
+  it. `#digest_valid?` no longer needs a key at all — it is a plain SHA-256 over the
+  authenticated nodes
 - [FIX] Removed the `container_flag:` order parameter, which emitted a `ContainerFlag`
   element that exists in no EBICS schema. The container is expressed by `Container`
   with a `containerType` attribute, which `container_type:` already emits

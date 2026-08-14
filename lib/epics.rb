@@ -91,6 +91,14 @@ module Epics
     end
   end
 
+  # Raised when a check needs a key the client has not loaded, e.g. verifying a bank
+  # signature before HPB has run.
+  class MissingKeyError < StandardError
+    def initialize(what)
+      super("#{what} is not available; run HPB or load a key file that contains it")
+    end
+  end
+
   class InvalidCertificateError < StandardError
     attr_reader :option_name
 
