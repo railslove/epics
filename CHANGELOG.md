@@ -20,6 +20,9 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [FIX] Removed the `container_flag:` order parameter, which emitted a `ContainerFlag`
+  element that exists in no EBICS schema. The container is expressed by `Container`
+  with a `containerType` attribute, which `container_type:` already emits
 - [ENHANCEMENT] `C54` accepts `scope:`, `msg_name_version:` and `container_type:`, the
   same options as `C52` and `C53`; `C53` gained `container_type:`. The three camt
   retrievals now differ only in service name and message type
