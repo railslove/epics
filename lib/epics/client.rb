@@ -195,10 +195,11 @@ class Epics::Client
     end
   end
 
-  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = DEFAULT_KEY_SIZE, options = {}, &block)
+  # Yields after the keys and certificates exist, so the block sees a usable client.
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = DEFAULT_KEY_SIZE, options = {})
     options = options.dup
     signature_version = options.delete(:signature_version) || Epics::Signature::A_VERSION_6
-    client = new(nil, passphrase, url, host_id, user_id, partner_id, options, &block)
+    client = new(nil, passphrase, url, host_id, user_id, partner_id, options)
     [signature_version, Epics::Signature::X_VERSION_2, Epics::Signature::E_VERSION_2].each do |version|
       signature = case version
                   when Epics::Signature::A_VERSION_6
@@ -219,6 +220,8 @@ class Epics::Client
 
     client.apply_certificates
     client.generate_certificates if client.generate_certificates?
+
+    yield client if block_given?
     client
   end
 

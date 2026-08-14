@@ -46,6 +46,10 @@ rewrite of request building into builders/factories/handlers.
   both accept `container_type:` to override it
 - [BREAKING] Removed `Epics::Services::CryptService#sign`, which had no callers and
   disagreed with `#encrypt` on how an A005 signature is formed
+- [FIX] `Epics::Client.setup` forwarded its block to `.new`, which yields before the
+  keys are generated, so the block saw an empty keyring and anything touching it —
+  `ini_letter`, `save_keys`, `INI`, `HIA` — failed. It now yields once the client is
+  usable
 
 ### 2.11.0
 
