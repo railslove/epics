@@ -11,8 +11,14 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
     @crypt_service = Epics::Services::CryptService.new
   end
 
+  # Line endings are stripped before hashing so that the same logical document
+  # always yields the same electronic signature.
   def document_digest
-    @crypt_service.hash(document)
+    @crypt_service.hash(normalized_document)
+  end
+
+  def normalized_document
+    document.gsub(/\n|\r/, '')
   end
 
   def to_transfer_xml
