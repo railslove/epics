@@ -20,6 +20,10 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [FIX] Loading a key file with the wrong passphrase raised `OpenSSL::PKey::PKeyError`
+  about one time in 256, when the decrypted garbage happened to be padded correctly.
+  Decryption now verifies it produced a PEM, so a wrong passphrase always raises
+  `OpenSSL::Cipher::CipherError`
 - [FIX] An unreadable certificate in an HPB response raised a bare
   `OpenSSL::X509::CertificateError`. It now raises `Epics::InvalidCertificateError`
   naming the HPB response as the source and keeping the OpenSSL message
