@@ -30,6 +30,12 @@ class Epics::GenericRequest
     end
   end
 
+  # BTF service parameters for the request, i.e. everything but the date range.
+  # Compacted so unset options fall through to the factory defaults.
+  def service_options
+    options.except(:from, :to).compact
+  end
+
   def nonce
     SecureRandom.hex(16)
   end
