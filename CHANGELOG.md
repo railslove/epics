@@ -44,6 +44,8 @@ rewrite of request building into builders/factories/handlers.
 - [FIX] `C52` requested no container on H005 while `Client#C52` always unzips the
   response, raising `Zip::Error`. `C52` and `C53` now default to a ZIP container and
   both accept `container_type:` to override it
+- [BREAKING] Removed `Epics::Services::CryptService#sign`, which had no callers and
+  disagreed with `#encrypt` on how an A005 signature is formed
 
 ### 2.11.0
 
