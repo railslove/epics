@@ -20,6 +20,10 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [FIX] `save_keys` discarded any key-file entry it could not map to one of the five
+  keyring slots, so a `host_id` that no longer matched the stored prefix destroyed the
+  bank's public keys on save. Unrecognised entries are now carried through unchanged,
+  and a warning names each one instead of the failure being swallowed
 - [BREAKING] `order_id:` is validated against the EBICS `OrderIDType` range (`A000` to
   `ZZZZ`). Values below `A000` rendered as e.g. `0002`, which violates the
   `[A-Z][A-Z0-9]{3}` pattern; they now raise `ArgumentError`. The protocol form
