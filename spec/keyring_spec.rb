@@ -289,8 +289,9 @@ RSpec.describe Epics::Keyring do
 
     it 'can be set via options' do
       client2 = Epics::Client.new(File.open(File.join(File.dirname(__FILE__), 'fixtures', 'SIZBN001.key')), 'secret',
-                                  'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', order_id: 100)
-      expect(client2.next_order_id).to eq(101)
+                                  'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS',
+                                  order_id: 500_000)
+      expect(client2.next_order_id).to eq(500_001)
     end
   end
 

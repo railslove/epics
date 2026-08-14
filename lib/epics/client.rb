@@ -1,8 +1,9 @@
 class Epics::Client
   extend Forwardable
 
-  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys_content, :locale, :product_name, :current_order_id,
+  attr_accessor :passphrase, :url, :host_id, :user_id, :partner_id, :keys_content, :locale, :product_name,
                 :debug_mode
+  attr_reader :current_order_id
   attr_reader :keyring
   attr_writer :iban, :bic, :name
 
@@ -12,6 +13,12 @@ class Epics::Client
 
   # EBICS 3.0 requires at least 2048 bits.
   DEFAULT_KEY_SIZE = 4096
+
+  # OrderIDType is `[A-Z][A-Z0-9]{3}`, i.e. base 36 from A000 to ZZZZ. Only EBICS 2.4
+  # sends an OrderID; 2.5 and 3.0 leave numbering to the bank.
+  MIN_ORDER_ID = 466_560
+  MAX_ORDER_ID = 1_679_615
+  ORDER_ID_FORMAT = /\A[A-Z][A-Z0-9]{3}\z/
 
   # Constructor option carrying certificate content, per signature type.
   CERTIFICATE_OPTIONS = {
@@ -27,7 +34,7 @@ class Epics::Client
     self.partner_id = partner_id
     self.locale = options[:locale] || Epics::DEFAULT_LOCALE
     self.product_name = options[:product_name] || Epics::DEFAULT_PRODUCT_NAME
-    self.current_order_id = options[:order_id] || 466_560
+    self.current_order_id = options[:order_id] || MIN_ORDER_ID
     @keyring = Epics::Keyring.new(options[:version] || Epics::Keyring::VERSION_25)
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
@@ -109,8 +116,25 @@ class Epics::Client
      @partner_id=\"#{partner_id}\""
   end
 
+  # Accepts either the protocol form ('A000') or the integer it encodes, so a caller
+  # can persist whichever it has and hand it back.
+  def current_order_id=(value)
+    # String#to_i(36) is lenient, so the format is checked before converting.
+    id = value.is_a?(String) && value.match?(ORDER_ID_FORMAT) ? value.to_i(36) : value
+
+    unless id.is_a?(Integer) && id.between?(MIN_ORDER_ID, MAX_ORDER_ID)
+      raise ArgumentError,
+            "order_id must be between #{MIN_ORDER_ID.to_s(36).upcase} and " \
+            "#{MAX_ORDER_ID.to_s(36).upcase}, got #{value.inspect}"
+    end
+
+    @current_order_id = id
+  end
+
+  # Not persisted with the keys: read it after use and pass it back as `order_id:` on
+  # the next client, or EBICS 2.4 uploads replay IDs the bank has already seen.
   def next_order_id
-    raise 'Order ID overflow' if current_order_id >= 1_679_615
+    raise 'Order ID overflow' if current_order_id >= MAX_ORDER_ID
 
     self.current_order_id += 1
   end
