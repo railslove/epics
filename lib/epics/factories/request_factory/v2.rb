@@ -13,7 +13,7 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_download_request('BKA', start_date: start_date, end_date: end_date)
   end
 
-  def create_z01(start_date, end_date)
+  def create_z01(start_date, end_date, **)
     build_download_request('Z01', start_date: start_date, end_date: end_date)
   end
 
@@ -53,15 +53,15 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_download_request('WSS')
   end
 
-  def create_z52(start_date, end_date)
+  def create_z52(start_date, end_date, **)
     build_download_request('Z52', start_date: start_date, end_date: end_date)
   end
 
-  def create_z53(start_date, end_date)
+  def create_z53(start_date, end_date, **)
     build_download_request('Z53', start_date: start_date, end_date: end_date)
   end
 
-  def create_z54(start_date, end_date)
+  def create_z54(start_date, end_date, **)
     build_download_request('Z54', start_date: start_date, end_date: end_date)
   end
 

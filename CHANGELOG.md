@@ -33,6 +33,15 @@ rewrite of request building into builders/factories/handlers.
 - [FIX] Removed the `container_flag:` order parameter, which emitted a `ContainerFlag`
   element that exists in no EBICS schema. The container is expressed by `Container`
   with a `containerType` attribute, which `container_type:` already emits
+- [ENHANCEMENT] Added the H005-only order types `XEK` (account statements as PDF),
+  `ZSR` (payment status reports) and `YCT` (multi-currency credit transfer). Their BTF
+  mappings existed in the V3 factory but had no order class or client method
+- [BREAKING] `XEK`, `YCT` and `ZSR` raise `Epics::VersionSupportError` on H003/H004
+  instead of `NotImplementedError`, matching every other version mismatch
+- [ENHANCEMENT] `XEK`, `ZSR`, `Z01`, `Z52`, `Z53` and `Z54` accept `scope:`,
+  `service_option:`, `msg_name_version:` and `container_type:`. Defaults are unchanged;
+  Swiss market practice requires a `Scope` and only `ZSR` sent one, so a bank-specific
+  value can now be supplied without patching the gem
 - [ENHANCEMENT] `C54` accepts `scope:`, `msg_name_version:` and `container_type:`, the
   same options as `C52` and `C53`; `C53` gained `container_type:`. The three camt
   retrievals now differ only in service name and message type

@@ -4,7 +4,7 @@ class Epics::Factories::RequestFactory::V24 < Epics::Factories::RequestFactory::
   ].freeze
 
   NOT_IMPLEMENTED_ORDER_TYPES.each do |type|
-    define_method("create_#{type}") { |*| raise NotImplementedError }
+    define_method("create_#{type}") { |*, **| raise Epics::VersionSupportError, 3.0 }
   end
 
   protected
