@@ -605,8 +605,12 @@ class Epics::Client
   end
 
   def extract_keys
+    @unmapped_keys = {}
+
     JSON.load(keys_content).each do |signature_version, value|
       next unless value
+
+      entry_name = signature_version
 
       # Handle new format: { "key" => "...", "cert" => "..." }
       if value.is_a?(Hash)
@@ -649,13 +653,18 @@ class Epics::Client
           keyring.user_encryption = signature
         end
       end
-    rescue Epics::Signature::UnknownTypeError
-    rescue Epics::Signature::UnknownVersionError
+    rescue Epics::Signature::UnknownTypeError, Epics::Signature::UnknownVersionError => e
+      # Kept verbatim so save_keys cannot drop it. A bank key whose prefix does not
+      # match host_id lands here, as does a key of a version this gem does not know.
+      @unmapped_keys[entry_name] = value
+      warn "[epics] WARNING: keeping #{entry_name.inspect} in the key file unchanged: #{e.message}"
     end
   end
 
   def dump_keys
-    data = {}
+    # Entries extract_keys could not place are carried through, so saving never
+    # discards part of the key file.
+    data = (@unmapped_keys || {}).dup
 
     [keyring.user_signature, keyring.user_authentication,
      keyring.user_encryption].each do |sig|
