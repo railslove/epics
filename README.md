@@ -45,7 +45,7 @@ Take these parameters and start setting up an UserID (repeat this for every user
 ```ruby
 e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID")
 
-# the key size defaults to 4096 bits; pass a different one as the sixth argument
+# the key size defaults to 4096 bits - pass a different one as the sixth argument
 e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID", 2048)
 
 # for EBICS 3.0, ask for H005 — this also generates the X.509 certificates it requires
@@ -83,7 +83,7 @@ e.save_ini_letter( 'My Banks Name', "/home/epics/ini.html" )
 ```
 
 Open the generated HTML file in your favorite browser and print it (skipping
-header and footer sounds like a solid setting here ;). In case you're having difficulties
+header and footer sounds like a solid setting here). In case you're having difficulties
 with the encoding, try forcing your browser to use UTF-8.
 
 Put the INI letter in an envelope and mail it to your bank!
@@ -141,7 +141,7 @@ e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', loca
 
 ### Order IDs on EBICS 2.4
 
-Only EBICS 2.4 numbers its own orders; 2.5 and 3.0 leave that to the bank. The counter runs
+Only EBICS 2.4 numbers its own orders. 2.5 and 3.0 leave that to the bank. The counter runs
 from `A000` to `ZZZZ` and is **not** stored in the key file, so a process that restarts
 begins at `A000` again and re-sends order IDs the bank has already seen. Persist it
 yourself and hand it back:
@@ -193,7 +193,7 @@ as in 2.x, and the specification requires X.509 data in the key management order
 
 `Client.setup` therefore generates a self-signed certificate for each key when the version
 is H005. Self-signed certificates are explicitly permitted for INI/HIA by the Swiss market
-practice guidelines (§6.1); confirm what your bank expects before relying on them.
+practice guidelines (§6.1). Confirm what your bank expects before relying on them.
 
 ```ruby
 e = Epics::Client.setup(
@@ -303,8 +303,9 @@ e.CCT(document, service_option: 'CH001COR')
 
 The `Scope` parameter identifies whose rulebook applies — an ISO country code such as `CH`
 or `DE`, `GLB` for SEPA/SWIFT/CGI, or `BIL` for bilaterally agreed rules. Swiss market
-practice requires it to be supplied; when it is absent the bank assumes a global
-definition. On EBICS 2.4/2.5 these parameters have no equivalent and are ignored.
+practice requires it to be supplied (guidelines §5.2).
+When it is absent the bank assumes a global definition.
+On EBICS 2.4/2.5 these parameters have no equivalent and are ignored.
 
 ## Features
 
@@ -402,7 +403,7 @@ certificate = Epics::Crypt::X509.generate(
 File.write('cert_a.pem', certificate.to_pem)
 ```
 
-It does not expire unless you say so; pass `not_before:` and `not_after:` for a bounded
+It does not expire unless you say so. Pass `not_before:` and `not_after:` for a bounded
 validity. On H005, `Client.setup` calls this for all three keys already, so you only need
 it directly when adding certificates to an existing 2.x client.
 
