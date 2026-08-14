@@ -176,27 +176,27 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def create_ful(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_fdl(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_cd1(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_wss(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_xds(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_xct(*, **)
-    raise Epics::VersionSupportError, 2.5
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def create_zsr(start_date, end_date)

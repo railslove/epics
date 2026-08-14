@@ -1,6 +1,6 @@
 class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBuilder::Base
   def add_order_type(_order_type)
-    raise Epics::VersionSupportError, 2.5, 'below'
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def add_admin_order_type(order_type)
@@ -8,7 +8,7 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
   end
 
   def add_order_attribute(_order_attribute)
-    raise Epics::VersionSupportError, 2.5, 'below'
+    raise Epics::VersionSupportError.new(3.0, 'below')
   end
 
   def add_btd_order_params(
