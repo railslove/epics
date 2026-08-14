@@ -40,7 +40,6 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
 
   def create_btu(transaction_key, digest, num_segments, options = {})
     signature_data = @user_signature_handle.handle(digest).to_xml
-    data_digest = @crypt_service.sign(@client.keyring.user_signature, digest)
     auth_signature_handler = Epics::Handlers::AuthSignatureHandler.new(@client.keyring)
     request_builder.add_container_secured do |xml_builder|
       xml_builder.add_header do |header_builder|
@@ -75,7 +74,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
             data_encryption_info_builder.add_transaction_key transaction_key, @client.keyring
           end
           data_transfer_builder.add_signature_data signature_data, transaction_key
-          data_transfer_builder.add_data_digest @client.keyring.user_signature.version, data_digest
+          data_transfer_builder.add_data_digest @client.keyring.user_signature.version, digest
           data_transfer_builder.add_additional_order_info
         end
       end
