@@ -1,6 +1,5 @@
 class Epics::GenericUploadRequest < Epics::GenericRequest
-  attr_accessor :document
-  attr_reader :transaction_key
+  attr_reader :document, :transaction_key
 
   def initialize(client, document, **options)
     super(client, **options)
@@ -11,14 +10,14 @@ class Epics::GenericUploadRequest < Epics::GenericRequest
     @crypt_service = Epics::Services::CryptService.new
   end
 
-  # Line endings are stripped before hashing so that the same logical document
-  # always yields the same electronic signature.
-  def document_digest
-    @crypt_service.hash(normalized_document)
+  # Normalized on the way in so the bytes hashed for the electronic signature are the
+  # bytes transmitted.
+  def document=(value)
+    @document = value.gsub(/\n|\r/, '')
   end
 
-  def normalized_document
-    document.gsub(/\n|\r/, '')
+  def document_digest
+    @crypt_service.hash(document)
   end
 
   def to_transfer_xml
