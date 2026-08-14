@@ -50,6 +50,10 @@ rewrite of request building into builders/factories/handlers.
   keys are generated, so the block saw an empty keyring and anything touching it —
   `ini_letter`, `save_keys`, `INI`, `HIA` — failed. It now yields once the client is
   usable
+- [FIX] `Epics::VersionSupportError` was raised as `raise Error, version, 'below'`,
+  where the third argument is the backtrace, so the direction was dropped and the
+  stack trace destroyed. 2.x-only order types on H005 now report "Support for versions
+  below 3.0" and keep their trace
 
 ### 2.11.0
 
