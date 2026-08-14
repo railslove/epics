@@ -41,6 +41,9 @@ rewrite of request building into builders/factories/handlers.
   mandatory within `DateRange`, so this now raises `ArgumentError`
 - [FIX] `Time` and `DateTime` passed as date-range bounds rendered an `xs:dateTime`
   with a local offset into an `xs:date` element; they are now coerced to a date
+- [FIX] `C52` requested no container on H005 while `Client#C52` always unzips the
+  response, raising `Zip::Error`. `C52` and `C53` now default to a ZIP container and
+  both accept `container_type:` to override it
 
 ### 2.11.0
 
