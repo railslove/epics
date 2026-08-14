@@ -727,13 +727,19 @@ class Epics::Client
     Base64.strict_encode64([salt, cipher.update(data) + cipher.final].join)
   end
 
+  # Every value in a key file is a PEM. A wrong passphrase normally fails the padding
+  # check, but about one time in 256 it decrypts to garbage that happens to be padded
+  # correctly; without this check that surfaces later as an unrelated key parse error.
   def decrypt(data)
     data = Base64.strict_decode64(data)
     salt = data[0..7]
     data = data[8..-1]
 
     cipher = setup_cipher(:decrypt, passphrase, salt)
-    cipher.update(data) + cipher.final
+    plaintext = cipher.update(data) + cipher.final
+    raise OpenSSL::Cipher::CipherError, 'cipher final failed: wrong passphrase' if !plaintext.start_with?('-----BEGIN')
+
+    plaintext
   end
 
   def setup_cipher(method, passphrase, salt)
