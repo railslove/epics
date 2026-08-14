@@ -77,6 +77,31 @@ module Epics
   DEFAULT_PRODUCT_NAME = 'EPICS - a ruby ebics kernel'
   DEFAULT_LOCALE = :de
 
+  # EBICS 3.0 (H005) carries public keys inside `ds:X509Data`, which the key management
+  # schemas declare mandatory (EBICS 3.0.2 §3.9). There is no raw modulus/exponent form.
+  class MissingCertificateError < StandardError
+    attr_reader :signature_version, :option_name
+
+    def initialize(signature_version, option_name)
+      @signature_version = signature_version
+      @option_name = option_name
+      super("EBICS 3.0 (H005) requires an X.509 certificate for #{signature_version}. " \
+            "Pass #{option_name}: to Epics::Client.new, or use Epics::Client.setup " \
+            'to generate a self-signed one.')
+    end
+  end
+
+  class InvalidCertificateError < StandardError
+    attr_reader :option_name
+
+    def initialize(option_name, original = nil)
+      @option_name = option_name
+      message = "Could not parse the X.509 certificate passed as #{option_name}"
+      message += " (#{original.message})" if original
+      super(message)
+    end
+  end
+
   class VersionSupportError < StandardError
     attr_reader :version
 

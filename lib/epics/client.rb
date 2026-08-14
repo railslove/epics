@@ -13,6 +13,13 @@ class Epics::Client
   # EBICS 3.0 requires at least 2048 bits.
   DEFAULT_KEY_SIZE = 4096
 
+  # Constructor option carrying certificate content, per signature type.
+  CERTIFICATE_OPTIONS = {
+    Epics::Signature::TYPE_A => :x_509_certificate_a_content,
+    Epics::Signature::TYPE_X => :x_509_certificate_x_content,
+    Epics::Signature::TYPE_E => :x_509_certificate_e_content
+  }.freeze
+
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
     self.url = url
     self.host_id    = host_id
@@ -25,12 +32,60 @@ class Epics::Client
     self.keys_content = keys_content.respond_to?(:read) ? keys_content.read : keys_content if keys_content
     self.passphrase = passphrase
     self.debug_mode = !!options[:debug_mode]
+    @certificate_contents = CERTIFICATE_OPTIONS.transform_values { |option| options[option] }
+    @certificate_subject = options[:certificate_subject]
+    @certificate_not_after = options[:certificate_not_after]
+    @generate_certificates = options.fetch(:generate_certificates, keyring.version == Epics::Keyring::VERSION_30)
     extract_keys if keys_content
-    keyring.user_signature&.certificate = parse_certificate(options[:x_509_certificate_a_content])
-    keyring.user_authentication&.certificate = parse_certificate(options[:x_509_certificate_x_content])
-    keyring.user_encryption&.certificate = parse_certificate(options[:x_509_certificate_e_content])
+    apply_certificates
 
     yield self if block_given?
+  end
+
+  # Attaches the certificates passed to the constructor. `.setup` calls this again
+  # because it builds the signatures after `#initialize` has run. Only assigns where
+  # content was given, so a certificate loaded from a key file survives.
+  def apply_certificates
+    user_signatures.each do |type, signature|
+      certificate = parse_certificate(@certificate_contents[type], CERTIFICATE_OPTIONS[type])
+      signature.certificate = certificate if certificate
+    end
+
+    self
+  end
+
+  # H005 cannot be initialised without certificates, so `.setup` mints them by default.
+  def generate_certificates?
+    @generate_certificates
+  end
+
+  # Self-signed certificate for each user key that lacks one. Permitted for INI/HIA by
+  # the Swiss market practice guidelines §6.1; banks requiring CA-issued certificates
+  # should be given `x_509_certificate_*_content`, which takes precedence.
+  #
+  # Called only by `.setup`: regenerating on every `.new` would hand the bank a
+  # different fingerprint than the one on the initialisation letter.
+  def generate_certificates
+    user_signatures.each_value do |signature|
+      next if signature.certificate
+
+      signature.certificate = Epics::Crypt::X509.generate(
+        signature.key,
+        subject: certificate_subject,
+        not_after: @certificate_not_after || Epics::Crypt::X509::UNLIMITED
+      )
+    end
+
+    self
+  end
+
+  # Built as an OpenSSL::X509::Name so IDs containing `/` or `=` need no escaping.
+  def certificate_subject
+    @certificate_subject ||= OpenSSL::X509::Name.new([
+                                                       ['CN', user_id],
+                                                       ['OU', partner_id],
+                                                       ['O', host_id]
+                                                     ])
   end
 
   def version
@@ -141,6 +196,7 @@ class Epics::Client
   end
 
   def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = DEFAULT_KEY_SIZE, options = {}, &block)
+    options = options.dup
     signature_version = options.delete(:signature_version) || Epics::Signature::A_VERSION_6
     client = new(nil, passphrase, url, host_id, user_id, partner_id, options, &block)
     [signature_version, Epics::Signature::X_VERSION_2, Epics::Signature::E_VERSION_2].each do |version|
@@ -161,6 +217,8 @@ class Epics::Client
       end
     end
 
+    client.apply_certificates
+    client.generate_certificates if client.generate_certificates?
     client
   end
 
@@ -466,11 +524,20 @@ class Epics::Client
 
   private
 
-  def parse_certificate(content)
+  def user_signatures
+    {
+      Epics::Signature::TYPE_A => keyring.user_signature,
+      Epics::Signature::TYPE_X => keyring.user_authentication,
+      Epics::Signature::TYPE_E => keyring.user_encryption,
+    }.compact
+  end
+
+  def parse_certificate(content, option_name)
     return if content.nil? || content.empty?
 
     Epics::Crypt::X509.new(content)
-  rescue OpenSSL::X509::CertificateError
+  rescue OpenSSL::X509::CertificateError => e
+    raise Epics::InvalidCertificateError.new(option_name, e)
   end
 
   def upload(order_type, document, **options)
@@ -565,23 +632,27 @@ class Epics::Client
 
     [keyring.user_signature, keyring.user_authentication,
      keyring.user_encryption].each do |sig|
-      next unless sig
+      next if !sig
 
-      data[sig.version] = encrypt(sig.key.key.to_pem)
+      data[sig.version] = dump_signature(sig)
     end
 
     [keyring.bank_authentication, keyring.bank_encryption].each do |sig|
-      next unless sig
+      next if !sig
 
-      key_id = "#{host_id.upcase}.#{sig.version}"
-      data[key_id] = if sig.certificate
-                       { 'key' => encrypt(sig.key.key.to_pem), 'cert' => encrypt(sig.certificate.to_pem) }
-                     else
-                       encrypt(sig.key.key.to_pem)
-                     end
+      data["#{host_id.upcase}.#{sig.version}"] = dump_signature(sig)
     end
 
     JSON.pretty_generate(data, JSON.dump_default_options)
+  end
+
+  # Keys without a certificate keep the bare-string form so key files stay readable by
+  # older versions of the gem.
+  def dump_signature(signature)
+    key = encrypt(signature.key.key.to_pem)
+    return key if !signature.certificate
+
+    { 'key' => key, 'cert' => encrypt(signature.certificate.to_pem) }
   end
 
   def new_cipher
