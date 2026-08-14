@@ -20,6 +20,11 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [BREAKING] `order_id:` is validated against the EBICS `OrderIDType` range (`A000` to
+  `ZZZZ`). Values below `A000` rendered as e.g. `0002`, which violates the
+  `[A-Z][A-Z0-9]{3}` pattern; they now raise `ArgumentError`. The protocol form
+  (`order_id: 'A000'`) is accepted alongside the integer
+
 - [FIX] `XCT` sent the wrong order type: `CD1` on H003/H004 and the DTAZV service on
   H005, filing credit transfers as direct debits. It now sends `XCT` on H003/H004.
   EBICS 3.0 defines no counterpart for XCT, so on H005 it raises
