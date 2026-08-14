@@ -100,11 +100,13 @@ module Epics
   end
 
   class InvalidCertificateError < StandardError
-    attr_reader :option_name
+    attr_reader :source
 
-    def initialize(option_name, original = nil)
-      @option_name = option_name
-      message = "Could not parse the X.509 certificate passed as #{option_name}"
+    # `source` says where the certificate came from: a constructor option name, or a
+    # description such as "the HPB response".
+    def initialize(source, original = nil)
+      @source = source
+      message = "Could not parse the X.509 certificate from #{source}"
       message += " (#{original.message})" if original
       super(message)
     end
