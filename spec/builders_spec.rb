@@ -98,13 +98,6 @@ RSpec.describe 'Builders' do
       expect(node['lastSegment']).to eq('true')
     end
 
-    it 'creates ReceiptCode element' do
-      instance = described_class.new do |b|
-        b.add_receipt_code 0
-      end
-      xml = parse_doc(instance)
-      expect(xml.at('mutable/ReceiptCode').text).to eq('0')
-    end
   end
 
   describe Epics::Builders::TransferReceiptBuilder do

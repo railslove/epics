@@ -12,11 +12,6 @@ class Epics::Builders::MutableBuilder
     end
   end
 
-  def add_receipt_code(receipt_code)
-    @xml.ReceiptCode receipt_code
-    self
-  end
-
   def add_transaction_phase(transaction_phase)
     @xml.TransactionPhase transaction_phase
     self
