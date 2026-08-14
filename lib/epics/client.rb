@@ -10,6 +10,9 @@ class Epics::Client
 
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
+  # EBICS 3.0 requires at least 2048 bits; 4096 is the default for new keys.
+  DEFAULT_KEY_SIZE = 4096
+
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
     self.url = url
     self.host_id    = host_id
@@ -137,7 +140,7 @@ class Epics::Client
     end
   end
 
-  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = 2048, options = {}, &block)
+  def self.setup(passphrase, url, host_id, user_id, partner_id, keysize = DEFAULT_KEY_SIZE, options = {}, &block)
     signature_version = options.delete(:signature_version) || Epics::Signature::A_VERSION_6
     client = new(nil, passphrase, url, host_id, user_id, partner_id, options, &block)
     [signature_version, Epics::Signature::X_VERSION_2, Epics::Signature::E_VERSION_2].each do |version|
