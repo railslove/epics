@@ -325,7 +325,6 @@ class Epics::Client
     doc.xpath('//ds:X509Certificate', xmlns: urn_schema,
                                       ds: 'http://www.w3.org/2000/09/xmldsig#').each do |cert_node|
       cert_pem = "-----BEGIN CERTIFICATE-----\n#{cert_node.content}\n-----END CERTIFICATE-----"
-      cert = OpenSSL::X509::Certificate.new(cert_pem)
 
       info_element = cert_node.parent&.parent
       auth_version = info_element&.at_xpath('.//*[local-name() = "AuthenticationVersion"]')&.content
@@ -335,6 +334,8 @@ class Epics::Client
       next unless version
 
       begin
+        cert = OpenSSL::X509::Certificate.new(cert_pem)
+
         signature = Epics::Signature.new(
           version,
           Epics::SignatureAlgorithm::RsaPkcs1.new(cert.public_key)
@@ -349,6 +350,8 @@ class Epics::Client
         end
       rescue Epics::Signature::UnknownTypeError
       rescue Epics::Signature::UnknownVersionError
+      rescue OpenSSL::OpenSSLError => e
+        raise Epics::InvalidCertificateError.new('the HPB response', e)
       end
     end
 

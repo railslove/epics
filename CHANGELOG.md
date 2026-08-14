@@ -20,6 +20,9 @@ rewrite of request building into builders/factories/handlers.
 
 **Fixes**
 
+- [FIX] An unreadable certificate in an HPB response raised a bare
+  `OpenSSL::X509::CertificateError`. It now raises `Epics::InvalidCertificateError`
+  naming the HPB response as the source and keeping the OpenSSL message
 - [FIX] `Response#signature_valid?` and `#public_digest_valid?` raised `NoMethodError`
   when the key they need was not loaded; they now raise `Epics::MissingKeyError` naming
   it. `#digest_valid?` no longer needs a key at all — it is a plain SHA-256 over the
