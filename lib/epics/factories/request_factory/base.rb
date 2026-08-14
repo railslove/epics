@@ -122,11 +122,11 @@ class Epics::Factories::RequestFactory::Base
   end
 
   def create_hac(start_date, end_date)
-    build_standard_request('HAC', start_date:, end_date:)
+    build_standard_request('HAC', start_date: start_date, end_date: end_date)
   end
 
   def create_ptk(start_date, end_date)
-    build_standard_request('PTK', start_date:, end_date:)
+    build_standard_request('PTK', start_date: start_date, end_date: end_date)
   end
 
   def create_fdl(format, start_date, end_date)

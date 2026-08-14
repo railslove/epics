@@ -33,6 +33,11 @@ rewrite of request building into builders/factories/handlers.
   verifies against banks that normalize before checking the ES
 - [FIX] H005 `DataDigest` carried an RSA-PSS signature (256 bytes, non-reproducible)
   instead of the SHA-256 hash of the order data
+- [BREAKING] Passing only one date-range bound (e.g. `client.STA(from)`) silently
+  omitted the range and fetched the bank's full retention window. Both bounds are
+  mandatory within `DateRange`, so this now raises `ArgumentError`
+- [FIX] `Time` and `DateTime` passed as date-range bounds rendered an `xs:dateTime`
+  with a local offset into an `xs:date` element; they are now coerced to a date
 
 ### 2.11.0
 

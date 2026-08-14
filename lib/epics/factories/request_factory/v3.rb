@@ -82,76 +82,77 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     end
   end
 
-  def create_c52(start_date, end_date, scope: nil, msg_name_version: nil, container_type: nil)
+  # Client#C52 unzips the response, so the request has to ask for a ZIP container.
+  def create_c52(start_date, end_date, scope: nil, msg_name_version: nil, container_type: 'ZIP')
     create_btd(
       service_name: 'STM',
       msg_name: 'camt.052',
       scope: scope,
       msg_name_version: msg_name_version,
       container_type: container_type,
-      start_date:,
-      end_date:
+      start_date: start_date,
+      end_date: end_date
     )
   end
 
-  def create_c53(start_date, end_date, scope: nil, msg_name_version: nil)
+  def create_c53(start_date, end_date, scope: nil, msg_name_version: nil, container_type: 'ZIP')
     create_btd(
       service_name: 'EOP',
       msg_name: 'camt.053',
-      container_type: 'ZIP',
+      container_type: container_type,
       scope: scope,
       msg_name_version: msg_name_version,
-      start_date:,
-      end_date:
+      start_date: start_date,
+      end_date: end_date
     )
   end
 
   def create_c54(start_date, end_date)
-    create_btd(service_name: 'REP', msg_name: 'camt.054', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'REP', msg_name: 'camt.054', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_sta(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'mt940', start_date:, end_date:)
+    create_btd(service_name: 'EOP', msg_name: 'mt940', start_date: start_date, end_date: end_date)
   end
 
   def create_vmk(start_date, end_date)
-    create_btd(service_name: 'STM', msg_name: 'mt942', start_date:, end_date:)
+    create_btd(service_name: 'STM', msg_name: 'mt942', start_date: start_date, end_date: end_date)
   end
 
   def create_z52(start_date, end_date)
-    create_btd(service_name: 'STM', msg_name: 'camt.052', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'STM', msg_name: 'camt.052', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_z53(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_z54(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'camt.054', container_type: 'ZIP', service_option: 'XQRR', start_date:, end_date:)
+    create_btd(service_name: 'EOP', msg_name: 'camt.054', container_type: 'ZIP', service_option: 'XQRR', start_date: start_date, end_date: end_date)
   end
 
   def create_xek(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'pdf', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'EOP', msg_name: 'pdf', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_z01(start_date, end_date)
-    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', service_option: 'CH003GEN', start_date:, end_date:)
+    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', service_option: 'CH003GEN', start_date: start_date, end_date: end_date)
   end
 
   def create_bka(start_date, end_date)
-    create_btd(service_name: 'EOP', scope: 'DE', msg_name: 'camt.053', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'EOP', scope: 'DE', msg_name: 'camt.053', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_c5n(start_date, end_date)
-    create_btd(service_name: 'STM', scope: 'DE', service_option: 'SCI', msg_name: 'camt.054', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'STM', scope: 'DE', service_option: 'SCI', msg_name: 'camt.054', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_cdz(start_date, end_date)
-    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SDD', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SDD', msg_name: 'pain.002', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_crz(start_date, end_date)
-    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SCT', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'REP', scope: 'DE', service_option: 'SCT', msg_name: 'pain.002', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_azv(digest, transaction_key, **overrides)
@@ -199,7 +200,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def create_zsr(start_date, end_date)
-    create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
+    create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date: start_date, end_date: end_date)
   end
 
   def create_cct(digest, transaction_key, **overrides)

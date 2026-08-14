@@ -10,43 +10,43 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
   end
 
   def create_bka(start_date, end_date)
-    build_download_request('BKA', start_date:, end_date:)
+    build_download_request('BKA', start_date: start_date, end_date: end_date)
   end
 
   def create_z01(start_date, end_date)
-    build_download_request('Z01', start_date:, end_date:)
+    build_download_request('Z01', start_date: start_date, end_date: end_date)
   end
 
   def create_c52(start_date, end_date, **)
-    build_download_request('C52', start_date:, end_date:)
+    build_download_request('C52', start_date: start_date, end_date: end_date)
   end
 
   def create_c53(start_date, end_date, **)
-    build_download_request('C53', start_date:, end_date:)
+    build_download_request('C53', start_date: start_date, end_date: end_date)
   end
 
   def create_c54(start_date, end_date)
-    build_download_request('C54', start_date:, end_date:)
+    build_download_request('C54', start_date: start_date, end_date: end_date)
   end
 
   def create_c5n(start_date, end_date)
-    build_download_request('C5N', start_date:, end_date:)
+    build_download_request('C5N', start_date: start_date, end_date: end_date)
   end
 
   def create_cdz(start_date, end_date)
-    build_download_request('CDZ', start_date:, end_date:)
+    build_download_request('CDZ', start_date: start_date, end_date: end_date)
   end
 
   def create_crz(start_date, end_date)
-    build_download_request('CRZ', start_date:, end_date:)
+    build_download_request('CRZ', start_date: start_date, end_date: end_date)
   end
 
   def create_sta(start_date, end_date)
-    build_download_request('STA', start_date:, end_date:)
+    build_download_request('STA', start_date: start_date, end_date: end_date)
   end
 
   def create_vmk(start_date, end_date)
-    build_download_request('VMK', start_date:, end_date:)
+    build_download_request('VMK', start_date: start_date, end_date: end_date)
   end
 
   def create_wss
@@ -54,15 +54,15 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
   end
 
   def create_z52(start_date, end_date)
-    build_download_request('Z52', start_date:, end_date:)
+    build_download_request('Z52', start_date: start_date, end_date: end_date)
   end
 
   def create_z53(start_date, end_date)
-    build_download_request('Z53', start_date:, end_date:)
+    build_download_request('Z53', start_date: start_date, end_date: end_date)
   end
 
   def create_z54(start_date, end_date)
-    build_download_request('Z54', start_date:, end_date:)
+    build_download_request('Z54', start_date: start_date, end_date: end_date)
   end
 
   def create_b2b(digest, transaction_key, **)

@@ -26,15 +26,17 @@ class Epics::Builders::OrderDetailsBuilder::Base
   end
 
   def add_standard_order_params(start_date = nil, end_date = nil)
+    date_range = create_date_range(start_date, end_date)
     @xml.StandardOrderParams do |xml|
-      xml.parent.add_child(create_date_range(start_date, end_date)) if start_date && end_date
+      xml.parent.add_child(date_range) if date_range
     end
     self
   end
 
   def add_fdl_order_params(format, start_date = nil, end_date = nil)
+    date_range = create_date_range(start_date, end_date)
     @xml.FDLOrderParams do |xml|
-      xml.parent.add_child(create_date_range(start_date, end_date)) if start_date && end_date
+      xml.parent.add_child(date_range) if date_range
       xml.FileFormat format
     end
     self
@@ -61,15 +63,18 @@ class Epics::Builders::OrderDetailsBuilder::Base
 
   protected
 
+  # Start and End are both mandatory within DateRange: no bounds means no range, one
+  # bound cannot be rendered at all.
   def create_date_range(start_date, end_date)
-    if start_date.is_a?(String)
-      start_date = Date.parse(start_date)
-      puts "DEPRECATION WARNING: start_date is a String, use Date instead"
+    return if start_date.nil? && end_date.nil?
+
+    if start_date.nil? || end_date.nil?
+      raise ArgumentError, 'DateRange requires both a start and an end date, got ' \
+                           "start_date=#{start_date.inspect} end_date=#{end_date.inspect}"
     end
-    if end_date.is_a?(String)
-      end_date = Date.parse(end_date)
-      puts "DEPRECATION WARNING: end_date is a String, use Date instead"
-    end
+
+    start_date = coerce_date(start_date, 'start_date')
+    end_date = coerce_date(end_date, 'end_date')
 
     Nokogiri::XML::Builder.new do |xml|
       xml.DateRange do
@@ -77,5 +82,19 @@ class Epics::Builders::OrderDetailsBuilder::Base
         xml.End end_date.iso8601
       end
     end.doc.root
+  end
+
+  # Start and End are xs:date; Time and DateTime would render an xs:dateTime with an
+  # offset and be rejected.
+  def coerce_date(value, name)
+    case value
+    when String
+      puts "DEPRECATION WARNING: #{name} is a String, use Date instead"
+      Date.parse(value)
+    when DateTime, Time
+      value.to_date
+    else
+      value
+    end
   end
 end
