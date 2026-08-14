@@ -195,6 +195,10 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     raise Epics::VersionSupportError, 2.5
   end
 
+  def create_xct(*, **)
+    raise Epics::VersionSupportError, 2.5
+  end
+
   def create_zsr(start_date, end_date)
     create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date:, end_date:)
   end

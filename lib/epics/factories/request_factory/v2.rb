@@ -114,6 +114,11 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_upload_request('CIP', transaction_key, signature_data, 1, true)
   end
 
+  def create_xct(digest, transaction_key, **)
+    signature_data = @user_signature_handle.handle(digest).to_xml
+    build_upload_request('XCT', transaction_key, signature_data, 1, true)
+  end
+
   def create_xds(digest, transaction_key, **)
     signature_data = @user_signature_handle.handle(digest).to_xml
     build_upload_request('XDS', transaction_key, signature_data, 1, true)
