@@ -1,5 +1,35 @@
 ### Unreleased
 
+### 3.0.0.rc1
+
+Major release adding EBICS 3.0 (H005) and EBICS 2.4 (H003) support, alongside a
+rewrite of request building into builders/factories/handlers.
+
+**Breaking changes**
+
+- [BREAKING] Default key size for `Epics::Client.setup` raised from 2048 to 4096 bits
+- [BREAKING] Removed internal accessors that were never intended as public API:
+  `Client#a`, `#e`, `#x`, `#bank_x`, `#bank_e`, `#keys=`, `#x_509_certificate`,
+  `#x_509_certificate_hash`, `#x_509_certificates_content`, `#header_request`, and the
+  constants `Epics::Key`, `Epics::Signer`, `Epics::X509Certificate`,
+  `Epics::HeaderRequest`, `Epics::XMLSIG`
+- [BREAKING] `Client#keys` is now recomputed per call; mutating it no longer injects keys
+- [BREAKING] On H005, `Client#HAA` and `Client#order_types` return an array of service
+  hashes (`service_name`, `scope`, `service_option`, `container`, `msg_name`) instead of
+  an array of order-type strings
+
+**Fixes**
+
+- [FIX] `XCT` sent the wrong order type: `CD1` on H003/H004 and the DTAZV service on
+  H005, filing credit transfers as direct debits. It now sends `XCT` on H003/H004.
+  EBICS 3.0 defines no counterpart for XCT, so on H005 it raises
+  `Epics::VersionSupportError` rather than guessing a BTF service
+- [FIX] The electronic signature over order data is again formed with line separators
+  removed, matching 2.x. The refactor had signed the raw document, changing the ES for
+  every upload
+- [FIX] H005 `DataDigest` carried an RSA-PSS signature (256 bytes, non-reproducible)
+  instead of the SHA-256 hash of the order data
+
 ### 2.11.0
 
 - [ENHANCEMENT] Added FUL order type (thanks to @scollon-pl)
