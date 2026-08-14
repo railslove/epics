@@ -6,12 +6,13 @@
 EPICS is a ruby implementation of the [EBICS](https://www.ebics.org/) (Electronic Banking Internet
 Communication Standard).
 
-It supports EBICS 2.4, 2.5 and 3.0.
-The default setting is 2.5.
+It supports EBICS 2.4 (H003), 2.5 (H004) and 3.0 (H005). The default is 2.5 — see
+[EBICS 3.0 (H005)](#ebics-30-h005) for what differs on 3.0.
 
 The client supports the complete initialization process comprising INI, HIA and HPB including the
 INI letter generation. It offers support for the most common download and upload order types
-(STA HAA HTD HPD PTK HAC HKD BKA C52 C53 C54 CD1 CDB CDD CCT VMK FDL FUL).
+(STA HAA HTD HPD PTK HAC HKD BKA C52 C53 C54 CD1 CDB CDD CCT VMK FDL FUL), and the H005-only
+types XEK, ZSR, and YCT.
 
 ## Installation
 
@@ -42,7 +43,20 @@ Once the paperwork is done, your bank should provide you with:
 Take these parameters and start setting up an UserID (repeat this for every user you want to initialize):
 
 ```ruby
-e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID", 4096)
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID")
+
+# the key size defaults to 4096 bits; pass a different one as the sixth argument
+e = Epics::Client.setup("my-super-secret", "https://ebics.sandbox", "EBICS_HOST_ID", "EBICS_USER_ID", "EBICS_PARTNER_ID", 2048)
+
+# for EBICS 3.0, ask for H005 — this also generates the X.509 certificates it requires
+e = Epics::Client.setup(
+      "my-super-secret",
+      "https://ebics.sandbox",
+      "EBICS_HOST_ID",
+      "EBICS_USER_ID",
+      "EBICS_PARTNER_ID",
+      version: Epics::Keyring::VERSION_30,
+    )
 ```
 
 To use the keys later, just store them in a file
@@ -125,6 +139,173 @@ You can choose to configure some default values like this
 e = Epics::Client.new(keys, 'passphrase', 'url', 'host', 'user', 'partner', locale: :fr, product_name: 'Mon Epic Client EBICS')
 ```
 
+### Order IDs on EBICS 2.4
+
+Only EBICS 2.4 numbers its own orders; 2.5 and 3.0 leave that to the bank. The counter runs
+from `A000` to `ZZZZ` and is **not** stored in the key file, so a process that restarts
+begins at `A000` again and re-sends order IDs the bank has already seen. Persist it
+yourself and hand it back:
+
+```ruby
+e = Epics::Client.new(
+      keys,
+      'passphrase',
+      'url',
+      'host',
+      'user',
+      'partner',
+      version: Epics::Keyring::VERSION_24,
+      order_id: last_used_order_id,
+    )   # 'A0FC' or the integer it encodes
+
+e.CD1(document)
+store(e.current_order_id)
+```
+
+## EBICS 3.0 (H005)
+
+### Choosing the protocol version
+
+Pass `version:` to `Client.new` and `Client.setup`. It defaults to 2.5.
+
+```ruby
+Epics::Keyring::VERSION_24  # => "H003", EBICS 2.4
+Epics::Keyring::VERSION_25  # => "H004", EBICS 2.5 (default)
+Epics::Keyring::VERSION_30  # => "H005", EBICS 3.0
+
+e = Epics::Client.new(
+      keys,
+      'passphrase',
+      'url',
+      'host',
+      'user',
+      'partner',
+      version: Epics::Keyring::VERSION_30,
+    )
+```
+
+### Certificates are mandatory
+
+EBICS 3.0 carries the public keys inside `ds:X509Data`: there is no modulus/exponent form
+as in 2.x, and the specification requires X.509 data in the key management order types
+(EBICS 3.0.2 §3.9). An H005 client without certificates cannot run INI or HIA and raises
+`Epics::MissingCertificateError`.
+
+`Client.setup` therefore generates a self-signed certificate for each key when the version
+is H005. Self-signed certificates are explicitly permitted for INI/HIA by the Swiss market
+practice guidelines (§6.1); confirm what your bank expects before relying on them.
+
+```ruby
+e = Epics::Client.setup(
+      'passphrase',
+      'url',
+      'host',
+      'user',
+      'partner',
+      version: Epics::Keyring::VERSION_30,
+    )
+
+e.INI            # sends the signature key, as a certificate
+e.HIA            # sends the authentication and encryption keys, as certificates
+e.save_ini_letter('My Banks Name', '/home/epics/ini.html')
+e.save_keys('/home/epics/my.key')
+```
+
+The subject defaults to the client's own identity (`CN=<user>`, `OU=<partner>`, `O=<host>`)
+and the certificate does not expire. Both are configurable, as is turning generation off:
+
+```ruby
+Epics::Client.setup(
+  'passphrase',
+  'url',
+  'host',
+  'user',
+  'partner',
+  version: Epics::Keyring::VERSION_30,
+  certificate_subject: '/CN=my.example.org/O=My Company/C=CH',
+  certificate_not_after: Time.utc(2030, 1, 1),
+  generate_certificates: false,
+)
+```
+
+### Supplying your own certificates
+
+Banks that require CA-issued certificates take precedence over generation — pass the PEM
+content and it is used as-is:
+
+```ruby
+e = Epics::Client.new(
+      keys,
+      'passphrase',
+      'url',
+      'host',
+      'user',
+      'partner',
+      version: Epics::Keyring::VERSION_30,
+      x_509_certificate_a_content: File.read('cert_a.pem'),
+      x_509_certificate_x_content: File.read('cert_x.pem'),
+      x_509_certificate_e_content: File.read('cert_e.pem'),
+    )
+```
+
+Certificates are stored in the key file alongside their key, so they are restored by
+`Client.new` without passing the options again. Content that cannot be parsed raises
+`Epics::InvalidCertificateError` naming the option it came from.
+
+### Signature version
+
+`Client.setup` uses A006 (RSASSA-PSS). Banks that still require A005 (RSASSA-PKCS1-v1_5)
+can ask for it:
+
+```ruby
+Epics::Client.setup(
+  'passphrase',
+  'url',
+  'host',
+  'user',
+  'partner',
+  version: Epics::Keyring::VERSION_30,
+  signature_version: Epics::Signature::A_VERSION_5,
+)
+```
+
+### Bank keys
+
+`HPB` reads the bank's keys from the certificates in its response and stores them with the
+keyring, so `save_keys` keeps them. On H005 the key digests sent with each request are
+SHA-256 fingerprints of those certificates rather than digests of the raw key.
+
+### HAA and HTD return services, not order types
+
+EBICS 3.0 replaces order types with BTF service parameters, so on H005 `HAA` and
+`order_types` return an array of hashes instead of an array of strings:
+
+```ruby
+# H003/H004
+e.order_types   # => ["C53", "CCT", "STA", ...]
+
+# H005
+e.order_types   # => [{ service_name: "EOP", scope: "CH", msg_name: "camt.053", container: "ZIP" },
+                #     { service_name: "SCT", scope: "CH", msg_name: "pain.001" }, ...]
+```
+
+Code that does `order_types.include?('CCT')` will silently find nothing on H005.
+
+### Service parameters
+
+Download and upload order types send BTF parameters derived from the order type. Where a
+bank differs from the default, override them per call:
+
+```ruby
+e.C53(from, to, scope: 'CH', msg_name_version: '08', container_type: 'ZIP')
+e.CCT(document, service_option: 'CH001COR')
+```
+
+The `Scope` parameter identifies whose rulebook applies — an ISO country code such as `CH`
+or `DE`, `GLB` for SEPA/SWIFT/CGI, or `BIL` for bilaterally agreed rules. Swiss market
+practice requires it to be supplied; when it is absent the bank assumes a global
+definition. On EBICS 2.4/2.5 these parameters have no equivalent and are ignored.
+
 ## Features
 
 ### Initialization
@@ -144,6 +325,8 @@ Currently this EPICS implementation supports the following order types:
 - PTK (customer usage report in text format)
 - HAC (customer usage report in xml format)
 - VMK (customer usage report in xml format)
+- XEK (account statements as PDF documents, H005 only)
+- ZSR (payment status reports, H005 only)
 - ... more coming soon
 
 Example:
@@ -176,6 +359,7 @@ puts e.STA('2014-09-01', '2014-09-11')
 - CDB (Uploads a SEPA Direct Debit document of type B2B)
 - CDD (Uploads a SEPA Direct Debit document of type CORE)
 - CCT (Uploads a SEPA Credit document)
+- YCT (Uploads a multi-currency credit transfer, H005 only)
 - ... more coming soon
 
 Example:
@@ -203,52 +387,28 @@ about the supported functionalities.
 
 ### Using X.509 Certificates
 
-Epics supports using X.509 self-signed certificates for INI and HIA requests, as required by some banks. This is in addition to the classic key-based workflow.
+Some banks require X.509 certificates for initialization (INI/HIA) even on EBICS 2.x,
+where the classic key-based workflow is otherwise used. On EBICS 3.0 they are mandatory —
+see [EBICS 3.0 (H005)](#ebics-30-h005).
 
-#### When to Use
+`Epics::Crypt::X509.generate` builds a self-signed certificate for one of your keys:
 
-Some banks require X.509 certificates for EBICS initialization (INI/HIA).
-
-You can generate your own X.509 certificate using Ruby’s OpenSSL library:
-
-This examples showcases the generation of the X.509 certificate A file and can be applied the same way for the others.
 ```ruby
-key = client.a.key # or e key, or x key
-name = OpenSSL::X509::Name.parse('/CN=Test Certificate/O=MyOrg/C=DE')
-cert = OpenSSL::X509::Certificate.new
-cert.version = 2
-cert.serial = SecureRandom.random_number(2**64)
-cert.subject = name
-cert.issuer = name
-cert.public_key = key.public_key
-cert.not_before = Time.current
-cert.not_after = cert.not_before + 1.year
+certificate = Epics::Crypt::X509.generate(
+  client.signature_key,                       # or authentication_key / encryption_key
+  subject: '/CN=my.example.org/O=My Company/C=DE'
+)
 
-ef = OpenSSL::X509::ExtensionFactory.new
-ef.subject_certificate = cert
-ef.issuer_certificate = cert
-cert.add_extension(ef.create_extension('basicConstraints', 'CA:FALSE', true))
-cert.add_extension(ef.create_extension('keyUsage', 'digitalSignature,nonRepudiation,keyEncipherment', true))
-
-cert.sign(key, OpenSSL::Digest.new('SHA256'))
-cert
-
-# Save to file
-File.write("cert_a.pem", cert.to_pem)
+File.write('cert_a.pem', certificate.to_pem)
 ```
-You can now use the contents of the generated certificate file in PEM format as your
-`x_509_certificate_a_content`, `x_509_certificate_x_content`, or `x_509_certificate_e_content`
-in the client initialization.
 
-**Note:** For production environments, your bank may require certificates issued by a trusted authority. Be sure to confirm your bank’s requirements before proceeding.
+It does not expire unless you say so; pass `not_before:` and `not_after:` for a bounded
+validity. On H005, `Client.setup` calls this for all three keys already, so you only need
+it directly when adding certificates to an existing 2.x client.
 
-#### Initializing the Client with X.509 Certificates
+Pass the PEM content when creating the client:
+
 ```ruby
-# Load your certificate data (PEM or DER encoded)
-certificate_a = File.read("cert_a.pem")
-certificate_x = File.read("cert_x.pem")
-certificate_e = File.read("cert_e.pem")
-
 client = Epics::Client.new(
   keys,                # your key data as before
   'passphrase',
@@ -256,20 +416,27 @@ client = Epics::Client.new(
   'host',
   'user',
   'partner',
-  x_509_certificate_a_content: certificate_a,
-  x_509_certificate_x_content: certificate_x,
-  x_509_certificate_e_content: certificate_e,
+  x_509_certificate_a_content: File.read('cert_a.pem'),
+  x_509_certificate_x_content: File.read('cert_x.pem'),
+  x_509_certificate_e_content: File.read('cert_e.pem'),
   debug_mode: true # Optional: enables verbose logging of EBICS requests/responses
 )
 ```
+
+`save_keys` stores the certificates with the keys, so later `Client.new` calls restore
+them without the options.
+
+**Note:** For production environments, your bank may require certificates issued by a
+trusted authority. Be sure to confirm your bank's requirements before proceeding.
+
 ### Example: Generating the Initialization Letter with Certificates
 
 ```ruby
-renderer = Epics::LetterRenderer.new(client)
-letter = renderer.render("Your Bank Name")
-File.write("initialization_letter.txt", letter)
+client.save_ini_letter('Your Bank Name', 'initialization_letter.html')
 ```
-If all three certificates are present, the INI letter will use certificate hashes as required for certificate-based registration.
+
+Where a key has a certificate, the letter prints the SHA-256 hash of that certificate as
+required for certificate-based registration, rather than the hash of the raw key.
 
 ## Issues and Feature Requests
 
