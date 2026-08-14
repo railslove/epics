@@ -14,9 +14,7 @@ RSpec.describe Epics::XCT do
   include_examples '#to_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
   include_examples '#to_transfer_xml', versions: [Epics::Keyring::VERSION_24, Epics::Keyring::VERSION_25]
 
-  # EBICS 3.0 replaced order types with BTF service parameters and defines no
-  # counterpart for XCT, so there is nothing to map it onto. Guessing a service would
-  # file the document under one the bank never agreed to.
+  # EBICS 3.0 defines no BTF service equivalent to XCT.
   describe 'H005' do
     let(:version) { Epics::Keyring::VERSION_30 }
 

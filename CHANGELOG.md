@@ -27,6 +27,10 @@ rewrite of request building into builders/factories/handlers.
 - [FIX] The electronic signature over order data is again formed with line separators
   removed, matching 2.x. The refactor had signed the raw document, changing the ES for
   every upload
+- [BREAKING] Upload order data is now normalized once, on the way in, so the bytes
+  hashed for the electronic signature are the bytes transmitted. Until 3.0 the digest
+  was taken over the normalized document while the raw one was sent, which only
+  verifies against banks that normalize before checking the ES
 - [FIX] H005 `DataDigest` carried an RSA-PSS signature (256 bytes, non-reproducible)
   instead of the SHA-256 hash of the order data
 

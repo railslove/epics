@@ -11,8 +11,7 @@ RSpec.describe 'upload order data digests' do
 
     subject { Epics::CCT.new(client, document) }
 
-    # The electronic signature is formed over the order data with line separators
-    # removed. Changing this changes the ES for every upload, so it is pinned here.
+    # Pinned: the hash basis determines the ES for every upload.
     it 'hashes the document with CR and LF removed' do
       expect(subject.document_digest)
         .to eq(OpenSSL::Digest.digest('sha256', document.gsub(/\n|\r/, '')))
@@ -21,6 +20,13 @@ RSpec.describe 'upload order data digests' do
     it 'does not hash the raw document' do
       expect(subject.document_digest)
         .not_to eq(OpenSSL::Digest.digest('sha256', document))
+    end
+
+    # Hashed bytes must equal transmitted bytes.
+    it 'normalizes once, so the digest covers exactly what is transmitted' do
+      expect(subject.document).not_to include("\n")
+      expect(subject.document_digest)
+        .to eq(OpenSSL::Digest.digest('sha256', subject.document))
     end
 
     it 'is identical for CRLF and LF encodings of the same document' do
@@ -40,11 +46,8 @@ RSpec.describe 'upload order data digests' do
       Nokogiri::XML(order.to_xml).at_xpath('//e:DataDigest', ns)
     end
 
-    # EBICS 3.0.2 §5.5.1.1 (p. 90) lists ebicsRequest/body/DataTransfer/DataDigest as
-    # "Hashwert der Auftragsdaten" and says @SignatureVersion "spezifiziert das
-    # Verfahren zur Hashwertberechnung" -- it names the hash algorithm, it does not
-    # make the content a signature. A signature here would be 256 bytes and, being
-    # RSA-PSS, would differ on every build.
+    # EBICS 3.0.2 §5.5.1.1: DataDigest is the "Hashwert der Auftragsdaten";
+    # @SignatureVersion names the hash algorithm, not a signature.
     it 'carries the SHA-256 hash of the order data, not a signature' do
       order = Epics::CCT.new(client, document)
 

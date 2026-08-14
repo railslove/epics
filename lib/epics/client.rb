@@ -10,7 +10,7 @@ class Epics::Client
 
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
-  # EBICS 3.0 requires at least 2048 bits; 4096 is the default for new keys.
+  # EBICS 3.0 requires at least 2048 bits.
   DEFAULT_KEY_SIZE = 4096
 
   def initialize(keys_content, passphrase, url, host_id, user_id, partner_id, options = {})
