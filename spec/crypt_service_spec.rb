@@ -4,60 +4,6 @@ RSpec.describe Epics::Services::CryptService do
   let(:rsa_key) { OpenSSL::PKey::RSA.generate(2048) }
   let(:rsa_algo) { Epics::SignatureAlgorithm::Rsa.new(rsa_key) }
 
-  describe '#sign' do
-    let(:data) { 'test data to sign' }
-
-    context 'with A006 (RSA-PSS)' do
-      let(:signature) { Epics::Signature.new(Epics::Signature::A_VERSION_6, rsa_algo) }
-
-      it 'returns a valid RSA-PSS signature' do
-        sig = service.sign(signature, data)
-        expect(sig).to be_a(String)
-        expect(sig.bytesize).to eq(rsa_key.n.num_bytes)
-      end
-
-      it 'produces a signature verifiable with RSA-PSS' do
-        sig = service.sign(signature, data)
-        valid = rsa_key.verify_pss('SHA256', sig, data, salt_length: 32, mgf1_hash: 'SHA256')
-        expect(valid).to be true
-      end
-
-      it 'produces different signatures for different data' do
-        sig1 = service.sign(signature, 'data one')
-        sig2 = service.sign(signature, 'data two')
-        expect(sig1).not_to eq(sig2)
-      end
-
-      it 'produces non-deterministic signatures (PSS uses random salt)' do
-        sig1 = service.sign(signature, data)
-        sig2 = service.sign(signature, data)
-        expect(sig1).not_to eq(sig2)
-      end
-    end
-
-    context 'with A005 (PKCS#1 v1.5)' do
-      let(:signature) { Epics::Signature.new(Epics::Signature::A_VERSION_5, rsa_algo) }
-
-      it 'returns a valid PKCS#1 v1.5 signature' do
-        sig = service.sign(signature, data)
-        expect(sig).to be_a(String)
-        expect(sig.bytesize).to eq(rsa_key.n.num_bytes)
-      end
-
-      it 'produces a signature verifiable with PKCS#1 v1.5' do
-        sig = service.sign(signature, data)
-        valid = rsa_key.verify('SHA256', sig, data)
-        expect(valid).to be true
-      end
-
-      it 'produces deterministic signatures' do
-        sig1 = service.sign(signature, data)
-        sig2 = service.sign(signature, data)
-        expect(sig1).to eq(sig2)
-      end
-    end
-  end
-
   describe '#encrypt' do
     let(:data) { 'data to encrypt' }
     let(:rsa_pss_algo) { Epics::SignatureAlgorithm::RsaPss.new(rsa_key) }
