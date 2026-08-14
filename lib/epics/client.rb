@@ -410,6 +410,10 @@ class Epics::Client
     upload(Epics::XCT, document, **options)
   end
 
+  def YCT(document, **options)
+    upload(Epics::YCT, document, **options)
+  end
+
   def FUL(document, **options)
     upload(Epics::FUL, document, **options)
   end
@@ -457,20 +461,34 @@ class Epics::Client
     download_and_unzip(Epics::C5N, from: from, to: to)
   end
 
-  def Z01(from, to)
-    download_and_unzip(Epics::Z01, from: from, to: to)
+  def Z01(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::Z01, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
   end
 
-  def Z52(from, to)
-    download_and_unzip(Epics::Z52, from: from, to: to)
+  def Z52(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::Z52, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
   end
 
-  def Z53(from, to)
-    download_and_unzip(Epics::Z53, from: from, to: to)
+  def Z53(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::Z53, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
   end
 
-  def Z54(from, to)
-    download_and_unzip(Epics::Z54, from: from, to: to)
+  def Z54(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::Z54, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
+  end
+
+  def XEK(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::XEK, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
+  end
+
+  def ZSR(from, to, scope: nil, service_option: nil, msg_name_version: nil, container_type: nil)
+    download_and_unzip(Epics::ZSR, from: from, to: to, scope: scope, service_option: service_option,
+                                   msg_name_version: msg_name_version, container_type: container_type)
   end
 
   def HAA

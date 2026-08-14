@@ -126,25 +126,70 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   def create_vmk(start_date, end_date)
     create_btd(service_name: 'STM', msg_name: 'mt942', start_date: start_date, end_date: end_date)
   end
-
-  def create_z52(start_date, end_date)
-    create_btd(service_name: 'STM', msg_name: 'camt.052', container_type: 'ZIP', start_date: start_date, end_date: end_date)
+  def create_z52(start_date, end_date, scope: nil, service_option: nil,
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'STM',
+      msg_name: 'camt.052',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
-
-  def create_z53(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP', start_date: start_date, end_date: end_date)
+  def create_z53(start_date, end_date, scope: nil, service_option: nil,
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'EOP',
+      msg_name: 'camt.053',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
-
-  def create_z54(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'camt.054', container_type: 'ZIP', service_option: 'XQRR', start_date: start_date, end_date: end_date)
+  def create_z54(start_date, end_date, scope: nil, service_option: 'XQRR',
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'EOP',
+      msg_name: 'camt.054',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
-
-  def create_xek(start_date, end_date)
-    create_btd(service_name: 'EOP', msg_name: 'pdf', container_type: 'ZIP', start_date: start_date, end_date: end_date)
+  def create_xek(start_date, end_date, scope: nil, service_option: nil,
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'EOP',
+      msg_name: 'pdf',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
-
-  def create_z01(start_date, end_date)
-    create_btd(service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP', service_option: 'CH003GEN', start_date: start_date, end_date: end_date)
+  def create_z01(start_date, end_date, scope: nil, service_option: 'CH003GEN',
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'PSR',
+      msg_name: 'pain.002',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
 
   def create_bka(start_date, end_date)
@@ -206,9 +251,18 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   def create_xct(*, **)
     raise Epics::VersionSupportError.new(3.0, 'below')
   end
-
-  def create_zsr(start_date, end_date)
-    create_btd(service_name: 'PSR', scope: 'BIL', msg_name: 'pain.002', container_type: 'ZIP', start_date: start_date, end_date: end_date)
+  def create_zsr(start_date, end_date, scope: 'BIL', service_option: nil,
+                 msg_name_version: nil, container_type: 'ZIP')
+    create_btd(
+      service_name: 'PSR',
+      msg_name: 'pain.002',
+      scope: scope,
+      service_option: service_option,
+      msg_name_version: msg_name_version,
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
 
   def create_cct(digest, transaction_key, **overrides)

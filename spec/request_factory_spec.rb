@@ -224,10 +224,11 @@ RSpec.describe 'RequestFactory' do
       end
     end
 
-    describe 'NotImplementedError for unsupported types' do
+    describe 'H005-only order types' do
       %w[xek yct zsr].each do |type|
-        it "raises NotImplementedError for #{type}" do
-          expect { factory.send("create_#{type}", start_date, end_date) }.to raise_error(NotImplementedError)
+        it "raises VersionSupportError for #{type}" do
+          expect { factory.send("create_#{type}", start_date, end_date) }
+            .to raise_error(Epics::VersionSupportError, 'Supported from version 3.0')
         end
       end
     end
