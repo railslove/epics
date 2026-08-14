@@ -1,4 +1,8 @@
 class Epics::Response
+  # Informational body return codes. Every other 01xxxx code in Epics::Error is a
+  # failure -- 011001 is a negative acknowledgement, 011101 a segment underrun.
+  BUSINESS_OK_CODES = ['', '000000', '011000', '011301'].freeze
+
   attr_accessor :doc, :client
 
   def initialize(client, xml)
@@ -23,10 +27,7 @@ class Epics::Response
   end
 
   def business_error?
-    code = business_code
-    return false if code.empty? || code == '000000'
-
-    %w[01].include?(code[0, 2]) ? false : true
+    !BUSINESS_OK_CODES.include?(business_code)
   end
 
   def business_code
