@@ -50,6 +50,11 @@ class Epics::GenericRequest
     raise NotImplementedError
   end
 
+  def to_transfer_download_xml(segment_number, is_last_segment)
+    builder = request_factory.create_transfer_download(transaction_id, segment_number, is_last_segment)
+    builder.to_xml
+  end
+
   def to_receipt_xml
     builder = request_factory.create_transfer_receipt(transaction_id, 0)
     builder.to_xml

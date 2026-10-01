@@ -604,10 +604,21 @@ class Epics::Client
     document = order_type.new(self, *args, **options)
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
+    segments = [res, *remaining_segments(document, res)]
+    order_data = res.decrypt_order_data(segments.map(&:order_data_encrypted).join)
+    # Acknowledged only once the order data could be read, so the bank does not
+    # consider a broken download as delivered.
+    post(url, document.to_receipt_xml) if res.segmented?
 
-    post(url, document.to_receipt_xml).body if res.segmented? && res.last_segment?
+    order_data
+  end
 
-    res.order_data
+  def remaining_segments(document, res)
+    return [] if !res.segmented? || res.last_segment?
+
+    (2..res.num_segments).map do |segment_number|
+      post(url, document.to_transfer_download_xml(segment_number, segment_number == res.num_segments)).body
+    end
   end
 
   def download_and_unzip(order_type, *args, **options)
