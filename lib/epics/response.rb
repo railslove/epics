@@ -46,6 +46,10 @@ class Epics::Response
     !!doc.at_xpath('//xmlns:header/xmlns:mutable/xmlns:SegmentNumber', xmlns: client.urn_schema)
   end
 
+  def num_segments
+    Integer(doc.xpath('//xmlns:header/xmlns:static/xmlns:NumSegments', xmlns: client.urn_schema).text, 10)
+  end
+
   def return_code
     doc.xpath('//xmlns:ReturnCode', xmlns: client.urn_schema).last.content
   rescue NoMethodError
@@ -93,11 +97,22 @@ class Epics::Response
   end
 
   def order_data
-    order_data_encrypted = Base64.decode64(doc.xpath('//xmlns:OrderData', xmlns: client.urn_schema).first.content)
+    decrypt_order_data(order_data_encrypted)
+  end
 
-    data = (cipher.update(order_data_encrypted) + cipher.final)
+  def order_data_encrypted
+    Base64.decode64(doc.xpath('//xmlns:OrderData', xmlns: client.urn_schema).first.content)
+  end
 
-    Zlib::Inflate.new.inflate(data)
+  # The bank cuts the segments out of the encrypted order data, so a segment cannot be
+  # decrypted on its own: pass the segments of all responses joined. The transaction key
+  # only comes with the first response. Raises on truncated order data instead of
+  # returning the part that could be read.
+  def decrypt_order_data(order_data_encrypted)
+    decipher = cipher
+    data = decipher.update(order_data_encrypted) + decipher.final
+
+    Zlib::Inflate.inflate(data)
   end
 
   def cipher

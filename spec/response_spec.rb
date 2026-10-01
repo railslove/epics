@@ -89,6 +89,24 @@ RSpec.describe Epics::Response do
     end
   end
 
+  describe '#num_segments' do
+    let(:ebics_response) { File.read('spec/fixtures/xml/sta_response_continued.xml') }
+
+    it 'pulls the number of segments from the response' do
+      expect(subject.num_segments).to eq(2)
+    end
+
+    describe 'when the number has leading zeros' do
+      let(:ebics_response) do
+        File.read('spec/fixtures/xml/sta_response_continued.xml').sub('<NumSegments>2<', '<NumSegments>09<')
+      end
+
+      it 'reads it as a decimal' do
+        expect(subject.num_segments).to eq(9)
+      end
+    end
+  end
+
   describe '#segmented?' do
     describe 'when the response is segemnted' do
       let(:ebics_response) { File.read('spec/fixtures/xml/sta_response.xml') }
