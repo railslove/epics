@@ -143,6 +143,7 @@ RSpec.describe 'segmented downloads' do
     let(:initialisation_response) do
       response('Initialisation', order_data: segments.first, segment_number: 1, num_segments: segments.size)
     end
+    let(:aborted_segment) { nil }
     let(:requests) { [] }
 
     subject { client.C53(Date.new(2026, 9, 24), Date.new(2026, 9, 24)) }
@@ -155,7 +156,11 @@ RSpec.describe 'segmented downloads' do
                when 'Initialisation' then initialisation_response
                when 'Transfer'
                  segment_number = Integer(details.first)
-                 response('Transfer', order_data: segments[segment_number - 1], segment_number:)
+                 if segment_number == aborted_segment
+                   response('Transfer', return_code: '091102')
+                 else
+                   response('Transfer', order_data: segments[segment_number - 1], segment_number:)
+                 end
                when 'Receipt' then response('Receipt', return_code: details == ['0'] ? '011000' : '011001')
                end
 
@@ -182,6 +187,17 @@ RSpec.describe 'segmented downloads' do
           expect(error.cause).to be_a(OpenSSL::Cipher::CipherError)
         end
         expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 1]])
+      end
+    end
+
+    context 'when the bank aborts the transaction during the transfer' do
+      let(:aborted_segment) { 2 }
+
+      it "raises the bank's error without sending a receipt" do
+        expect { subject }.to raise_error(Epics::Error::TechnicalError) do |error|
+          expect(error.symbol).to eq('EBICS_TX_ABORT')
+        end
+        expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false]])
       end
     end
 
