@@ -48,6 +48,8 @@ class Epics::Response
 
   def num_segments
     Integer(doc.xpath('//xmlns:header/xmlns:static/xmlns:NumSegments', xmlns: client.urn_schema).text, 10)
+  rescue ArgumentError => e
+    raise Epics::InvalidResponseError.new('NumSegments', e)
   end
 
   def return_code

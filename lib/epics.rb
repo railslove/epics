@@ -115,6 +115,32 @@ module Epics
     end
   end
 
+  # Raised when the bank's response lacks a value the protocol requires, or carries one
+  # that cannot be read.
+  class InvalidResponseError < StandardError
+    attr_reader :field
+
+    def initialize(field, original = nil)
+      @field = field
+      message = "Could not read #{field} from the bank's response"
+      message += " (#{original.message})" if original
+      super(message)
+    end
+  end
+
+  # Raised when the order data of a download cannot be decrypted or inflated, e.g.
+  # because it arrived truncated. The bank has been sent a negative receipt by then.
+  class InvalidOrderDataError < StandardError
+    attr_reader :order_type
+
+    def initialize(order_type, original = nil)
+      @order_type = order_type
+      message = "Could not read the order data of the #{order_type} download"
+      message += " (#{original.message})" if original
+      super(message)
+    end
+  end
+
   class VersionSupportError < StandardError
     attr_reader :version
 
