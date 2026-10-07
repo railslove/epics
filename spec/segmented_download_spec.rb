@@ -43,6 +43,33 @@ RSpec.describe 'segmented downloads' do
     end
   end
 
+  describe 'Epics::GenericRequest#to_receipt_xml' do
+    let(:order) { Epics::C53.new(client, from: Date.new(2026, 9, 24), to: Date.new(2026, 9, 24)) }
+
+    before { order.transaction_id = transaction_id }
+
+    def receipt_code(xml)
+      Nokogiri::XML(xml).at_xpath('//e:body/e:TransferReceipt/e:ReceiptCode', ns).text
+    end
+
+    it 'acknowledges the download by default' do
+      expect(receipt_code(order.to_receipt_xml)).to eq('0')
+    end
+
+    versions.each do |version|
+      context version do
+        let(:version) { version }
+
+        it 'rejects the download when not acknowledged' do
+          xml = order.to_receipt_xml(acknowledged: false)
+
+          expect(xml).to be_a_valid_ebics_doc(version)
+          expect(receipt_code(xml)).to eq('1')
+        end
+      end
+    end
+  end
+
   describe 'Epics::Client#download' do
     def response(phase, order_data: nil, segment_number: nil, num_segments: nil, return_code: '000000')
       <<~XML
@@ -88,12 +115,14 @@ RSpec.describe 'segmented downloads' do
       XML
     end
 
-    def phase_and_segment_number(request)
+    def summarize(request)
       segment_number = request.at_xpath('//e:header/e:mutable/e:SegmentNumber', ns)
+      receipt_code = request.at_xpath('//e:body/e:TransferReceipt/e:ReceiptCode', ns)
 
       [request.at_xpath('//e:header/e:mutable/e:TransactionPhase', ns).text,
        segment_number&.text,
-       segment_number&.[]('lastSegment')]
+       segment_number&.[]('lastSegment'),
+       receipt_code&.text].compact
     end
 
     let(:zipped_order_data) { File.binread(File.join(File.dirname(__FILE__), 'fixtures', 'test.zip')) }
@@ -120,14 +149,14 @@ RSpec.describe 'segmented downloads' do
 
     before do
       stub_request(:post, url).to_return do |http_request|
-        requests << phase_and_segment_number(Nokogiri::XML(http_request.body))
-        phase, segment_number = requests.last
+        requests << summarize(Nokogiri::XML(http_request.body))
+        phase, *details = requests.last
         body = case phase
                when 'Initialisation' then initialisation_response
                when 'Transfer'
-                 response('Transfer', order_data: segments[Integer(segment_number) - 1],
-                                      segment_number: Integer(segment_number))
-               when 'Receipt' then response('Receipt', return_code: '011000')
+                 segment_number = Integer(details.first)
+                 response('Transfer', order_data: segments[segment_number - 1], segment_number:)
+               when 'Receipt' then response('Receipt', return_code: details == ['0'] ? '011000' : '011001')
                end
 
         { status: 200, body: }
@@ -137,18 +166,31 @@ RSpec.describe 'segmented downloads' do
     context 'when the order data arrives short by whole cipher blocks' do
       let(:missing_bytes) { 32 }
 
-      it 'raises without sending the receipt' do
+      it 'raises after sending a negative receipt' do
         expect { subject }.to raise_error(Zlib::BufError)
-        expect(requests).to eq([['Initialisation', nil, nil], %w[Transfer 2 false], %w[Transfer 3 true]])
+        expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 1]])
       end
     end
 
     context 'when the order data arrives short by part of a cipher block' do
       let(:missing_bytes) { 5 }
 
-      it 'raises without sending the receipt' do
+      it 'raises after sending a negative receipt' do
         expect { subject }.to raise_error(OpenSSL::Cipher::CipherError)
-        expect(requests).to eq([['Initialisation', nil, nil], %w[Transfer 2 false], %w[Transfer 3 true]])
+        expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 1]])
+      end
+    end
+
+    context 'when the negative receipt cannot be sent' do
+      let(:missing_bytes) { 32 }
+
+      before do
+        stub_request(:post, url).with { |request| summarize(Nokogiri::XML(request.body)) == %w[Receipt 1] }
+                                .to_raise(Faraday::ConnectionFailed)
+      end
+
+      it 'raises the reason the order data could not be read' do
+        expect { subject }.to raise_error(Zlib::BufError)
       end
     end
 
@@ -157,7 +199,7 @@ RSpec.describe 'segmented downloads' do
 
       it 'returns the order data without sending a receipt' do
         expect(subject).to eq(["ebics is great\n"])
-        expect(requests).to eq([['Initialisation', nil, nil]])
+        expect(requests).to eq([%w[Initialisation]])
       end
     end
 
@@ -166,7 +208,7 @@ RSpec.describe 'segmented downloads' do
 
       it 'returns the order data and sends the receipt' do
         expect(subject).to eq(["ebics is great\n"])
-        expect(requests).to eq([['Initialisation', nil, nil], ['Receipt', nil, nil]])
+        expect(requests).to eq([%w[Initialisation], %w[Receipt 0]])
       end
     end
 
@@ -176,10 +218,7 @@ RSpec.describe 'segmented downloads' do
 
         it 'returns the order data of all segments and sends the receipt after the last one' do
           expect(subject).to eq(["ebics is great\n"])
-          expect(requests).to eq([['Initialisation', nil, nil],
-                                  %w[Transfer 2 false],
-                                  %w[Transfer 3 true],
-                                  ['Receipt', nil, nil]])
+          expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 0]])
         end
       end
     end
