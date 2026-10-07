@@ -167,7 +167,9 @@ RSpec.describe 'segmented downloads' do
       let(:missing_bytes) { 32 }
 
       it 'raises after sending a negative receipt' do
-        expect { subject }.to raise_error(Zlib::BufError)
+        expect { subject }.to raise_error(Epics::InvalidOrderDataError, /C53/) do |error|
+          expect(error.cause).to be_a(Zlib::BufError)
+        end
         expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 1]])
       end
     end
@@ -176,7 +178,9 @@ RSpec.describe 'segmented downloads' do
       let(:missing_bytes) { 5 }
 
       it 'raises after sending a negative receipt' do
-        expect { subject }.to raise_error(OpenSSL::Cipher::CipherError)
+        expect { subject }.to raise_error(Epics::InvalidOrderDataError, /C53/) do |error|
+          expect(error.cause).to be_a(OpenSSL::Cipher::CipherError)
+        end
         expect(requests).to eq([%w[Initialisation], %w[Transfer 2 false], %w[Transfer 3 true], %w[Receipt 1]])
       end
     end
@@ -190,7 +194,9 @@ RSpec.describe 'segmented downloads' do
       end
 
       it 'raises the reason the order data could not be read' do
-        expect { subject }.to raise_error(Zlib::BufError)
+        expect { subject }.to raise_error(Epics::InvalidOrderDataError, /C53/) do |error|
+          expect(error.cause).to be_a(Zlib::BufError)
+        end
       end
     end
 

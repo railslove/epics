@@ -354,6 +354,10 @@ puts e.STA('2014-09-01', '2014-09-11')
 ^62RATAJA 13B/1083-032 PSZCZOL^63KI
 ```
 
+If the order data cannot be decrypted or inflated, e.g. because it arrived truncated,
+the download is rejected to the bank with a negative receipt and
+`Epics::InvalidOrderDataError` is raised, with the underlying error as its `cause`.
+
 ### Uploads
 
 - CD1 (Uploads a SEPA Direct Debit document of type COR1)

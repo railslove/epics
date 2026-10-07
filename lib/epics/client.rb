@@ -607,9 +607,9 @@ class Epics::Client
     segments = [res, *remaining_segments(document, res)]
     order_data = begin
       res.decrypt_order_data(segments.map(&:order_data_encrypted).join)
-    rescue StandardError
+    rescue StandardError => e
       reject_download(document) if res.segmented?
-      raise
+      raise Epics::InvalidOrderDataError.new(order_type.name.split('::').last, e)
     end
     post(url, document.to_receipt_xml) if res.segmented?
 
