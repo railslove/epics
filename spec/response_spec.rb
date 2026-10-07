@@ -105,6 +105,19 @@ RSpec.describe Epics::Response do
         expect(subject.num_segments).to eq(9)
       end
     end
+
+    describe 'when the number is missing' do
+      let(:ebics_response) do
+        File.read('spec/fixtures/xml/sta_response_continued.xml').sub(%r{<NumSegments>2</NumSegments>}, '')
+      end
+
+      it 'raises an error naming the field' do
+        expect { subject.num_segments }.to raise_error(Epics::InvalidResponseError, /NumSegments/) do |error|
+          expect(error.field).to eq('NumSegments')
+          expect(error.cause).to be_a(ArgumentError)
+        end
+      end
+    end
   end
 
   describe '#segmented?' do

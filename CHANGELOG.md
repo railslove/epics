@@ -3,10 +3,12 @@
 - [FIX] A download spanning several segments returned only its first segment, so zipped
   downloads such as `C52` and `C53` raised `Zip::Error` and plain ones such as `STA` came
   back cut off without an error. The remaining segments are now requested in the transfer
-  phase and the order data is decrypted once all segments are joined
+  phase and the order data is decrypted once all segments are joined. A segmented response
+  without a readable `NumSegments` raises `Epics::InvalidResponseError`
 - [FIX] Truncated order data was inflated as far as it went and returned. It now raises
-  `Zlib::BufError` or `OpenSSL::Cipher::CipherError`, and the receipt is only sent after
-  the order data could be read, so a broken download is no longer acknowledged to the bank
+  `Epics::InvalidOrderDataError`, with the `Zlib` or `OpenSSL` error as its `cause`, and a
+  negative receipt is sent instead of a positive one, so the bank does not consider a
+  broken download as delivered
 
 ### 3.0.0.rc1
 

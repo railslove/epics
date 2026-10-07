@@ -605,9 +605,12 @@ class Epics::Client
     res = post(url, document.to_xml).body
     document.transaction_id = res.transaction_id
     segments = [res, *remaining_segments(document, res)]
-    order_data = res.decrypt_order_data(segments.map(&:order_data_encrypted).join)
-    # Acknowledged only once the order data could be read, so the bank does not
-    # consider a broken download as delivered.
+    order_data = begin
+      res.decrypt_order_data(segments.map(&:order_data_encrypted).join)
+    rescue StandardError => e
+      reject_download(document) if res.segmented?
+      raise Epics::InvalidOrderDataError.new(order_type.name.split('::').last, e)
+    end
     post(url, document.to_receipt_xml) if res.segmented?
 
     order_data
@@ -619,6 +622,14 @@ class Epics::Client
     (2..res.num_segments).map do |segment_number|
       post(url, document.to_transfer_download_xml(segment_number, segment_number == res.num_segments)).body
     end
+  end
+
+  # The bank answers a negative receipt with an error, and the reason the order data
+  # could not be read is the one worth raising.
+  def reject_download(document)
+    post(url, document.to_receipt_xml(acknowledged: false))
+  rescue StandardError
+    nil
   end
 
   def download_and_unzip(order_type, *args, **options)
