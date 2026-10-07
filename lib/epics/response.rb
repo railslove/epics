@@ -106,10 +106,8 @@ class Epics::Response
     Base64.decode64(doc.xpath('//xmlns:OrderData', xmlns: client.urn_schema).first.content)
   end
 
-  # The bank cuts the segments out of the encrypted order data, so a segment cannot be
-  # decrypted on its own: pass the segments of all responses joined. The transaction key
-  # only comes with the first response. Raises on truncated order data instead of
-  # returning the part that could be read.
+  # Segments cannot be decrypted on their own, so pass all of them joined. Only the first
+  # response carries the transaction key.
   def decrypt_order_data(order_data_encrypted)
     decipher = cipher
     data = decipher.update(order_data_encrypted) + decipher.final
