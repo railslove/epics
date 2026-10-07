@@ -5,8 +5,8 @@
   back cut off without an error. The remaining segments are now requested in the transfer
   phase and the order data is decrypted once all segments are joined
 - [FIX] Truncated order data was inflated as far as it went and returned. It now raises
-  `Zlib::BufError` or `OpenSSL::Cipher::CipherError`, and the receipt is only sent after
-  the order data could be read, so a broken download is no longer acknowledged to the bank
+  `Zlib::BufError` or `OpenSSL::Cipher::CipherError`, and a negative receipt is sent
+  instead of a positive one, so the bank does not consider a broken download as delivered
 
 ### 3.0.0.rc1
 

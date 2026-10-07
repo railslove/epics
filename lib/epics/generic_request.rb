@@ -55,8 +55,8 @@ class Epics::GenericRequest
     builder.to_xml
   end
 
-  def to_receipt_xml
-    builder = request_factory.create_transfer_receipt(transaction_id, 0)
+  def to_receipt_xml(acknowledged: true)
+    builder = request_factory.create_transfer_receipt(transaction_id, acknowledged ? 0 : 1)
     builder.to_xml
   end
 
