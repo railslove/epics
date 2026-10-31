@@ -1,5 +1,14 @@
 ### Unreleased
 
+- [FIX] H005 uploads were sent without `SignatureFlag` in `BTUOrderParams`, although they
+  carry the user's ES (electronic signature), so banks treated them as orders
+  to be authorised outside EBICS and some rejected them with `EBICS_INVALID_ORDER_TYPE`.
+  `SignatureFlag` is now set by default, matching `OZHNN` on H004. Pass `request_eds: true`
+  to spool the order into the EDS (distributed electronic signature, German VEU)
+  when signatures are still missing, or `signature_flag: false` to omit the flag
+
+### 3.0.0.rc2
+
 - [FIX] A download spanning several segments returned only its first segment, so zipped
   downloads such as `C52` and `C53` raised `Zip::Error` and plain ones such as `STA` came
   back cut off without an error. The remaining segments are now requested in the transfer

@@ -317,6 +317,60 @@ RSpec.describe 'Builders' do
           expect(container).not_to be_nil
           expect(container['containerType']).to eq('ZIP')
         end
+
+        it 'adds SignatureFlag after Service by default' do
+          instance = described_class::V3.new do |b|
+            b.add_btu_order_params(
+              filename: 'test.xml', service_name: 'MCT', msg_name: 'pain.001'
+            )
+          end
+          xml = parse_doc(instance)
+          params = xml.at('OrderDetails/BTUOrderParams')
+          expect(params.element_children.map(&:name)).to eq(%w[Service SignatureFlag])
+          expect(params.at('SignatureFlag')['requestEDS']).to be_nil
+        end
+
+        it 'sets requestEDS on SignatureFlag when request_eds is given' do
+          instance = described_class::V3.new do |b|
+            b.add_btu_order_params(
+              filename: 'test.xml',
+              service_name: 'MCT',
+              msg_name: 'pain.001',
+              request_eds: true
+            )
+          end
+          xml = parse_doc(instance)
+          params = xml.at('OrderDetails/BTUOrderParams')
+          expect(params.at('SignatureFlag')['requestEDS']).to eq('true')
+        end
+
+        it 'omits SignatureFlag when signature_flag is false' do
+          instance = described_class::V3.new do |b|
+            b.add_btu_order_params(
+              filename: 'test.xml',
+              service_name: 'MCT',
+              msg_name: 'pain.001',
+              signature_flag: false
+            )
+          end
+          xml = parse_doc(instance)
+          params = xml.at('OrderDetails/BTUOrderParams')
+          expect(params.at('SignatureFlag')).to be_nil
+        end
+
+        it 'rejects request_eds without signature_flag' do
+          expect do
+            described_class::V3.new do |b|
+              b.add_btu_order_params(
+                filename: 'test.xml',
+                service_name: 'MCT',
+                msg_name: 'pain.001',
+                signature_flag: false,
+                request_eds: true
+              )
+            end
+          end.to raise_error(ArgumentError, /request_eds/)
+        end
       end
     end
   end
