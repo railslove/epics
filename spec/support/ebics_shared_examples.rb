@@ -469,6 +469,10 @@ RSpec.shared_examples 'a valid ebicsRequest H005 upload' do |service_name:, msg_
     expect(service.at_xpath('e:MsgName', ns).text).to eq(msg_name)
   end
 
+  it 'has SignatureFlag' do
+    expect(xml.at_xpath('//e:header/e:static/e:OrderDetails/e:BTUOrderParams/e:SignatureFlag', ns)).not_to be_nil
+  end
+
   if scope
     it "has Scope #{scope}" do
       service = xml.at_xpath('//e:header/e:static/e:OrderDetails/e:BTUOrderParams/e:Service', ns)

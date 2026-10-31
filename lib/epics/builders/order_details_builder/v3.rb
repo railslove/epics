@@ -32,8 +32,22 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
   end
 
   def add_btu_order_params(
-    filename:, service_name:, msg_name:, scope: nil, service_option: nil, container_type: nil, msg_name_version: nil, msg_name_variant: nil, msg_name_format: nil
+    filename:,
+    service_name:,
+    msg_name:,
+    scope: nil,
+    service_option: nil,
+    container_type: nil,
+    msg_name_version: nil,
+    msg_name_variant: nil,
+    msg_name_format: nil,
+    signature_flag: true,
+    request_eds: false
   )
+    if request_eds && !signature_flag
+      raise ArgumentError, 'request_eds requires signature_flag'
+    end
+
     @xml.BTUOrderParams fileName: filename do |xml|
       xml.Service do
         xml.ServiceName service_name
@@ -45,6 +59,16 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
         msg_name_attributes[:variant] = msg_name_variant if msg_name_variant
         msg_name_attributes[:format] = msg_name_format if msg_name_format
         xml.MsgName msg_name, msg_name_attributes
+      end
+      # Without SignatureFlag the bank treats the order as carrying no ES (electronic
+      # signature) and expects authorisation outside EBICS. requestEDS asks the bank to
+      # spool the order into the EDS (distributed electronic signature, German VEU,
+      # "Verteilte Elektronische Unterschrift") instead of rejecting it when signatures
+      # are still missing.
+      if signature_flag
+        signature_flag_attributes = {}
+        signature_flag_attributes[:requestEDS] = 'true' if request_eds
+        xml.SignatureFlag '', signature_flag_attributes
       end
     end
   end

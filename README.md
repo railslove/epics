@@ -307,6 +307,28 @@ practice requires it to be supplied (guidelines §5.2).
 When it is absent the bank assumes a global definition.
 On EBICS 2.4/2.5 these parameters have no equivalent and are ignored.
 
+### Signatures on uploads
+
+EBICS 3.0 replaces the order attribute (`OZHNN`, `DZHNN`) with `SignatureFlag`, which tells
+the bank whether an upload carries the user's ES (electronic signature). Uploads always
+include it and send `SignatureFlag` by default, the equivalent of `OZHNN`: the bank expects
+every required signature in the request and rejects the order otherwise.
+
+```ruby
+# spool into the EDS (distributed electronic signature, German VEU) when signatures are
+# still missing, e.g. for a user who needs a second signer
+e.CCT(document, request_eds: true)
+
+# no SignatureFlag: the order is authorised outside EBICS, e.g. by an accompanying slip
+# or in online banking
+e.CCT(document, signature_flag: false)
+```
+
+`signature_flag: false` only drops the flag; the user's signature is still sent.
+
+On EBICS 2.4/2.5 both options have no effect and are silently ignored: uploads keep
+their fixed order attribute (`OZHNN` for the payment uploads).
+
 ## Features
 
 ### Initialization

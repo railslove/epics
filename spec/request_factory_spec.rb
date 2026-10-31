@@ -439,6 +439,25 @@ RSpec.describe 'RequestFactory' do
         params = xml.at('//BTUOrderParams')
         expect(params['fileName']).to eq('custom.xml')
       end
+
+      it 'create_xe2 without override has SignatureFlag without requestEDS' do
+        xml = parse(factory.create_xe2(digest, transaction_key))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('SignatureFlag')).not_to be_nil
+        expect(params.at('SignatureFlag')['requestEDS']).to be_nil
+      end
+
+      it 'create_xe2 accepts request_eds override' do
+        xml = parse(factory.create_xe2(digest, transaction_key, request_eds: true))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('SignatureFlag')['requestEDS']).to eq('true')
+      end
+
+      it 'create_xe2 accepts signature_flag override' do
+        xml = parse(factory.create_xe2(digest, transaction_key, signature_flag: false))
+        params = xml.at('//BTUOrderParams')
+        expect(params.at('SignatureFlag')).to be_nil
+      end
     end
   end
 end
