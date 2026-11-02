@@ -724,7 +724,7 @@ class Epics::Client
       data["#{host_id.upcase}.#{sig.version}"] = dump_signature(sig)
     end
 
-    JSON.pretty_generate(data, JSON.dump_default_options)
+    JSON.pretty_generate(data)
   end
 
   # Keys without a certificate keep the bare-string form so key files stay readable by
