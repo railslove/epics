@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 3.0.0
+
 - [FIX] H005 uploads were sent without `SignatureFlag` in `BTUOrderParams`, although they
   carry the user's ES (electronic signature), so banks treated them as orders
   to be authorised outside EBICS and some rejected them with `EBICS_INVALID_ORDER_TYPE`.
