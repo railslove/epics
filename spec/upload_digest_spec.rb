@@ -22,11 +22,18 @@ RSpec.describe 'upload order data digests' do
         .not_to eq(OpenSSL::Digest.digest('sha256', document))
     end
 
-    # Hashed bytes must equal transmitted bytes.
-    it 'normalizes once, so the digest covers exactly what is transmitted' do
-      expect(subject.document).not_to include("\n")
-      expect(subject.document_digest)
-        .to eq(OpenSSL::Digest.digest('sha256', subject.document))
+    # Callers may hash the content themselves, e.g. a container's HashValue over the
+    # canonical message, so the transmitted order data must be the input as given.
+    it 'transmits the document unchanged' do
+      subject.transaction_id = 'ABC'
+      order_data = Nokogiri::XML(subject.to_transfer_xml)
+                     .at_xpath('//e:OrderData', 'e' => 'urn:org:ebics:H004').text
+      compressed = Epics::Services::CryptService
+                     .new
+                     .decrypt_by_key(subject.transaction_key, Base64.decode64(order_data))
+
+      expect(document).to include("\n")
+      expect(Zlib::Inflate.inflate(compressed)).to eq(document)
     end
 
     it 'is identical for CRLF and LF encodings of the same document' do
@@ -54,6 +61,18 @@ RSpec.describe 'upload order data digests' do
       expect(Base64.decode64(data_digest_of(order).text).bytesize).to eq(32)
       expect(Base64.strict_encode64(order.document_digest))
         .to eq(data_digest_of(order).text)
+    end
+
+    it 'transmits the document unchanged' do
+      order = Epics::CCT.new(client, document)
+      order.transaction_id = 'ABC'
+      order_data = Nokogiri::XML(order.to_transfer_xml).at_xpath('//e:OrderData', ns).text
+      compressed = Epics::Services::CryptService
+                     .new
+                     .decrypt_by_key(order.transaction_key, Base64.decode64(order_data))
+
+      expect(document).to include("\n")
+      expect(Zlib::Inflate.inflate(compressed)).to eq(document)
     end
 
     it 'is reproducible across two builds of the same document' do
