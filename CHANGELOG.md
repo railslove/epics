@@ -1,5 +1,13 @@
 ### Unreleased
 
+- [FIX] Upload order data was transmitted with all CR and LF removed, not as given. Any
+  content hashed by the caller no longer matched, so container uploads (e.g. `CCS`, `CDS`,
+  `C2S` with a `conxml` container whose `HashValue` covers the canonical pain message) were
+  rejected by the bank, and line breaks inside text values were lost. As in 2.x, the order
+  data is now sent unchanged and CR and LF are removed only to form the ES (electronic
+  signature) hash, as EBICS specifies; the bank removes them the same way before verifying.
+  This reverts the 3.0.0.rc1 entry "Upload order data is now normalized once"
+
 ### 3.0.0
 
 - [FIX] H005 uploads were sent without `SignatureFlag` in `BTUOrderParams`, although they
