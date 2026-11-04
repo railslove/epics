@@ -1,5 +1,7 @@
 ### Unreleased
 
+### 3.0.1
+
 - [FIX] Upload order data was transmitted with all CR and LF removed, not as given. Any
   content hashed by the caller no longer matched, so container uploads (e.g. `CCS`, `CDS`,
   `C2S` with a `conxml` container whose `HashValue` covers the canonical pain message) were
@@ -46,6 +48,24 @@ rewrite of request building into builders/factories/handlers.
 - [BREAKING] On H005, `Client#HAA` and `Client#order_types` return an array of service
   hashes (`service_name`, `scope`, `service_option`, `container`, `msg_name`) instead of
   an array of order-type strings
+- [BREAKING] `XEK`, `YCT` and `ZSR` raise `Epics::VersionSupportError` on H003/H004
+  instead of `NotImplementedError`, matching every other version mismatch
+- [BREAKING] `order_id:` is validated against the EBICS `OrderIDType` range (`A000` to
+  `ZZZZ`). Values below `A000` rendered as e.g. `0002`, which violates the
+  `[A-Z][A-Z0-9]{3}` pattern; they now raise `ArgumentError`. The protocol form
+  (`order_id: 'A000'`) is accepted alongside the integer
+- [BREAKING] Removed `Epics::Builders::MutableBuilder#add_receipt_code`, which emitted
+  `ReceiptCode` inside `mutable` where the schema does not allow it. `ReceiptCode`
+  belongs to `TransferReceipt`, which `TransferReceiptBuilder` already builds
+- [BREAKING] Upload order data is now normalized once, on the way in, so the bytes
+  hashed for the electronic signature are the bytes transmitted. Until 3.0 the digest
+  was taken over the normalized document while the raw one was sent, which only
+  verifies against banks that normalize before checking the ES
+- [BREAKING] Passing only one date-range bound (e.g. `client.STA(from)`) silently
+  omitted the range and fetched the bank's full retention window. Both bounds are
+  mandatory within `DateRange`, so this now raises `ArgumentError`
+- [BREAKING] Removed `Epics::Services::CryptService#sign`, which had no callers and
+  disagreed with `#encrypt` on how an A005 signature is formed
 
 **Fixes**
 
@@ -60,17 +80,12 @@ rewrite of request building into builders/factories/handlers.
   when the key they need was not loaded; they now raise `Epics::MissingKeyError` naming
   it. `#digest_valid?` no longer needs a key at all — it is a plain SHA-256 over the
   authenticated nodes
-- [BREAKING] Removed `Epics::Builders::MutableBuilder#add_receipt_code`, which emitted
-  `ReceiptCode` inside `mutable` where the schema does not allow it. `ReceiptCode`
-  belongs to `TransferReceipt`, which `TransferReceiptBuilder` already builds
 - [FIX] Removed the `container_flag:` order parameter, which emitted a `ContainerFlag`
   element that exists in no EBICS schema. The container is expressed by `Container`
   with a `containerType` attribute, which `container_type:` already emits
 - [ENHANCEMENT] Added the H005-only order types `XEK` (account statements as PDF),
   `ZSR` (payment status reports) and `YCT` (multi-currency credit transfer). Their BTF
   mappings existed in the V3 factory but had no order class or client method
-- [BREAKING] `XEK`, `YCT` and `ZSR` raise `Epics::VersionSupportError` on H003/H004
-  instead of `NotImplementedError`, matching every other version mismatch
 - [ENHANCEMENT] `XEK`, `ZSR`, `Z01`, `Z52`, `Z53` and `Z54` accept `scope:`,
   `service_option:`, `msg_name_version:` and `container_type:`. Defaults are unchanged;
   Swiss market practice requires a `Scope` and only `ZSR` sent one, so a bank-specific
@@ -82,11 +97,6 @@ rewrite of request building into builders/factories/handlers.
   keyring slots, so a `host_id` that no longer matched the stored prefix destroyed the
   bank's public keys on save. Unrecognised entries are now carried through unchanged,
   and a warning names each one instead of the failure being swallowed
-- [BREAKING] `order_id:` is validated against the EBICS `OrderIDType` range (`A000` to
-  `ZZZZ`). Values below `A000` rendered as e.g. `0002`, which violates the
-  `[A-Z][A-Z0-9]{3}` pattern; they now raise `ArgumentError`. The protocol form
-  (`order_id: 'A000'`) is accepted alongside the integer
-
 - [FIX] `XCT` sent the wrong order type: `CD1` on H003/H004 and the DTAZV service on
   H005, filing credit transfers as direct debits. It now sends `XCT` on H003/H004.
   EBICS 3.0 defines no counterpart for XCT, so on H005 it raises
@@ -94,25 +104,16 @@ rewrite of request building into builders/factories/handlers.
 - [FIX] The electronic signature over order data is again formed with line separators
   removed, matching 2.x. The refactor had signed the raw document, changing the ES for
   every upload
-- [BREAKING] Upload order data is now normalized once, on the way in, so the bytes
-  hashed for the electronic signature are the bytes transmitted. Until 3.0 the digest
-  was taken over the normalized document while the raw one was sent, which only
-  verifies against banks that normalize before checking the ES
 - [FIX] H005 `DataDigest` carried an RSA-PSS signature (256 bytes, non-reproducible)
   instead of the SHA-256 hash of the order data
 - [FIX] `Response#business_error?` treated every `01`-prefixed return code as
   informational, reporting `011001` (negative acknowledgement) and `011101` (segment
   number not reached) as success. It now uses an explicit allow-list
-- [BREAKING] Passing only one date-range bound (e.g. `client.STA(from)`) silently
-  omitted the range and fetched the bank's full retention window. Both bounds are
-  mandatory within `DateRange`, so this now raises `ArgumentError`
 - [FIX] `Time` and `DateTime` passed as date-range bounds rendered an `xs:dateTime`
   with a local offset into an `xs:date` element; they are now coerced to a date
 - [FIX] `C52` requested no container on H005 while `Client#C52` always unzips the
   response, raising `Zip::Error`. `C52` and `C53` now default to a ZIP container and
   both accept `container_type:` to override it
-- [BREAKING] Removed `Epics::Services::CryptService#sign`, which had no callers and
-  disagreed with `#encrypt` on how an A005 signature is formed
 - [FIX] `Epics::Client.setup` forwarded its block to `.new`, which yields before the
   keys are generated, so the block saw an empty keyring and anything touching it —
   `ini_letter`, `save_keys`, `INI`, `HIA` — failed. It now yields once the client is
