@@ -119,6 +119,18 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
     )
   end
 
+  def create_vpz(start_date, end_date, scope: 'DE', container_type: 'ZIP')
+    create_btd(
+      service_name: 'REP',
+      scope: scope,
+      service_option: 'VOP',
+      msg_name: 'pain.002',
+      container_type: container_type,
+      start_date: start_date,
+      end_date: end_date
+    )
+  end
+
   def create_sta(start_date, end_date)
     create_btd(service_name: 'EOP', msg_name: 'mt940', start_date: start_date, end_date: end_date)
   end
@@ -300,6 +312,10 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
   end
 
   def add_order_type(order_details_builder, order_type, with_es = false)
+    order_details_builder.add_admin_order_type order_type
+  end
+
+  def add_signature_order_type(order_details_builder, order_type)
     order_details_builder.add_admin_order_type order_type
   end
 end
