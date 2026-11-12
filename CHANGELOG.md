@@ -1,5 +1,17 @@
 ### Unreleased
 
+- [ENHANCEMENT] Verification of Payee (VoP) and the EDS (distributed electronic
+  signature, German VEU). A credit transfer uploaded with VoP (`e.CCT(document,
+  service_option: 'VOI', request_eds: true)` on H005) waits in the EDS until it is signed.
+  - `VPZ` downloads the VoP status reports (pain.002): H005 `BTD REP/DE/VOP/pain.002/ZIP`,
+    H004 order type `VPZ`.
+  - `HVU` lists the orders waiting in the EDS, `HVD` returns the DataDigest and display
+    file of one of them.
+  - `HVE` signs and so releases an order, `HVS` cancels it. Both fetch the DataDigest via
+    `HVD` first; pass `digest:` to sign only when it matches the digest you expect,
+    otherwise `Epics::DataDigestMismatchError` is raised and nothing is sent.
+  - The order is identified by a BTF service hash on H005 and by its order type on H004.
+
 ### 3.0.1
 
 - [FIX] Upload order data was transmitted with all CR and LF removed, not as given. Any

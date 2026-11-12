@@ -329,6 +329,35 @@ e.CCT(document, signature_flag: false)
 On EBICS 2.4/2.5 both options have no effect and are silently ignored: uploads keep
 their fixed order attribute (`OZHNN` for the payment uploads).
 
+### Verification of Payee and the EDS
+
+Since October 2025 a payer's bank has to verify the payee's name before a credit transfer
+can be authorised (Verification of Payee, VoP). Banks such as GLS reject a credit transfer
+with a single payment unless it goes through VoP. Upload it with the service option `VOI`
+and spool it into the EDS (distributed electronic signature, German VEU); after the check
+it waits there until it is signed or cancelled.
+
+```ruby
+e.CCT(document, scope: nil, service_option: 'VOI', request_eds: true)
+
+e.VPZ             # => VoP status reports (pain.002), one per order
+e.HVU             # => XML listing the orders waiting in the EDS
+
+service = { service_name: 'SCT', service_option: 'VOI', msg_name: 'pain.001' }
+e.HVD('N02A', service)            # => XML with the DataDigest and the display file
+e.HVE('N02A', service)            # sign: the bank executes the order
+e.HVS('N02A', service)            # cancel: nothing is paid
+
+# sign only what you uploaded: the ES hash, i.e. SHA-256 of the document without CR and LF
+e.HVE('N02A', service, digest: Digest::SHA256.digest(document.delete("\r\n")))
+```
+
+The VoP report states the result per order (`RCVC` match, `RVMC` close match with the
+account holder's name in `AddtlInf`, `RVNM` no match, `RVNA` not possible). On a full match
+it may only carry the group status, matched by `OrgnlMsgId` to the pain.001's `MsgId`.
+
+On EBICS 2.5 pass the order type instead of the service hash, e.g. `e.HVE('N02A', 'CTV')`.
+
 ## Features
 
 ### Initialization
@@ -350,6 +379,8 @@ Currently this EPICS implementation supports the following order types:
 - VMK (customer usage report in xml format)
 - XEK (account statements as PDF documents, H005 only)
 - ZSR (payment status reports, H005 only)
+- VPZ (Verification of Payee status reports)
+- HVU / HVD (orders waiting in the EDS and their details)
 - ... more coming soon
 
 Example:

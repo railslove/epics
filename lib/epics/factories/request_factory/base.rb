@@ -2,13 +2,13 @@ class Epics::Factories::RequestFactory::Base
   ORDER_TYPES = %w[
     azv b2b btd btu bka
     c2s c5n c52 c53 c54 ccs cct cd1 cdb cdd cds cdz cip crz
-    fdl ful h3k haa hac hev hia hkd hpb hpd htd ini ptk spr sta
-    vmk wss xct xds xe2 xe3 xek yct z01 z52 z53 z54 zsr
+    fdl ful h3k haa hac hev hia hkd hpb hpd htd hvd hve hvs hvu ini ptk spr sta
+    vmk vpz wss xct xds xe2 xe3 xek yct z01 z52 z53 z54 zsr
   ].freeze
 
   (ORDER_TYPES - %w[
     b2b bka c2s c5n c52 c53 c54 ccs cct cd1 cdb cdd cds cdz cip crz
-    fdl ful h3k haa hac hev hia hkd hpb hpd htd ini ptk spr
+    fdl ful h3k haa hac hev hia hkd hpb hpd htd hvd hve hvs hvu ini ptk spr
     sta vmk wss xds xe2 xe3 z01 z52 z53 z54
   ]).each do |type|
     define_method("create_#{type}") { |*| raise NotImplementedError }
@@ -129,6 +129,24 @@ class Epics::Factories::RequestFactory::Base
     build_standard_request('PTK', start_date: start_date, end_date: end_date)
   end
 
+  def create_hvu
+    build_standard_request('HVU', &:add_hvu_order_params)
+  end
+
+  def create_hvd(order_id, service)
+    build_standard_request('HVD') do |order_details_builder|
+      order_details_builder.add_hv_order_params('HVD', partner_id: @client.partner_id, order_id: order_id, service: service)
+    end
+  end
+
+  def create_hve(order_id, service, digest)
+    build_hv_signature_request('HVE', order_id, service, digest)
+  end
+
+  def create_hvs(order_id, service, digest)
+    build_hv_signature_request('HVS', order_id, service, digest)
+  end
+
   def create_fdl(format, start_date, end_date)
     build_standard_request('FDL') do |order_details_builder|
       order_details_builder.add_fdl_order_params(format, start_date, end_date)
@@ -196,7 +214,57 @@ class Epics::Factories::RequestFactory::Base
     Epics::Builders::RequestBuilder.new(xml_builder)
   end
 
+  def add_signature_order_type(order_details_builder, order_type)
+    raise NotImplementedError
+  end
+
   private
+
+  # HVE and HVS carry only the user's signature over the DataDigest the bank reported
+  # for the waiting order (HVD), so the request has no order data and no transfer phase.
+  def build_hv_signature_request(order_type, order_id, service, digest)
+    transaction_key = Epics::Factories::Crypt::AesFactory.new.create.key
+    signature_data = @user_signature_handle.handle(digest).to_xml
+    auth_signature_handler = Epics::Handlers::AuthSignatureHandler.new(@client.keyring)
+    request_builder.add_container_secured do |xml_builder|
+      xml_builder.add_header do |header_builder|
+        header_builder.add_static do |static_builder|
+          static_builder.add_host_id @client.host_id
+          static_builder.add_random_nonce
+          static_builder.add_timestamp Time.now.utc
+          static_builder.add_partner_id @client.partner_id
+          static_builder.add_user_id @client.user_id
+          static_builder.add_product @client.product_name, @client.locale
+          static_builder.add_order_details do |order_details_builder|
+            add_signature_order_type(order_details_builder, order_type)
+            order_details_builder.add_hv_order_params(order_type, partner_id: @client.partner_id, order_id: order_id, service: service)
+          end
+          static_builder.add_bank_pubbey_digests(
+            @client.keyring.bank_authentication.version,
+            @digest_resolver.sign_digest(@client.keyring.bank_authentication),
+            @client.keyring.bank_encryption.version,
+            @digest_resolver.sign_digest(@client.keyring.bank_encryption)
+          )
+          static_builder.add_security_medium Epics::Builders::StaticBuilder::SECURITY_MEDIUM_0000
+          static_builder.add_num_segments 0
+        end
+        header_builder.add_mutable do |mutable_builder|
+          mutable_builder.add_transaction_phase Epics::Builders::MutableBuilder::PHASE_INITIALIZATION
+        end
+      end
+      xml_builder.add_body do |body_builder|
+        body_builder.add_data_transfer do |data_transfer_builder|
+          data_transfer_builder.add_data_encryption_info do |data_encryption_info_builder|
+            data_encryption_info_builder.add_encryption_pubkey_digest @client.keyring
+            data_encryption_info_builder.add_transaction_key transaction_key, @client.keyring
+          end
+          data_transfer_builder.add_signature_data signature_data, transaction_key
+          data_transfer_builder.add_data_digest @client.keyring.user_signature.version, digest
+        end
+      end
+      auth_signature_handler.handle(xml_builder)
+    end
+  end
 
   def build_standard_request(order_type, start_date: nil, end_date: nil, with_es: false)
     auth_signature_handler = Epics::Handlers::AuthSignatureHandler.new(@client.keyring)

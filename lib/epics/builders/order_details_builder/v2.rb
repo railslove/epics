@@ -18,4 +18,10 @@ class Epics::Builders::OrderDetailsBuilder::V2 < Epics::Builders::OrderDetailsBu
   def add_btu_order_params
     raise Epics::VersionSupportError, 3.0
   end
+
+  protected
+
+  def add_order_identification(xml, order_type)
+    xml.OrderType order_type
+  end
 end

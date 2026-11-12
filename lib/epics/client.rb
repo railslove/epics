@@ -568,6 +568,26 @@ class Epics::Client
     download(Epics::WSS)
   end
 
+  def VPZ(from = nil, to = nil)
+    download_and_unzip(Epics::VPZ, from: from, to: to)
+  end
+
+  def HVU
+    download(Epics::HVU)
+  end
+
+  def HVD(order_id, service)
+    download(Epics::HVD, order_id: order_id, service: service)
+  end
+
+  def HVE(order_id, service, digest: nil)
+    sign_eds_order(Epics::HVE, order_id, service, digest)
+  end
+
+  def HVS(order_id, service, digest: nil)
+    sign_eds_order(Epics::HVS, order_id, service, digest)
+  end
+
   def save_keys(path)
     File.write(path, dump_keys)
   end
@@ -588,6 +608,21 @@ class Epics::Client
     Epics::Crypt::X509.new(content)
   rescue OpenSSL::X509::CertificateError => e
     raise Epics::InvalidCertificateError.new(option_name, e)
+  end
+
+  def sign_eds_order(order_type, order_id, service, expected_digest)
+    digest = eds_data_digest(order_id, service)
+    raise Epics::DataDigestMismatchError, order_id if expected_digest && expected_digest != digest
+
+    res = post(url, order_type.new(self, order_id: order_id, service: service, digest: digest).to_xml).body
+    [res.transaction_id, res.order_id]
+  end
+
+  def eds_data_digest(order_id, service)
+    node = Nokogiri::XML(HVD(order_id, service)).at_xpath("//*[local-name()='DataDigest']")
+    raise Epics::InvalidResponseError, 'DataDigest' if node.nil? || node.text.strip.empty?
+
+    Base64.decode64(node.text)
   end
 
   def upload(order_type, document, **options)

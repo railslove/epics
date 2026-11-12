@@ -43,6 +43,11 @@ require "epics/z53"
 require "epics/z54"
 require "epics/ptk"
 require "epics/hac"
+require "epics/hvu"
+require "epics/hvd"
+require "epics/hve"
+require "epics/hvs"
+require "epics/vpz"
 require "epics/wss"
 require "epics/hpd"
 require "epics/cd1"
@@ -125,6 +130,17 @@ module Epics
       message = "Could not read #{field} from the bank's response"
       message += " (#{original.message})" if original
       super(message)
+    end
+  end
+
+  # Raised by HVE and HVS when the order waiting in the EDS (distributed electronic
+  # signature, German VEU) is not the one the caller expects to sign.
+  class DataDigestMismatchError < StandardError
+    attr_reader :order_id
+
+    def initialize(order_id)
+      @order_id = order_id
+      super("The DataDigest of order #{order_id} in the EDS does not match the expected digest, nothing was signed")
     end
   end
 

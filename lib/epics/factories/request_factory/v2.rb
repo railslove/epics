@@ -53,6 +53,10 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_download_request('WSS')
   end
 
+  def create_vpz(start_date, end_date)
+    build_download_request('VPZ', start_date: start_date, end_date: end_date)
+  end
+
   def create_z52(start_date, end_date, **)
     build_download_request('Z52', start_date: start_date, end_date: end_date)
   end
@@ -139,6 +143,13 @@ class Epics::Factories::RequestFactory::V2 < Epics::Factories::RequestFactory::B
     build_upload_request('FUL', transaction_key, signature_data, 1) do |order_details_builder|
       order_details_builder.add_ful_order_params(file_format)
     end
+  end
+
+  protected
+
+  def add_signature_order_type(order_details_builder, order_type)
+    order_details_builder.add_order_type order_type
+    order_details_builder.add_order_attribute Epics::Builders::OrderDetailsBuilder::ORDER_ATTRIBUTE_UZHNN
   end
 
   private

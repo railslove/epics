@@ -49,6 +49,20 @@ class Epics::Builders::OrderDetailsBuilder::Base
     self
   end
 
+  def add_hvu_order_params
+    @xml.HVUOrderParams
+    self
+  end
+
+  def add_hv_order_params(order_type, partner_id:, order_id:, service:)
+    @xml.send("#{order_type}OrderParams") do |xml|
+      xml.PartnerID partner_id
+      add_order_identification(xml, service)
+      xml.OrderID order_id
+    end
+    self
+  end
+
   def add_btd_order_params
     raise NotImplementedError
   end
@@ -62,6 +76,10 @@ class Epics::Builders::OrderDetailsBuilder::Base
   end
 
   protected
+
+  def add_order_identification(xml, service)
+    raise NotImplementedError
+  end
 
   # Start and End are both mandatory within DateRange: no bounds means no range, one
   # bound cannot be rendered at all.

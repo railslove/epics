@@ -72,4 +72,19 @@ class Epics::Builders::OrderDetailsBuilder::V3 < Epics::Builders::OrderDetailsBu
       end
     end
   end
+
+  protected
+
+  def add_order_identification(xml, service)
+    service_name, msg_name, scope, service_option, container_type =
+      service.values_at(:service_name, :msg_name, :scope, :service_option, :container_type)
+
+    xml.Service do
+      xml.ServiceName service_name
+      xml.Scope scope if scope
+      xml.ServiceOption service_option if service_option
+      xml.Container '', containerType: container_type if container_type
+      xml.MsgName msg_name
+    end
+  end
 end
