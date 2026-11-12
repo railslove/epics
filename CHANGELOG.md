@@ -1,4 +1,4 @@
-### Unreleased
+### 3.1.0
 
 - [ENHANCEMENT] Verification of Payee (VoP) and the EDS (distributed electronic
   signature, German VEU). A credit transfer uploaded with VoP (`e.CCT(document,
