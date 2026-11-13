@@ -1,4 +1,4 @@
-### 3.2.0
+### 3.1.1
 
 - [FIX] `C54` on H005 requested the BTF service `REP` instead of `STM`. The German
   mapping is `STM | DE | camt.054 | ZIP`, and banks that follow it (e.g. GLS) rejected
