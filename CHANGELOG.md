@@ -1,3 +1,7 @@
+- [FIX] `C54` on H005 requested the BTF service `REP` instead of `STM`. The German
+  mapping is `STM | DE | camt.054 | ZIP`, and banks that follow it (e.g. GLS) rejected
+  the request with `EBICS_INVALID_ORDER_TYPE`
+
 ### 3.1.0
 
 - [ENHANCEMENT] Verification of Payee (VoP) and the EDS (distributed electronic

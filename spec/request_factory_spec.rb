@@ -303,7 +303,7 @@ RSpec.describe 'RequestFactory' do
       btd_downloads = {
         'c52' => { service_name: 'STM', msg_name: 'camt.052' },
         'c53' => { service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP' },
-        'c54' => { service_name: 'REP', msg_name: 'camt.054', container_type: 'ZIP' },
+        'c54' => { service_name: 'STM', msg_name: 'camt.054', container_type: 'ZIP' },
         'sta' => { service_name: 'EOP', msg_name: 'mt940' },
         'vmk' => { service_name: 'STM', msg_name: 'mt942' },
         'z52' => { service_name: 'STM', msg_name: 'camt.052', container_type: 'ZIP' },

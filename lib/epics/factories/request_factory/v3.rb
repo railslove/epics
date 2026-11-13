@@ -109,7 +109,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
 
   def create_c54(start_date, end_date, scope: nil, msg_name_version: nil, container_type: 'ZIP')
     create_btd(
-      service_name: 'REP',
+      service_name: 'STM',
       msg_name: 'camt.054',
       scope: scope,
       msg_name_version: msg_name_version,
