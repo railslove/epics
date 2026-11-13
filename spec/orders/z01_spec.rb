@@ -18,7 +18,11 @@ RSpec.describe Epics::Z01 do
     let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
     include_examples 'a valid ebicsRequest H005 download with date range',
-      service_name: 'PSR', msg_name: 'pain.002', service_option: 'CH003GEN', from: '2014-09-01', to: '2014-09-30'
+      service_name: 'PSR', msg_name: 'pain.002', from: '2014-09-01', to: '2014-09-30'
+
+    it 'has no ServiceOption' do
+      expect(xml.at_xpath('//e:BTDOrderParams/e:Service/e:ServiceOption', ns)).to be_nil
+    end
   end
 
   describe 'H004 request structure' do

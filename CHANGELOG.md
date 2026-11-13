@@ -1,6 +1,13 @@
 - [FIX] `C54` on H005 requested the BTF service `REP` instead of `STM`. The German
   mapping is `STM | DE | camt.054 | ZIP`, and banks that follow it (e.g. GLS) rejected
   the request with `EBICS_INVALID_ORDER_TYPE`
+- [FIX] `Z54` on H005 requested `EOP | XQRR` instead of `REP | CH | camt.054`, and `Z01`
+  sent the service option `CH003GEN`, which the Swiss mapping doesn't define. Swiss banks
+  (e.g. the ZKB test platform) rejected both with `EBICS_INVALID_ORDER_TYPE`
+  - **Behaviour change:** `Z54` now returns all aggregate booking details. For the QR
+    reference payments only (ZQR), pass `service_option: 'XQRR'`
+  - Swiss banks also require the message version, e.g.
+    `e.Z54(from, to, scope: 'CH', msg_name_version: '08')`
 
 ### 3.1.0
 

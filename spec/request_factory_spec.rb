@@ -308,9 +308,9 @@ RSpec.describe 'RequestFactory' do
         'vmk' => { service_name: 'STM', msg_name: 'mt942' },
         'z52' => { service_name: 'STM', msg_name: 'camt.052', container_type: 'ZIP' },
         'z53' => { service_name: 'EOP', msg_name: 'camt.053', container_type: 'ZIP' },
-        'z54' => { service_name: 'EOP', msg_name: 'camt.054', service_option: 'XQRR' },
+        'z54' => { service_name: 'REP', msg_name: 'camt.054', container_type: 'ZIP' },
         'xek' => { service_name: 'EOP', msg_name: 'pdf', container_type: 'ZIP' },
-        'z01' => { service_name: 'PSR', msg_name: 'pain.002', service_option: 'CH003GEN' },
+        'z01' => { service_name: 'PSR', msg_name: 'pain.002', container_type: 'ZIP' },
         'bka' => { service_name: 'EOP', msg_name: 'camt.053', scope: 'DE' },
         'c5n' => { service_name: 'STM', msg_name: 'camt.054', scope: 'DE', service_option: 'SCI' },
         'cdz' => { service_name: 'REP', msg_name: 'pain.002', scope: 'DE', service_option: 'SDD' },
@@ -333,6 +333,8 @@ RSpec.describe 'RequestFactory' do
 
           if expected[:service_option]
             expect(xml.at('//BTDOrderParams/Service/ServiceOption').text).to eq(expected[:service_option])
+          else
+            expect(xml.at('//BTDOrderParams/Service/ServiceOption')).to be_nil
           end
 
           if expected[:container_type]
