@@ -18,7 +18,7 @@ RSpec.describe Epics::C54 do
     let(:ns) { { 'e' => 'urn:org:ebics:H005' } }
 
     include_examples 'a valid ebicsRequest H005 download with date range',
-      service_name: 'REP', msg_name: 'camt.054', from: '2014-09-01', to: '2014-09-30'
+      service_name: 'STM', msg_name: 'camt.054', from: '2014-09-01', to: '2014-09-30'
   end
 
   describe 'H004 request structure' do

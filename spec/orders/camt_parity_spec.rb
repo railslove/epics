@@ -10,7 +10,7 @@ RSpec.describe 'C52/C53/C54 parameter parity' do
   # The three camt statement retrievals differ only in service name and message type.
   types = { Epics::C52 => { service: 'STM', msg: 'camt.052' },
             Epics::C53 => { service: 'EOP', msg: 'camt.053' },
-            Epics::C54 => { service: 'REP', msg: 'camt.054' } }
+            Epics::C54 => { service: 'STM', msg: 'camt.054' } }
 
   def service(order, ns)
     Nokogiri::XML(order.to_xml).at_xpath('//e:Service', ns)

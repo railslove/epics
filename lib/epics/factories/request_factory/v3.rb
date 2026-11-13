@@ -109,7 +109,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
 
   def create_c54(start_date, end_date, scope: nil, msg_name_version: nil, container_type: 'ZIP')
     create_btd(
-      service_name: 'REP',
+      service_name: 'STM',
       msg_name: 'camt.054',
       scope: scope,
       msg_name_version: msg_name_version,
@@ -164,10 +164,10 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
       end_date: end_date
     )
   end
-  def create_z54(start_date, end_date, scope: nil, service_option: 'XQRR',
+  def create_z54(start_date, end_date, scope: nil, service_option: nil,
                  msg_name_version: nil, container_type: 'ZIP')
     create_btd(
-      service_name: 'EOP',
+      service_name: 'REP',
       msg_name: 'camt.054',
       scope: scope,
       service_option: service_option,
@@ -190,7 +190,7 @@ class Epics::Factories::RequestFactory::V3 < Epics::Factories::RequestFactory::B
       end_date: end_date
     )
   end
-  def create_z01(start_date, end_date, scope: nil, service_option: 'CH003GEN',
+  def create_z01(start_date, end_date, scope: nil, service_option: nil,
                  msg_name_version: nil, container_type: 'ZIP')
     create_btd(
       service_name: 'PSR',
