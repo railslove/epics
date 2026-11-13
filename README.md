@@ -301,6 +301,14 @@ e.C53(from, to, scope: 'CH', msg_name_version: '08', container_type: 'ZIP')
 e.CCT(document, service_option: 'CH001COR')
 ```
 
+Passing `nil` keeps the order type's default. To leave a parameter out of the request,
+pass `false`. For example, the ZKB offers the pain.002 status report in version 10 only
+without a container, while `Z01` requests `ZIP` by default:
+
+```ruby
+e.Z01(from, to, scope: 'CH', msg_name_version: '10', container_type: false)
+```
+
 The `Scope` parameter identifies whose rulebook applies — an ISO country code such as `CH`
 or `DE`, `GLB` for SEPA/SWIFT/CGI, or `BIL` for bilaterally agreed rules. Swiss market
 practice requires it to be supplied (guidelines §5.2).
