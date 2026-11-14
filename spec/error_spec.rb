@@ -41,3 +41,15 @@ describe Epics::Error::BusinessError do
   end
 
 end
+
+describe Epics::Error::HTTPError do
+  it 'truncates a long body' do
+    error = described_class.new(500, 'x' * 1000)
+
+    expect(error.body.length).to eq(Epics::Error::HTTPError::BODY_EXCERPT_LENGTH)
+  end
+
+  it 'falls back to the bare status for an unknown reason phrase' do
+    expect(described_class.new(599, '').message).to eq('HTTP 599')
+  end
+end

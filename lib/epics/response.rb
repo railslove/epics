@@ -10,6 +10,12 @@ class Epics::Response
     self.client = client
   end
 
+  # Every EBICS response root (ebicsResponse, ebicsKeyManagementResponse,
+  # ebicsHEVResponse, ...) starts with "ebics"; an HTML error page does not.
+  def ebics?
+    !!doc.root&.name&.start_with?('ebics')
+  end
+
   def technical_error?
     !%w[011000 000000].include?(technical_code)
   end
