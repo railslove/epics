@@ -504,6 +504,26 @@ client.save_ini_letter('Your Bank Name', 'initialization_letter.html')
 Where a key has a certificate, the letter prints the SHA-256 hash of that certificate as
 required for certificate-based registration, rather than the hash of the raw key.
 
+### When the bank is not reachable
+
+A bank whose EBICS endpoint is down, e.g. for a maintenance window, often answers with a
+non-2xx status and an HTML page. Epics then raises `Epics::Error::HTTPError` instead of
+parsing the page as EBICS. It carries the `status` and the first 500 characters of the
+`body`:
+
+```ruby
+begin
+  client.HTD
+rescue Epics::Error::HTTPError => e
+  e.message # => "HTTP 503 Service Unavailable"
+  e.status  # => 503
+end
+```
+
+A 2xx response that is not an EBICS document raises `Epics::Error::UnexpectedResponse`,
+with the start of the `body`. Both are subclasses of `Epics::Error`, but not of
+`Epics::Error::TechnicalError`, so they never pose as an EBICS return code.
+
 ## Issues and Feature Requests
 
 [Railslove](http://railslove.com) is commited to provide the best developer tools for integrating
