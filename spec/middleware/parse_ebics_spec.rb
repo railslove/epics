@@ -72,11 +72,78 @@ RSpec.describe Epics::ParseEbics do
       expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 302 Found')
     end
 
+    it 'still raises the HTTPError when the request body is not XML' do
+      stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
+
+      expect { subject.post('/', '<<not xml') }.to raise_error(Epics::Error::HTTPError) do |error|
+        expect(error.phase).to be_nil
+        expect(error.order_type).to be_nil
+      end
+    end
+
     it 'can be rescued as an Epics::Error but not as a TechnicalError' do
       stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
 
       expect { subject.post('/') }.to raise_error(Epics::Error) do |error|
         expect(error).not_to be_a(Epics::Error::TechnicalError)
+      end
+    end
+
+    describe 'the failed request' do
+      # HTD, the uploads and HVE send the bank key digests; the fixture holds bank keys for host SIZBN001 only.
+      let(:client) { Epics::Client.new( File.open(File.join( File.dirname(__FILE__), '..', 'fixtures', 'SIZBN001.key')), 'secret' , 'https://194.180.18.30/ebicsweb/ebicsweb', 'SIZBN001', 'EBIX', 'EBICS', version:) }
+      let(:upload) { Epics::CCT.new(client, 'pain.001 document').tap { |order| order.transaction_id = 'B5F1A3D2C4E6F8091A2B3C4D5E6F7A8B' } }
+
+      before { stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] } }
+
+      describe 'H004' do
+        let(:version) { Epics::Keyring::VERSION_25 }
+        let(:download) do
+          Epics::STA.new(client, from: Date.new(2014, 9, 1), to: Date.new(2014, 9, 30))
+               .tap { |order| order.transaction_id = 'B5F1A3D2C4E6F8091A2B3C4D5E6F7A8B' }
+        end
+        let(:hve) { Epics::HVE.new(client, order_id: 'N02A', digest: Digest::SHA256.digest('pain.001 in the EDS')) }
+
+        { 'the initialisation of a download' => [-> { Epics::HTD.new(client).to_xml }, 'Initialisation', 'HTD', true],
+          'the initialisation of an upload'  => [-> { upload.to_xml }, 'Initialisation', 'CCT', true],
+          'the order data of an upload'      => [-> { upload.to_transfer_xml }, 'Transfer', nil, false],
+          'a further segment of a download'  => [-> { download.to_transfer_download_xml(2, true) }, 'Transfer', nil, true],
+          'the receipt of a download'        => [-> { download.to_receipt_xml }, 'Receipt', nil, true],
+          'the initialisation of an HVE'     => [-> { hve.to_xml }, 'Initialisation', 'HVE', false],
+          'key management'                   => [-> { Epics::INI.new(client).to_xml }, nil, 'INI', true],
+          'HEV'                              => [-> { Epics::HEV.new(client).to_xml }, nil, nil, true] }
+          .each do |request, (request_xml, phase, order_type, retryable)|
+          it "#{retryable ? 'is' : 'is not'} retryable after #{request}" do
+            expect { subject.post('/', instance_exec(&request_xml)) }
+              .to raise_error(Epics::Error::HTTPError) do |error|
+              expect(error.phase).to eq(phase)
+              expect(error.order_type).to eq(order_type)
+              expect(error.retryable?).to eq(retryable)
+            end
+          end
+        end
+      end
+
+      describe 'H005' do
+        let(:version) { Epics::Keyring::VERSION_30 }
+        let(:hve) do
+          Epics::HVE.new(client, order_id: 'N02A', digest: Digest::SHA256.digest('pain.001 in the EDS'),
+                                 service: { service_name: 'SCT', service_option: 'VOI', msg_name: 'pain.001' })
+        end
+
+        { 'the initialisation of an upload' => [-> { upload.to_xml }, 'Initialisation', 'BTU', true],
+          'the order data of an upload'     => [-> { upload.to_transfer_xml }, 'Transfer', nil, false],
+          'the initialisation of an HVE'    => [-> { hve.to_xml }, 'Initialisation', 'HVE', false] }
+          .each do |request, (request_xml, phase, order_type, retryable)|
+          it "#{retryable ? 'is' : 'is not'} retryable after #{request}" do
+            expect { subject.post('/', instance_exec(&request_xml)) }
+              .to raise_error(Epics::Error::HTTPError) do |error|
+              expect(error.phase).to eq(phase)
+              expect(error.order_type).to eq(order_type)
+              expect(error.retryable?).to eq(retryable)
+            end
+          end
+        end
       end
     end
   end

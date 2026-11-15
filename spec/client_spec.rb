@@ -252,6 +252,30 @@ RSpec.describe Epics::Client do
       it 'raises an HTTPError with the reason phrase and a UTF-8 excerpt of a page without a charset' do
         expect { subject.HTD }.to raise_error(Epics::Error::HTTPError, 'HTTP 503 Wartungsarbeiten') do |error|
           expect(error.body_excerpt).to eq('<p>Wartungsarbeiten für das Online-Banking</p>')
+          expect(error.phase).to eq('Initialisation')
+          expect(error.order_type).to eq('HTD')
+          expect(error).to be_retryable
+        end
+      end
+    end
+
+    describe '#CD1' do
+      let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
+
+      before do
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Initialisation</TransactionPhase>})
+          .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                            'cd1_init_response.xml')))
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .with(body: %r{<TransactionPhase>Transfer</TransactionPhase>})
+          .to_return(status: [504, 'Gateway Timeout'], body: '')
+      end
+
+      it 'raises an HTTPError that is not retryable when the order data fails' do
+        expect { subject.CD1(cd1_document) }.to raise_error(Epics::Error::HTTPError, 'HTTP 504 Gateway Timeout') do |error|
+          expect(error.phase).to eq('Transfer')
+          expect(error).not_to be_retryable
         end
       end
     end
