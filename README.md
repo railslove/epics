@@ -567,6 +567,7 @@ is safe. It is `false` when the failed request may have made the bank act:
 | `"Transfer"`       | A further segment of a download                                                      | `true`. Restart the download                                                              |
 | `"Receipt"`        | The receipt that closes a download, positive or negative                            | `true`. The order data was already received; a new download may return the same data again |
 | `nil`              | Key management (`INI`, `HIA`, `HPB`) and `HEV`, which have no transaction phase      | `true`. No order or payment is involved                                                   |
+| `nil`              | A request Epics could not read as EBICS, e.g. a body passed as an IO                 | `false`. Epics cannot tell what reached the bank                                           |
 
 `phase` is the `TransactionPhase` of the request that failed, and `order_type` its order
 type: `OrderType` on EBICS 2.x (e.g. `"CCT"`), `AdminOrderType` on EBICS 3.0 (e.g. `"BTU"`

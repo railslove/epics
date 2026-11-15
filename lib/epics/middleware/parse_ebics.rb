@@ -7,6 +7,9 @@ class Epics::ParseEbics < Faraday::Middleware
   # H003 and H004 name the order type OrderType, H005 AdminOrderType.
   ORDER_TYPE_XPATH = "//*[local-name()='header']/*[local-name()='static']/*[local-name()='OrderDetails']" \
                      "/*[local-name()='OrderType' or local-name()='AdminOrderType']"
+  # The root elements of the requests Epics sends. A request that is not one of them, e.g. a
+  # body passed as an IO, cannot be read, so retryable? says no instead of guessing.
+  EBICS_REQUESTS = %w[ebicsRequest ebicsUnsecuredRequest ebicsNoPubKeyDigestsRequest ebicsHEVRequest].freeze
   # Only an ebicsRequest carries an order. INI and HIA send their keys as OrderData in an
   # ebicsUnsecuredRequest, and sending a key again cannot make the bank act twice.
   ORDER_DATA_XPATH = "/*[local-name()='ebicsRequest']/*[local-name()='body']" \
@@ -33,9 +36,11 @@ class Epics::ParseEbics < Faraday::Middleware
   private
 
   def raise_http_error(response, request_body)
-    request = Nokogiri::XML(request_body.to_s)
+    # Only a String holds the request itself; an IO's to_s is e.g. "#<StringIO:0x…>".
+    request = Nokogiri::XML(request_body.is_a?(String) ? request_body : nil)
     raise(Epics::Error::HTTPError.new(response.status, response.body,
                                       reason_phrase: response.reason_phrase,
+                                      request_read: EBICS_REQUESTS.include?(request.root&.name),
                                       phase: request_text(request, PHASE_XPATH),
                                       order_type: request_text(request, ORDER_TYPE_XPATH),
                                       order_data_sent: !request_text(request, ORDER_DATA_XPATH).nil?))

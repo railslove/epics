@@ -72,12 +72,31 @@ RSpec.describe Epics::ParseEbics do
       expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 302 Found')
     end
 
-    it 'still raises the HTTPError when the request body is not XML' do
+    it 'still raises the HTTPError when the request body is not XML, but not as retryable' do
       stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
 
       expect { subject.post('/', '<<not xml') }.to raise_error(Epics::Error::HTTPError) do |error|
         expect(error.phase).to be_nil
         expect(error.order_type).to be_nil
+        expect(error).not_to be_retryable
+      end
+    end
+
+    it 'is not retryable when the request is XML but not EBICS' do
+      stubs.post('/') { [503, {}, ''] }
+
+      expect { subject.post('/', '<order><amount>100</amount></order>') }.to raise_error(Epics::Error::HTTPError) do |error|
+        expect(error).not_to be_retryable
+      end
+    end
+
+    it 'is not retryable when the order data of an upload was sent as an IO, which it cannot read' do
+      stubs.post('/') { [504, {}, ''] }
+      upload = Epics::CCT.new(client, 'pain.001 document').tap { |order| order.transaction_id = 'B5F1A3D2C4E6F8091A2B3C4D5E6F7A8B' }
+
+      expect { subject.post('/', StringIO.new(upload.to_transfer_xml)) }.to raise_error(Epics::Error::HTTPError) do |error|
+        expect(error.phase).to be_nil
+        expect(error).not_to be_retryable
       end
     end
 
