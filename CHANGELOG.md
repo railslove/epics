@@ -1,3 +1,20 @@
+### Unreleased
+
+- [FIX] A non-2xx HTTP response, e.g. a `503 Service Unavailable` page during a bank's
+  maintenance window, raised `Epics::Error::TechnicalError` with
+  `EPICS_UNKNOWN - unknown` and lost the HTTP status. It now raises
+  `Epics::Error::HTTPError` with `status` and an excerpt of the `body`, and the message
+  reads e.g. `HTTP 503 Service Unavailable` (#197)
+- [FIX] A 2xx response without an EBICS `ReturnCode`, e.g. an HTML page or an empty body,
+  now raises `Epics::InvalidResponseError` with `field` `ReturnCode` and an excerpt of the
+  `body`, instead of `EPICS_UNKNOWN - unknown`
+  - `Epics::Error::HTTPError` is a subclass of `Epics::Error`, not of
+    `Epics::Error::TechnicalError`, and its `symbol` reads e.g. `HTTP_503`
+  - `Epics::InvalidResponseError` is now a subclass of `Epics::Error` instead of
+    `StandardError`, so `rescue Epics::Error` also catches a missing `NumSegments` or
+    `DataDigest`. It gained an optional `body` and the `symbol` `EPICS_INVALID_RESPONSE`
+  - Neither carries an EBICS return code, so `code` is `nil`
+
 ### 3.1.1
 
 - [FIX] `C54` on H005 requested the BTF service `REP` instead of `STM`. The German
