@@ -5,7 +5,8 @@
   `Receipt`, or `nil` for key management and `HEV`) and `order_type` its (Admin)OrderType.
   `retryable?` is `false` when the request may have made the bank act despite the error:
   the order data of an upload, or the Initialisation of `HVE` and `HVS`, which carries the
-  signature
+  signature. It is also `false` when the request could not be read as EBICS, e.g. a body
+  passed as an IO
 - [ENHANCEMENT] The README has a guide to every error Epics raises and whether a retry
   helps
 

@@ -162,8 +162,12 @@ RSpec.describe Epics::Error::HTTPError do
       'a request without a phase'        => [{}, true] }
       .each do |request, (request_options, retryable)|
       it "is #{retryable} after #{request}" do
-        expect(described_class.new(503, '', **request_options).retryable?).to eq(retryable)
+        expect(described_class.new(503, '', request_read: true, **request_options).retryable?).to eq(retryable)
       end
+    end
+
+    it 'is false when the request could not be read' do
+      expect(described_class.new(503, '', phase: 'Initialisation', order_type: 'HTD').retryable?).to be(false)
     end
   end
 end
