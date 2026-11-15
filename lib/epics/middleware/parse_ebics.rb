@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
 class Epics::ParseEbics < Faraday::Middleware
-  PHASE_XPATH = '//xmlns:header/xmlns:mutable/xmlns:TransactionPhase'
+  # local-name() reads H003, H004 and H005 alike, so a namespace other than the client's
+  # cannot hide the phase or the order data and turn an upload into a retryable request.
+  PHASE_XPATH = "//*[local-name()='header']/*[local-name()='mutable']/*[local-name()='TransactionPhase']"
   # H003 and H004 name the order type OrderType, H005 AdminOrderType.
-  ORDER_TYPE_XPATH = '//xmlns:header/xmlns:static/xmlns:OrderDetails/xmlns:OrderType | ' \
-                     '//xmlns:header/xmlns:static/xmlns:OrderDetails/xmlns:AdminOrderType'
-  ORDER_DATA_XPATH = '//xmlns:body/xmlns:DataTransfer/xmlns:OrderData'
+  ORDER_TYPE_XPATH = "//*[local-name()='header']/*[local-name()='static']/*[local-name()='OrderDetails']" \
+                     "/*[local-name()='OrderType' or local-name()='AdminOrderType']"
+  # Only an ebicsRequest carries an order. INI and HIA send their keys as OrderData in an
+  # ebicsUnsecuredRequest, and sending a key again cannot make the bank act twice.
+  ORDER_DATA_XPATH = "/*[local-name()='ebicsRequest']/*[local-name()='body']" \
+                     "/*[local-name()='DataTransfer']/*[local-name()='OrderData']"
 
   def initialize(app = nil, options = {})
     super(app)
@@ -43,6 +48,6 @@ class Epics::ParseEbics < Faraday::Middleware
   end
 
   def request_text(request, xpath)
-    request.at_xpath(xpath, xmlns: @client.urn_schema)&.text
+    request.at_xpath(xpath)&.text
   end
 end

@@ -156,6 +156,7 @@ RSpec.describe Epics::Error::HTTPError do
     { 'the initialisation of an upload'  => [{ phase: 'Initialisation', order_type: 'BTU' }, true],
       'the order data of an upload'      => [{ phase: 'Transfer', order_data_sent: true }, false],
       'a further segment of a download'  => [{ phase: 'Transfer', order_data_sent: false }, true],
+      'order data without a phase'       => [{ order_data_sent: true }, false],
       'the initialisation of an HVE'     => [{ phase: 'Initialisation', order_type: 'HVE' }, false],
       'the initialisation of an HVS'     => [{ phase: 'Initialisation', order_type: 'HVS' }, false],
       'a request without a phase'        => [{}, true] }

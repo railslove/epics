@@ -388,9 +388,11 @@ class Epics::Error < StandardError
     # Whether sending the order again cannot make the bank act on it twice. A gateway can
     # answer with an error after the bank has accepted the request, so this is false when
     # the failed request carried the order data of an upload or the signature of an HVE
-    # or HVS. Check those with HAC, PTK or HVU before you send them again.
+    # or HVS. Check those with HAC, PTK or HVU before you send them again. Order data
+    # makes it false whatever the phase, so a phase that could not be read never turns an
+    # upload into a retryable request.
     def retryable?
-      return false if phase == "Transfer" && @order_data_sent
+      return false if @order_data_sent
       return false if phase == "Initialisation" && SIGNING_ORDER_TYPES.include?(order_type)
 
       true
