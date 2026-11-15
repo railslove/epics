@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ebicsHEVResponse xmlns="http://www.ebics.org/H000" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ebics.org/H000 http://www.ebics.org/H000/ebics_hev.xsd">
+  <SystemReturnCode>
+    <ReturnCode>000000</ReturnCode>
+    <ReportText>[EBICS_OK] OK</ReportText>
+  </SystemReturnCode>
+  <VersionNumber ProtocolVersion="H003">02.40</VersionNumber>
+  <VersionNumber ProtocolVersion="H004">02.50</VersionNumber>
+  <VersionNumber ProtocolVersion="H005">03.00</VersionNumber>
+</ebicsHEVResponse>

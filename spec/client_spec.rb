@@ -93,6 +93,19 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe '#HEV' do
+    before do
+      stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+        .with(body: /ebicsHEVRequest/)
+        .to_return(status: 200, body: File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',
+                                                          'hev_response.xml')))
+    end
+
+    it 'reads the ReturnCode from SystemReturnCode and returns the supported versions' do
+      expect(subject.HEV).to eq('H003' => '02.40', 'H004' => '02.50', 'H005' => '03.00')
+    end
+  end
+
   describe '#HPB' do
     let(:e_key) do
       Epics::SignatureAlgorithm::RsaPss.new(OpenSSL::PKey::RSA.new(File.read(File.join(File.dirname(__FILE__),

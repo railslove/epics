@@ -1,4 +1,6 @@
 class Epics::Error < StandardError
+  # How much of an unreadable response body an error keeps for debugging.
+  BODY_EXCERPT_LENGTH = 500
 
   attr_reader :code
 
@@ -331,6 +333,30 @@ class Epics::Error < StandardError
         "short_text" => "The signatory has already signed the order on hand."
       }
     }
+  end
+
+  # Raised when the bank answers with a non-2xx HTTP status, e.g. a 503 page during a
+  # maintenance window, instead of an EBICS response. There is no EBICS return code, so
+  # #code is nil; #symbol reads e.g. "HTTP_503".
+  class HTTPError < self
+    REASON_PHRASES = {
+      400 => 'Bad Request', 401 => 'Unauthorized', 403 => 'Forbidden', 404 => 'Not Found',
+      405 => 'Method Not Allowed', 408 => 'Request Timeout', 413 => 'Payload Too Large',
+      429 => 'Too Many Requests', 500 => 'Internal Server Error', 502 => 'Bad Gateway',
+      503 => 'Service Unavailable', 504 => 'Gateway Timeout'
+    }.freeze
+
+    attr_reader :status, :body
+
+    def initialize(status, body)
+      @status = status
+      @body = body.to_s[0, BODY_EXCERPT_LENGTH]
+      @error = { 'symbol' => "HTTP_#{status}", 'short_text' => REASON_PHRASES[status] }.compact
+    end
+
+    def to_s
+      ["HTTP #{status}", REASON_PHRASES[status]].compact.join(' ')
+    end
   end
 
 end
