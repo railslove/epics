@@ -1,3 +1,14 @@
+### 3.3.0
+
+- [ENHANCEMENT] `Epics::Error::HTTPError` tells whether sending the order again is safe.
+  `phase` is the `TransactionPhase` of the failed request (`Initialisation`, `Transfer`,
+  `Receipt`, or `nil` for key management and `HEV`) and `order_type` its (Admin)OrderType.
+  `retryable?` is `false` when the request may have made the bank act despite the error:
+  the order data of an upload, or the Initialisation of `HVE` and `HVS`, which carries the
+  signature
+- [ENHANCEMENT] The README has a guide to every error Epics raises and whether a retry
+  helps
+
 ### 3.2.0
 
 - **Upgrade note:** both cases below raised `Epics::Error::TechnicalError` before. Code

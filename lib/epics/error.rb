@@ -355,7 +355,9 @@ class Epics::Error < StandardError
   # Raised when the bank answers with a non-2xx HTTP status, e.g. a 503 page during a
   # maintenance window, instead of an EBICS response. There is no EBICS return code, so
   # #code is nil; #symbol reads e.g. "HTTP_503". #reason_phrase is the one the server
-  # sent, or the standard one where it sent none, e.g. over HTTP/2.
+  # sent, or the standard one where it sent none, e.g. over HTTP/2. #phase is the
+  # TransactionPhase and #order_type the (Admin)OrderType of the request that failed; key
+  # management requests and HEV have no phase, HEV has no order type.
   class HTTPError < self
     REASON_PHRASES = {
       301 => "Moved Permanently", 302 => "Found", 307 => "Temporary Redirect", 308 => "Permanent Redirect",
@@ -367,14 +369,31 @@ class Epics::Error < StandardError
       511 => "Network Authentication Required"
     }.freeze
 
-    attr_reader :status, :reason_phrase, :body_excerpt
+    # Their Initialisation request carries the signature itself, so it is the action.
+    SIGNING_ORDER_TYPES = %w[HVE HVS].freeze
 
-    def initialize(status, body, reason_phrase: nil)
+    attr_reader :status, :reason_phrase, :body_excerpt, :phase, :order_type
+
+    def initialize(status, body, reason_phrase: nil, phase: nil, order_type: nil, order_data_sent: false)
       @status = status
       sent_phrase = to_utf8(reason_phrase).strip
       @reason_phrase = sent_phrase.empty? ? REASON_PHRASES[status] : sent_phrase
       @body_excerpt = excerpt_of(body)
+      @phase = phase
+      @order_type = order_type
+      @order_data_sent = order_data_sent
       super(nil, error: { "symbol" => "HTTP_#{status}", "short_text" => @reason_phrase || "HTTP #{status}" })
+    end
+
+    # Whether sending the order again cannot make the bank act on it twice. A gateway can
+    # answer with an error after the bank has accepted the request, so this is false when
+    # the failed request carried the order data of an upload or the signature of an HVE
+    # or HVS. Check those with HAC, PTK or HVU before you send them again.
+    def retryable?
+      return false if phase == "Transfer" && @order_data_sent
+      return false if phase == "Initialisation" && SIGNING_ORDER_TYPES.include?(order_type)
+
+      true
     end
 
     def to_s

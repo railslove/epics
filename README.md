@@ -504,11 +504,42 @@ client.save_ini_letter('Your Bank Name', 'initialization_letter.html')
 Where a key has a certificate, the letter prints the SHA-256 hash of that certificate as
 required for certificate-based registration, rather than the hash of the raw key.
 
-### When the bank does not answer with EBICS
+## Error handling
 
-A bank whose EBICS endpoint is down, e.g. for a maintenance window, often answers with a
-non-2xx status and an HTML page. Epics then raises `Epics::Error::HTTPError` instead of
-parsing the page as EBICS:
+Epics raises a different error for each way an order can fail. Errors about the bank's
+answer inherit from `Epics::Error`, except `Epics::InvalidOrderDataError`. Network failures
+come from Faraday, and setup mistakes point to your code or configuration.
+
+### The bank rejected the request
+
+The bank answered with an EBICS return code. Both errors carry `code` (e.g. `"091005"`),
+`symbol` (e.g. `"EBICS_INVALID_ORDER_TYPE"`) and `short_text`.
+
+| Error                           | Raised when                                                                                  |
+|---------------------------------|----------------------------------------------------------------------------------------------|
+| `Epics::Error::TechnicalError`  | The return code in the response header is not OK, e.g. `EBICS_AUTHENTICATION_FAILED` or `EBICS_INVALID_ORDER_TYPE` |
+| `Epics::Error::BusinessError`   | The return code in the response body is not OK, e.g. `EBICS_NO_DOWNLOAD_DATA_AVAILABLE`      |
+
+Retrying does not help here, apart from cases like `EBICS_NO_DOWNLOAD_DATA_AVAILABLE`,
+which only means there is nothing new to fetch yet.
+
+### The bank did not answer with EBICS
+
+| Error                          | Superclass      | Raised when                                                                                 | Attributes                  |
+|--------------------------------|-----------------|---------------------------------------------------------------------------------------------|-----------------------------|
+| `Epics::Error::HTTPError`      | `Epics::Error`  | The HTTP status is not 2xx, e.g. a `503` page during a maintenance window                   | `status`, `reason_phrase`, `phase`, `order_type`, `retryable?`, `body_excerpt` |
+| `Epics::InvalidResponseError`  | `Epics::Error`  | The response lacks a value EBICS requires: a `ReturnCode` (e.g. a login page behind a wrong URL, an empty body), `NumSegments` or a `DataDigest` | `field`, `body_excerpt`     |
+| `Epics::InvalidOrderDataError` | `StandardError` | The order data of a download cannot be decrypted or inflated, e.g. because it arrived truncated. The bank has already received a negative receipt | `order_type`, `cause`       |
+
+`body_excerpt` holds the first 500 characters of the response as UTF-8, converted from the
+charset the bank declared, so the page the bank sent shows up in your logs; bytes that are
+not valid UTF-8 become `�`. It comes from a system you do not control: an error page from
+a firewall or gateway can echo parts of your request, such as your partner and user ID, so
+treat it like any other response data when you send it to an error tracker. `message` and `inspect` do not contain it.
+
+`reason_phrase` is the one the server sent, e.g. `"Wartungsarbeiten"`, or the standard one
+where it sent none. Like `body_excerpt`, it is always UTF-8. None of these errors is a
+`TechnicalError`, so they never pose as an EBICS return code, and their `code` is `nil`.
 
 ```ruby
 begin
@@ -517,27 +548,68 @@ rescue Epics::Error::HTTPError => e
   e.message       # => "HTTP 503 Service Unavailable"
   e.status        # => 503
   e.reason_phrase # => "Service Unavailable"
-  e.body_excerpt  # => "<html><head><title>503 Service Unavailable</title>..."
+  e.phase         # => "Initialisation"
+  e.order_type    # => "HTD"
+  e.retryable?    # => true
 end
 ```
 
-`reason_phrase` is the one the server sent, e.g. `"Wartungsarbeiten"`, or the standard one
-where it sent none. Like `body_excerpt`, it is always UTF-8.
+A gateway in front of the bank can answer with an error after the bank has already
+accepted the request. A new attempt is a new transaction with a new signature, so the bank
+does not recognise it as a duplicate. `retryable?` tells you whether sending the order again
+is safe. It is `false` when the failed request may have made the bank act:
 
-A 2xx response without an EBICS `ReturnCode`, e.g. a portal login page behind a wrong URL
-or an empty body, raises `Epics::InvalidResponseError` with `field` `"ReturnCode"` and a
-`body_excerpt`. The same error is raised when a response lacks `NumSegments` or a
-`DataDigest`.
+| `phase`            | Request that failed                                                                 | `retryable?`                                                                             |
+|--------------------|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `"Initialisation"` | The first request of downloads (`HTD`, `C53`, `BTD`, ...) and uploads (`CCT`, `BTU`, ...). It carries no order data | `true`. The bank may have opened a transaction, which expires without the order data |
+| `"Initialisation"` | `HVE` and `HVS`, whose only request carries the signature or the cancellation        | `false`. The bank may have signed or cancelled the order, so check it with `HVU` or `HVD` first |
+| `"Transfer"`       | The order data of an upload                                                          | `false`. The bank may execute the order, so check it with `HAC`, `PTK` or the account statement first |
+| `"Transfer"`       | A further segment of a download                                                      | `true`. Restart the download                                                              |
+| `"Receipt"`        | The receipt that closes a download, positive or negative                            | `true`. The order data was already received; a new download may return the same data again |
+| `nil`              | Key management (`INI`, `HIA`, `HPB`) and `HEV`, which have no transaction phase      | `true`. No order or payment is involved                                                   |
 
-Both are subclasses of `Epics::Error`, but not of `Epics::Error::TechnicalError`, so
-`rescue Epics::Error` catches them and they never pose as an EBICS return code. Their
-`code` is `nil`.
+`phase` is the `TransactionPhase` of the request that failed, and `order_type` its order
+type: `OrderType` on EBICS 2.x (e.g. `"CCT"`), `AdminOrderType` on EBICS 3.0 (e.g. `"BTU"`
+for an upload, `"HVE"`), or `nil` for `HEV`.
 
-`body_excerpt` holds the first 500 characters of the response as UTF-8, converted from the
-charset the bank declared, so the page the bank sent shows up in your logs; bytes that are
-not valid UTF-8 become `�`. It comes from a system you do not control: an error page from a firewall or gateway can echo parts of your
-request, such as your partner and user ID, so treat it like any other response data when
-you send it to an error tracker. `message` and `inspect` do not contain it.
+### The request did not reach the bank
+
+Timeouts and connection failures are raised as Faraday's own errors, e.g.
+`Faraday::TimeoutError` and `Faraday::ConnectionFailed` (both `Faraday::Error`). They carry
+no phase. A timeout while an upload's order data is on its way may still have reached the
+bank, so never retry an upload automatically after a `Faraday::TimeoutError` or
+`Faraday::ConnectionFailed`: treat it like a failed `"Transfer"` and check the order first.
+
+### Setup and usage errors
+
+These point to a problem in your code or configuration and are raised before a request is
+sent or while Epics checks the bank's keys. A retry does not help.
+
+| Error                            | Raised when                                                                                |
+|----------------------------------|--------------------------------------------------------------------------------------------|
+| `Epics::MissingCertificateError`   | EBICS 3.0 (H005) needs an X.509 certificate the client was not given                    |
+| `Epics::InvalidCertificateError`   | A certificate from a constructor option or the HPB response cannot be parsed            |
+| `Epics::MissingKeyError`           | A key is needed that the client has not loaded, e.g. the bank's key before HPB has run  |
+| `Epics::VersionSupportError`       | The order or option is not available for the client's EBICS version                     |
+| `Epics::DataDigestMismatchError`   | HVE or HVS find a different order in the EDS than the one you meant to sign; nothing was signed |
+
+### Putting it together
+
+```ruby
+begin
+  statements = client.C53(from, to)
+rescue Epics::Error::BusinessError => e
+  raise unless e.symbol == 'EBICS_NO_DOWNLOAD_DATA_AVAILABLE'
+
+  statements = [] # nothing new at the bank yet
+rescue Epics::Error::HTTPError => e
+  e.retryable? ? retry_later(e) : alert(e) # alert: an upload or signature may have reached the bank
+rescue Faraday::Error => e
+  retry_later(e) # a download only; for an upload, check the order before you send it again
+rescue Epics::Error, Epics::InvalidOrderDataError => e
+  alert(e) # the bank rejected the order, or its answer could not be read
+end
+```
 
 ## Issues and Feature Requests
 
