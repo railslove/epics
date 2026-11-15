@@ -153,21 +153,47 @@ RSpec.describe Epics::Error::HTTPError do
   end
 
   describe '#retryable?' do
-    { 'the initialisation of an upload'  => [{ phase: 'Initialisation', order_type: 'BTU' }, true],
-      'the order data of an upload'      => [{ phase: 'Transfer', order_data_sent: true }, false],
-      'a further segment of a download'  => [{ phase: 'Transfer', order_data_sent: false }, true],
-      'order data without a phase'       => [{ order_data_sent: true }, false],
-      'the initialisation of an HVE'     => [{ phase: 'Initialisation', order_type: 'HVE' }, false],
-      'the initialisation of an HVS'     => [{ phase: 'Initialisation', order_type: 'HVS' }, false],
-      'a request without a phase'        => [{}, true] }
-      .each do |request, (request_options, retryable)|
-      it "is #{retryable} after #{request}" do
-        expect(described_class.new(503, '', request_read: true, **request_options).retryable?).to eq(retryable)
-      end
+    it 'is true after the initialisation of an upload, which carries no order data' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Initialisation', order_type: 'CCT')).to be_retryable
     end
 
-    it 'is false when the request could not be read' do
-      expect(described_class.new(503, '', phase: 'Initialisation', order_type: 'HTD').retryable?).to be(false)
+    it 'is false after the order data of an upload' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Transfer', order_type: 'CCT', order_data_sent: true))
+        .not_to be_retryable
+    end
+
+    it 'is false after order data without a phase' do
+      expect(described_class.new(503, '', request_known: true, order_data_sent: true)).not_to be_retryable
+    end
+
+    it 'is true after a further segment of a download' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Transfer', order_type: 'C53')).to be_retryable
+    end
+
+    it 'is true after the receipt of a download' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Receipt', order_type: 'C53')).to be_retryable
+    end
+
+    it 'is false after the initialisation of an HVE, which carries the signature' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Initialisation', order_type: 'HVE'))
+        .not_to be_retryable
+    end
+
+    it 'is false after the initialisation of an HVS, which carries the cancellation' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Initialisation', order_type: 'HVS'))
+        .not_to be_retryable
+    end
+
+    it 'is true for HVE outside the initialisation, as only its initialisation carries the signature' do
+      expect(described_class.new(503, '', request_known: true, phase: 'Receipt', order_type: 'HVE')).to be_retryable
+    end
+
+    it 'is true after key management, which has no phase' do
+      expect(described_class.new(503, '', request_known: true, order_type: 'INI')).to be_retryable
+    end
+
+    it 'is false when Epics does not know the request' do
+      expect(described_class.new(503, '', phase: 'Initialisation', order_type: 'HTD')).not_to be_retryable
     end
   end
 end

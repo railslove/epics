@@ -7,8 +7,6 @@ class Epics::Client
   attr_reader :keyring
   attr_writer :iban, :bic, :name
 
-  def_delegators :connection, :post
-
   USER_AGENT = "EPICS v#{Epics::VERSION}"
 
   # EBICS 3.0 requires at least 2048 bits.
@@ -275,15 +273,15 @@ class Epics::Client
   end
 
   def HIA
-    post(url, Epics::HIA.new(self).to_xml).body.ok?
+    post(url, Epics::HIA.new(self).to_xml, phase: nil, order_type: 'HIA').body.ok?
   end
 
   def INI
-    post(url, Epics::INI.new(self).to_xml).body.ok?
+    post(url, Epics::INI.new(self).to_xml, phase: nil, order_type: 'INI').body.ok?
   end
 
   def HEV
-    res = post(url, Epics::HEV.new(self).to_xml).body
+    res = post(url, Epics::HEV.new(self).to_xml, phase: nil, order_type: nil).body
     res.doc.xpath('//xmlns:VersionNumber', xmlns: 'http://www.ebics.org/H000').each_with_object({}) do |node, versions|
       versions[node['ProtocolVersion']] = node.content
     end
@@ -592,6 +590,14 @@ class Epics::Client
     File.write(path, dump_keys)
   end
 
+  # Without phase: and order_type:, e.g. for a request built outside Epics, an HTTPError
+  # cannot tell what reached the bank and is not retryable.
+  def post(url, body, **request)
+    connection.post(url, body) do |http_request|
+      http_request.options.context = { epics_request: request } unless request.empty?
+    end
+  end
+
   private
 
   def user_signatures
@@ -614,7 +620,8 @@ class Epics::Client
     digest = eds_data_digest(order_id, service)
     raise Epics::DataDigestMismatchError, order_id if expected_digest && expected_digest != digest
 
-    res = post(url, order_type.new(self, order_id: order_id, service: service, digest: digest).to_xml).body
+    res = post(url, order_type.new(self, order_id: order_id, service: service, digest: digest).to_xml,
+               phase: 'Initialisation', order_type: order_type_name(order_type)).body
     [res.transaction_id, res.order_id]
   end
 
@@ -627,44 +634,52 @@ class Epics::Client
 
   def upload(order_type, document, **options)
     order = order_type.new(self, document, **options)
-    session = post(url, order.to_xml).body
+    session = post(url, order.to_xml, phase: 'Initialisation', order_type: order_type_name(order_type)).body
     order.transaction_id = session.transaction_id
 
-    res = post(url, order.to_transfer_xml).body
+    res = post(url, order.to_transfer_xml, phase: 'Transfer', order_type: order_type_name(order_type),
+                                           order_data_sent: true).body
 
     [res.transaction_id, [res.order_id, session.order_id].detect { |id| id.to_s.chars.any? }]
   end
 
   def download(order_type, *args, **options)
+    name = order_type_name(order_type)
     document = order_type.new(self, *args, **options)
-    res = post(url, document.to_xml).body
+    # HPB is key management and has no transaction phase.
+    res = post(url, document.to_xml, phase: order_type == Epics::HPB ? nil : 'Initialisation', order_type: name).body
     document.transaction_id = res.transaction_id
-    segments = [res, *remaining_segments(document, res)]
+    segments = [res, *remaining_segments(document, res, name)]
     order_data = begin
       res.decrypt_order_data(segments.map(&:order_data_encrypted).join)
     rescue StandardError => e
-      reject_download(document) if res.segmented?
-      raise Epics::InvalidOrderDataError.new(order_type.name.split('::').last, e)
+      reject_download(document, name) if res.segmented?
+      raise Epics::InvalidOrderDataError.new(name, e)
     end
-    post(url, document.to_receipt_xml) if res.segmented?
+    post(url, document.to_receipt_xml, phase: 'Receipt', order_type: name) if res.segmented?
 
     order_data
   end
 
-  def remaining_segments(document, res)
+  def remaining_segments(document, res, name)
     return [] if !res.segmented? || res.last_segment?
 
     (2..res.num_segments).map do |segment_number|
-      post(url, document.to_transfer_download_xml(segment_number, segment_number == res.num_segments)).body
+      post(url, document.to_transfer_download_xml(segment_number, segment_number == res.num_segments),
+           phase: 'Transfer', order_type: name).body
     end
   end
 
   # The bank answers a negative receipt with an error, and the reason the order data
   # could not be read is the one worth raising.
-  def reject_download(document)
-    post(url, document.to_receipt_xml(acknowledged: false))
+  def reject_download(document, name)
+    post(url, document.to_receipt_xml(acknowledged: false), phase: 'Receipt', order_type: name)
   rescue StandardError
     nil
+  end
+
+  def order_type_name(order_type)
+    order_type.name.split('::').last
   end
 
   def download_and_unzip(order_type, *args, **options)

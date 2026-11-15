@@ -374,13 +374,13 @@ class Epics::Error < StandardError
 
     attr_reader :status, :reason_phrase, :body_excerpt, :phase, :order_type
 
-    def initialize(status, body, reason_phrase: nil, request_read: false, phase: nil, order_type: nil,
+    def initialize(status, body, reason_phrase: nil, request_known: false, phase: nil, order_type: nil,
                    order_data_sent: false)
       @status = status
       sent_phrase = to_utf8(reason_phrase).strip
       @reason_phrase = sent_phrase.empty? ? REASON_PHRASES[status] : sent_phrase
       @body_excerpt = excerpt_of(body)
-      @request_read = request_read
+      @request_known = request_known
       @phase = phase
       @order_type = order_type
       @order_data_sent = order_data_sent
@@ -390,12 +390,10 @@ class Epics::Error < StandardError
     # Whether sending the order again cannot make the bank act on it twice. A gateway can
     # answer with an error after the bank has accepted the request, so this is false when
     # the failed request carried the order data of an upload or the signature of an HVE
-    # or HVS. Check those with HAC, PTK or HVU before you send them again. Order data
-    # makes it false whatever the phase, and so does a request that could not be read as
-    # EBICS, so neither a missing phase nor an unreadable body turns an upload into a
-    # retryable request.
+    # or HVS. Order data makes it false whatever the phase, and so does a request that no
+    # Epics::Client method sent, as Epics cannot tell what it was.
     def retryable?
-      return false unless @request_read
+      return false unless @request_known
       return false if @order_data_sent
       return false if phase == "Initialisation" && SIGNING_ORDER_TYPES.include?(order_type)
 
