@@ -1,5 +1,10 @@
-### Unreleased
+### 3.2.0
 
+- **Upgrade note:** both cases below raised `Epics::Error::TechnicalError` before. Code
+  that rescues only `TechnicalError` (and `BusinessError`) to handle an unreachable bank
+  must now also rescue `Epics::Error::HTTPError` and `Epics::InvalidResponseError`, or
+  `Epics::Error`. Alerts, log filters or error-tracker rules that match `EPICS_UNKNOWN`
+  or the class `TechnicalError` no longer match these cases
 - [FIX] A non-2xx HTTP response, e.g. a `503 Service Unavailable` page during a bank's
   maintenance window, raised `Epics::Error::TechnicalError` with
   `EPICS_UNKNOWN - unknown` and lost the HTTP status. It now raises
