@@ -504,26 +504,40 @@ client.save_ini_letter('Your Bank Name', 'initialization_letter.html')
 Where a key has a certificate, the letter prints the SHA-256 hash of that certificate as
 required for certificate-based registration, rather than the hash of the raw key.
 
-### When the bank is not reachable
+### When the bank does not answer with EBICS
 
 A bank whose EBICS endpoint is down, e.g. for a maintenance window, often answers with a
 non-2xx status and an HTML page. Epics then raises `Epics::Error::HTTPError` instead of
-parsing the page as EBICS. It carries the `status` and the first 500 characters of the
-`body`:
+parsing the page as EBICS:
 
 ```ruby
 begin
   client.HTD
 rescue Epics::Error::HTTPError => e
-  e.message # => "HTTP 503 Service Unavailable"
-  e.status  # => 503
+  e.message       # => "HTTP 503 Service Unavailable"
+  e.status        # => 503
+  e.reason_phrase # => "Service Unavailable"
+  e.body_excerpt  # => "<html><head><title>503 Service Unavailable</title>..."
 end
 ```
 
-A 2xx response without an EBICS `ReturnCode`, e.g. a portal login page behind a wrong URL,
-raises `Epics::InvalidResponseError` with `field` `"ReturnCode"` and the start of the
-`body`. Both are subclasses of `Epics::Error`, but not of `Epics::Error::TechnicalError`,
-so they never pose as an EBICS return code.
+`reason_phrase` is the one the server sent, e.g. `"Wartungsarbeiten"`, or the standard one
+where it sent none. Like `body_excerpt`, it is always UTF-8.
+
+A 2xx response without an EBICS `ReturnCode`, e.g. a portal login page behind a wrong URL
+or an empty body, raises `Epics::InvalidResponseError` with `field` `"ReturnCode"` and a
+`body_excerpt`. The same error is raised when a response lacks `NumSegments` or a
+`DataDigest`.
+
+Both are subclasses of `Epics::Error`, but not of `Epics::Error::TechnicalError`, so
+`rescue Epics::Error` catches them and they never pose as an EBICS return code. Their
+`code` is `nil`.
+
+`body_excerpt` holds the first 500 characters of the response as UTF-8, converted from the
+charset the bank declared, so the page the bank sent shows up in your logs; bytes that are
+not valid UTF-8 become `�`. It comes from a system you do not control: an error page from a firewall or gateway can echo parts of your
+request, such as your partner and user ID, so treat it like any other response data when
+you send it to an error tracker. `message` and `inspect` do not contain it.
 
 ## Issues and Feature Requests
 

@@ -43,7 +43,7 @@ RSpec.describe Epics::ParseEbics do
 
       expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 503 Service Unavailable') do |error|
         expect(error.status).to eq(503)
-        expect(error.body).to include('maintenance downtime')
+        expect(error.body_excerpt).to include('maintenance downtime')
       end
     end
 
@@ -52,7 +52,7 @@ RSpec.describe Epics::ParseEbics do
 
       expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 502 Bad Gateway') do |error|
         expect(error.status).to eq(502)
-        expect(error.body).to eq('')
+        expect(error.body_excerpt).to eq('')
       end
     end
 
@@ -62,8 +62,14 @@ RSpec.describe Epics::ParseEbics do
 
       expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 500 Internal Server Error') do |error|
         expect(error.code).to be_nil
-        expect(error.body).to include('<ReturnCode>061001</ReturnCode>')
+        expect(error.body_excerpt).to include('<ReturnCode>061001</ReturnCode>')
       end
+    end
+
+    it 'raises an HTTPError for a redirect, the usual sign of a wrong bank URL' do
+      stubs.post('/') { [302, { 'Location' => 'https://bank.example/login' }, ''] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 302 Found')
     end
 
     it 'can be rescued as an Epics::Error but not as a TechnicalError' do
@@ -110,7 +116,7 @@ RSpec.describe Epics::ParseEbics do
       expect { subject.post('/') }
         .to raise_error(Epics::InvalidResponseError, "Could not read ReturnCode from the bank's response") do |error|
         expect(error.field).to eq('ReturnCode')
-        expect(error.body).to eq('Welcome to the bank portal')
+        expect(error.body_excerpt).to eq('Welcome to the bank portal')
         expect(error).not_to respond_to(:status)
       end
     end
@@ -119,7 +125,7 @@ RSpec.describe Epics::ParseEbics do
       stubs.post('/') { [200, {}, ''] }
 
       expect { subject.post('/') }.to raise_error(Epics::InvalidResponseError) do |error|
-        expect(error.body).to eq('')
+        expect(error.body_excerpt).to eq('')
         expect(error).not_to be_a(Epics::Error::TechnicalError)
       end
     end
@@ -128,7 +134,7 @@ RSpec.describe Epics::ParseEbics do
       stubs.post('/') { [200, {}, '<ebicsResponse xmlns="urn:org:ebics:H004"><header authenticate="true"><static>'] }
 
       expect { subject.post('/') }.to raise_error(Epics::InvalidResponseError) do |error|
-        expect(error.body).to start_with('<ebicsResponse')
+        expect(error.body_excerpt).to start_with('<ebicsResponse')
       end
     end
   end
