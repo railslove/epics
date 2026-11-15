@@ -241,6 +241,22 @@ RSpec.describe Epics::Client do
     end
   end
 
+  describe 'when the bank answers with a non-2xx status' do
+    describe '#HTD' do
+      before do
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb')
+          .to_return(status: [503, 'Wartungsarbeiten'], headers: { 'Content-Type' => 'text/html' },
+                     body: '<p>Wartungsarbeiten für das Online-Banking</p>'.b)
+      end
+
+      it 'raises an HTTPError with the reason phrase and a UTF-8 excerpt of a page without a charset' do
+        expect { subject.HTD }.to raise_error(Epics::Error::HTTPError, 'HTTP 503 Wartungsarbeiten') do |error|
+          expect(error.body_excerpt).to eq('<p>Wartungsarbeiten für das Online-Banking</p>')
+        end
+      end
+    end
+  end
+
   describe '#HTD' do
     before do
       allow(subject).to receive(:download).and_return(File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml',

@@ -19,7 +19,7 @@ class Epics::ParseEbics < Faraday::Middleware
   private
 
   def raise_http_error(response)
-    raise(Epics::Error::HTTPError.new(response.status, response.body))
+    raise(Epics::Error::HTTPError.new(response.status, response.body, reason_phrase: response.reason_phrase))
   end
 
   def raise_for_return_code(ebics_response, raw_body)

@@ -123,11 +123,11 @@ module Epics
   # Raised when the bank's response lacks a value the protocol requires, or carries one
   # that cannot be read, e.g. a 2xx HTML page without an EBICS ReturnCode.
   class InvalidResponseError < Epics::Error
-    attr_reader :field, :body
+    attr_reader :field, :body_excerpt
 
     def initialize(field, original = nil, body: nil)
       @field = field
-      @body = body && body.to_s[0, BODY_EXCERPT_LENGTH]
+      @body_excerpt = body && excerpt_of(body)
       message = "Could not read #{field} from the bank's response"
       message += " (#{original.message})" if original
       super(nil, error: { 'symbol' => 'EPICS_INVALID_RESPONSE', 'short_text' => message })

@@ -23,6 +23,21 @@ class Epics::Error < StandardError
     @error.fetch("short_text", "unknown")
   end
 
+  private
+
+  def excerpt_of(body)
+    to_utf8(body)[0, BODY_EXCERPT_LENGTH]
+  end
+
+  # Net::HTTP leaves the status line and a body without a charset in its Content-Type as
+  # ASCII-8BIT, and keeps a declared charset such as ISO-8859-1. A binary string breaks
+  # JSON loggers, and any non-UTF-8 one breaks interpolation into a UTF-8 message, so the
+  # text is read as UTF-8 and invalid bytes are replaced.
+  def to_utf8(text)
+    text = text.to_s.dup
+    text.force_encoding(Encoding::UTF_8) if text.encoding == Encoding::BINARY
+    text.encode(Encoding::UTF_8, invalid: :replace, undef: :replace).scrub
+  end
 
   class TechnicalError < self
     ERRORS = {
@@ -339,26 +354,31 @@ class Epics::Error < StandardError
 
   # Raised when the bank answers with a non-2xx HTTP status, e.g. a 503 page during a
   # maintenance window, instead of an EBICS response. There is no EBICS return code, so
-  # #code is nil; #symbol reads e.g. "HTTP_503".
+  # #code is nil; #symbol reads e.g. "HTTP_503". #reason_phrase is the one the server
+  # sent, or the standard one where it sent none, e.g. over HTTP/2.
   class HTTPError < self
     REASON_PHRASES = {
-      400 => 'Bad Request', 401 => 'Unauthorized', 403 => 'Forbidden', 404 => 'Not Found',
-      405 => 'Method Not Allowed', 408 => 'Request Timeout', 413 => 'Payload Too Large',
-      429 => 'Too Many Requests', 500 => 'Internal Server Error', 502 => 'Bad Gateway',
-      503 => 'Service Unavailable', 504 => 'Gateway Timeout'
+      301 => "Moved Permanently", 302 => "Found", 307 => "Temporary Redirect", 308 => "Permanent Redirect",
+      400 => "Bad Request", 401 => "Unauthorized", 403 => "Forbidden", 404 => "Not Found",
+      405 => "Method Not Allowed", 408 => "Request Timeout", 410 => "Gone", 413 => "Payload Too Large",
+      429 => "Too Many Requests",
+      500 => "Internal Server Error", 501 => "Not Implemented", 502 => "Bad Gateway",
+      503 => "Service Unavailable", 504 => "Gateway Timeout", 505 => "HTTP Version Not Supported",
+      511 => "Network Authentication Required"
     }.freeze
 
-    attr_reader :status, :body
+    attr_reader :status, :reason_phrase, :body_excerpt
 
-    def initialize(status, body)
+    def initialize(status, body, reason_phrase: nil)
       @status = status
-      @body = body.to_s[0, BODY_EXCERPT_LENGTH]
-      super(nil, error: { "symbol" => "HTTP_#{status}", "short_text" => REASON_PHRASES[status] }.compact)
+      sent_phrase = to_utf8(reason_phrase).strip
+      @reason_phrase = sent_phrase.empty? ? REASON_PHRASES[status] : sent_phrase
+      @body_excerpt = excerpt_of(body)
+      super(nil, error: { "symbol" => "HTTP_#{status}", "short_text" => @reason_phrase || "HTTP #{status}" })
     end
 
     def to_s
-      ["HTTP #{status}", REASON_PHRASES[status]].compact.join(' ')
+      ["HTTP #{status}", reason_phrase].compact.join(" ")
     end
   end
-
 end
