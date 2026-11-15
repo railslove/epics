@@ -1,4 +1,4 @@
-[![Build Status](https://railslove.semaphoreci.com/badges/epics/branches/master.svg?style=shields)](https://railslove.semaphoreci.com/branches/c29225c5-5b7e-4a90-8ac8-22d1aa28efcf)
+[![CI](https://github.com/railslove/epics/actions/workflows/ci.yml/badge.svg)](https://github.com/railslove/epics/actions/workflows/ci.yml)
 [![Gem Version](https://badge.fury.io/rb/epics.svg)](http://badge.fury.io/rb/epics)
 
 # Epics
