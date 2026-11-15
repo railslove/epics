@@ -216,6 +216,36 @@ RSpec.describe 'segmented downloads' do
       end
     end
 
+    context 'when the bank answers a further segment with a non-2xx status' do
+      before do
+        stub_request(:post, url).with { |request| summarize(Nokogiri::XML(request.body)) == %w[Transfer 2 false] }
+                                .to_return(status: [503, 'Service Unavailable'], body: '')
+      end
+
+      it 'raises an HTTPError that is retryable, as restarting the download is safe' do
+        expect { subject }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to eq('Transfer')
+          expect(error.order_type).to eq('C53')
+          expect(error).to be_retryable
+        end
+      end
+    end
+
+    context 'when the bank answers the receipt with a non-2xx status' do
+      before do
+        stub_request(:post, url).with { |request| summarize(Nokogiri::XML(request.body)) == %w[Receipt 0] }
+                                .to_return(status: [504, 'Gateway Timeout'], body: '')
+      end
+
+      it 'raises an HTTPError that is retryable, though the bank may already have marked the data as fetched' do
+        expect { subject }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to eq('Receipt')
+          expect(error.order_type).to eq('C53')
+          expect(error).to be_retryable
+        end
+      end
+    end
+
     context 'when the response is not segmented' do
       let(:initialisation_response) { response('Initialisation', order_data: order_data_encrypted) }
 

@@ -565,13 +565,18 @@ is safe. It is `false` when the failed request may have made the bank act:
 | `"Initialisation"` | `HVE` and `HVS`, whose only request carries the signature or the cancellation        | `false`. The bank may have signed or cancelled the order, so check it with `HVU` or `HVD` first |
 | `"Transfer"`       | The order data of an upload                                                          | `false`. The bank may execute the order, so check it with `HAC`, `PTK` or the account statement first |
 | `"Transfer"`       | A further segment of a download                                                      | `true`. Restart the download                                                              |
-| `"Receipt"`        | The receipt that closes a download, positive or negative                            | `true`. The order data was already received; a new download may return the same data again |
+| `"Receipt"`        | The receipt that closes a download                                                   | `true`. The bank may already have marked the data as fetched, so download it again with a date range (`from`, `to`) |
 | `nil`              | Key management (`INI`, `HIA`, `HPB`) and `HEV`, which have no transaction phase      | `true`. No order or payment is involved                                                   |
-| `nil`              | A request Epics could not read as EBICS, e.g. a body passed as an IO                 | `false`. Epics cannot tell what reached the bank                                           |
+| `nil`              | A request no `Epics::Client` method sent, e.g. your own XML passed to `client.post`  | `false`. Epics cannot tell what reached the bank                                           |
 
-`phase` is the `TransactionPhase` of the request that failed, and `order_type` its order
-type: `OrderType` on EBICS 2.x (e.g. `"CCT"`), `AdminOrderType` on EBICS 3.0 (e.g. `"BTU"`
-for an upload, `"HVE"`), or `nil` for `HEV`.
+`phase` is the `TransactionPhase` of the request that failed, and `order_type` the order
+type of the client method that sent it, e.g. `"CCT"` or `"HVE"`, on EBICS 3.0 as well,
+where the request itself says `BTU`. It is `nil` for `HEV`.
+
+A failed receipt costs the order data of that download: Epics raises before it returns
+the data, and the bank may already have marked it as fetched. A download of new data only,
+e.g. `client.C53` without a date range, then finds nothing, so fetch the same date range
+again rather than reading `EBICS_NO_DOWNLOAD_DATA_AVAILABLE` as "nothing new".
 
 ### The request did not reach the bank
 

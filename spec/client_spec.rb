@@ -275,6 +275,99 @@ RSpec.describe Epics::Client do
       it 'raises an HTTPError that is not retryable when the order data fails' do
         expect { subject.CD1(cd1_document) }.to raise_error(Epics::Error::HTTPError, 'HTTP 504 Gateway Timeout') do |error|
           expect(error.phase).to eq('Transfer')
+          expect(error.order_type).to eq('CD1')
+          expect(error).not_to be_retryable
+        end
+      end
+    end
+
+    describe 'the initialisation of #CD1' do
+      let(:cd1_document) { File.read(File.join(File.dirname(__FILE__), 'fixtures', 'xml', 'cd1.xml')) }
+
+      before do
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb').to_return(status: [503, 'Service Unavailable'], body: '')
+      end
+
+      it 'raises an HTTPError that is retryable, as the initialisation carries no order data' do
+        expect { subject.CD1(cd1_document) }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to eq('Initialisation')
+          expect(error.order_type).to eq('CD1')
+          expect(error).to be_retryable
+        end
+      end
+    end
+
+    describe '#HVE and #HVS' do
+      let(:digest) { Digest::SHA256.digest('pain.001 in the EDS') }
+
+      before do
+        allow(subject).to receive(:HVD)
+          .and_return("<HVDResponseOrderData><DataDigest>#{Base64.strict_encode64(digest)}</DataDigest></HVDResponseOrderData>")
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb').to_return(status: [504, 'Gateway Timeout'], body: '')
+      end
+
+      it 'raises an HTTPError for HVE that is not retryable, as the request carries the signature' do
+        expect { subject.HVE('N02A', nil, digest:) }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to eq('Initialisation')
+          expect(error.order_type).to eq('HVE')
+          expect(error).not_to be_retryable
+        end
+      end
+
+      it 'raises an HTTPError for HVS that is not retryable, as the request carries the cancellation' do
+        expect { subject.HVS('N02A', nil, digest:) }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to eq('Initialisation')
+          expect(error.order_type).to eq('HVS')
+          expect(error).not_to be_retryable
+        end
+      end
+    end
+
+    describe 'key management and HEV' do
+      before do
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb').to_return(status: [503, 'Service Unavailable'], body: '')
+      end
+
+      it 'raises an HTTPError for INI that is retryable and has no phase' do
+        expect { subject.INI }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to be_nil
+          expect(error.order_type).to eq('INI')
+          expect(error).to be_retryable
+        end
+      end
+
+      it 'raises an HTTPError for HIA that is retryable and has no phase' do
+        expect { subject.HIA }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to be_nil
+          expect(error.order_type).to eq('HIA')
+          expect(error).to be_retryable
+        end
+      end
+
+      it 'raises an HTTPError for HPB that is retryable and has no phase' do
+        expect { subject.HPB }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to be_nil
+          expect(error.order_type).to eq('HPB')
+          expect(error).to be_retryable
+        end
+      end
+
+      it 'raises an HTTPError for HEV that is retryable and has neither phase nor order type' do
+        expect { subject.HEV }.to raise_error(Epics::Error::HTTPError) do |error|
+          expect(error.phase).to be_nil
+          expect(error.order_type).to be_nil
+          expect(error).to be_retryable
+        end
+      end
+    end
+
+    describe '#post without phase and order type' do
+      before do
+        stub_request(:post, 'https://194.180.18.30/ebicsweb/ebicsweb').to_return(status: [504, 'Gateway Timeout'], body: '')
+      end
+
+      it 'raises an HTTPError that is not retryable, as Epics cannot tell what reached the bank' do
+        expect { subject.post(subject.url, '<ebicsRequest/>') }.to raise_error(Epics::Error::HTTPError) do |error|
           expect(error).not_to be_retryable
         end
       end

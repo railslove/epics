@@ -2,11 +2,12 @@
 
 - [ENHANCEMENT] `Epics::Error::HTTPError` tells whether sending the order again is safe.
   `phase` is the `TransactionPhase` of the failed request (`Initialisation`, `Transfer`,
-  `Receipt`, or `nil` for key management and `HEV`) and `order_type` its (Admin)OrderType.
-  `retryable?` is `false` when the request may have made the bank act despite the error:
-  the order data of an upload, or the Initialisation of `HVE` and `HVS`, which carries the
-  signature. It is also `false` when the request could not be read as EBICS, e.g. a body
-  passed as an IO
+  `Receipt`, or `nil` for key management and `HEV`) and `order_type` the order type of the
+  client method that sent it, e.g. `CCT` also on EBICS 3.0. `retryable?` is `false` when
+  the request may have made the bank act despite the error: the order data of an upload,
+  or the Initialisation of `HVE` and `HVS`, which carries the signature. `Epics::Client`
+  tells this from what it sent, not from the bank, so it is also `false` for a request
+  posted without it, e.g. your own XML passed to `client.post`
 - [ENHANCEMENT] The README has a guide to every error Epics raises and whether a retry
   helps
 
