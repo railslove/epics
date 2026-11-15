@@ -595,7 +595,7 @@ EPICS_VERIFY_SSL=false
 - [Die Deutsche Kreditwirtschaft](http://www.die-deutsche-kreditwirtschaft.de/)
 
 ## Contributing
-Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/master/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/).
+Railslove has a [Contributor License Agreement (CLA)](https://github.com/railslove/epics/blob/main/CONTRIBUTING.md) which clarifies the intellectual property rights for contributions from individuals or entities. To ensure every developer has signed the CLA, we use [CLA  Assistant](https://cla-assistant.io/).
 
 After checking out the repo, run `bin/setup` to install dependencies.
 Then, run `rspec` to run the tests.
@@ -621,4 +621,4 @@ You can also run `bin/console` for an interactive prompt that will allow you to 
 
 ---
 
-2014-2022 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/master/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
+2014-2022 - built with love by [Railslove](http://railslove.com) and released under the [GNU LESSER GENERAL PUBLIC LICENSE](https://github.com/railslove/epics/blob/main/LICENSE.txt). We have built quite a number of FinTech products. If you need support we are happy to help. Please contact us at team@railslove.com.
