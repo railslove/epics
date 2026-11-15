@@ -8,9 +8,11 @@ class Epics::Error < StandardError
     [@error.fetch("symbol", "EPICS_UNKNOWN"), @error.fetch("short_text", "unknown")].join(" - ")
   end
 
-  def initialize(code)
+  # Subclasses without an EBICS return code pass their own symbol and short text as error.
+  def initialize(code = nil, error: nil)
     @code = code
-    @error = self.class::ERRORS.fetch(code, {})
+    @error = error || self.class::ERRORS.fetch(code, {})
+    super()
   end
 
   def symbol
@@ -351,7 +353,7 @@ class Epics::Error < StandardError
     def initialize(status, body)
       @status = status
       @body = body.to_s[0, BODY_EXCERPT_LENGTH]
-      @error = { 'symbol' => "HTTP_#{status}", 'short_text' => REASON_PHRASES[status] }.compact
+      super(nil, error: { "symbol" => "HTTP_#{status}", "short_text" => REASON_PHRASES[status] }.compact)
     end
 
     def to_s

@@ -8,13 +8,23 @@ class Epics::ParseEbics < Faraday::Middleware
 
   def call(env)
     @app.call(env).on_complete do |response|
-      raise(Epics::Error::HTTPError.new(response.status, response.body)) unless (200..299).cover?(response.status)
+      raise_http_error(response) unless response.success?
 
-      body = response.body
-      response.body = ::Epics::Response.new(@client, body)
-      raise(Epics::InvalidResponseError.new('ReturnCode', body: body)) if response.body.technical_code.empty?
-      raise(Epics::Error::TechnicalError, response.body.technical_code) if response.body.technical_error?
-      raise(Epics::Error::BusinessError, response.body.business_code)   if response.body.business_error?
+      raw_body = response.body
+      response.body = ::Epics::Response.new(@client, raw_body)
+      raise_for_return_code(response.body, raw_body)
     end
+  end
+
+  private
+
+  def raise_http_error(response)
+    raise(Epics::Error::HTTPError.new(response.status, response.body))
+  end
+
+  def raise_for_return_code(ebics_response, raw_body)
+    raise(Epics::InvalidResponseError.new('ReturnCode', body: raw_body)) if ebics_response.technical_code.empty?
+    raise(Epics::Error::TechnicalError, ebics_response.technical_code) if ebics_response.technical_error?
+    raise(Epics::Error::BusinessError, ebics_response.business_code)   if ebics_response.business_error?
   end
 end

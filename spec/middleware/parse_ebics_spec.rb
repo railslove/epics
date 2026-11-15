@@ -11,21 +11,20 @@ RSpec.describe Epics::ParseEbics do
     HTML
   end
 
+  let(:stubs) do
+    Faraday::Adapter::Test::Stubs.new do |stub|
+      stub.post('/business_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_business_nok.xml'))] }
+      stub.post('/technical_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml'))] }
+      stub.post('/ok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hpb_response_ebics_ns.xml'))] }
+      stub.post('/timeout') { raise Faraday::TimeoutError }
+      stub.post('/no_connection') { raise Faraday::ConnectionFailed, 'peer has finished all lan parties and gone home' }
+    end
+  end
+
   subject do
     Faraday.new do |builder|
       builder.use Epics::ParseEbics, { client: client }
-      builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
-        stub.post('/business_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_business_nok.xml'))] }
-        stub.post('/technical_nok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml'))] }
-        stub.post('/ok') { [200, {}, File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hpb_response_ebics_ns.xml'))] }
-        stub.post('/maintenance') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
-        stub.post('/bad_gateway') { [502, {}, ''] }
-        stub.post('/not_ebics') { [200, { 'Content-Type' => 'text/plain' }, 'Welcome to the bank portal'] }
-        stub.post('/empty') { [200, {}, ''] }
-        stub.post('/truncated') { [200, {}, '<ebicsResponse xmlns="urn:org:ebics:H004"><header authenticate="true"><static>'] }
-        stub.post('/timeout') { raise Faraday::TimeoutError }
-        stub.post('/no_connection') { raise Faraday::ConnectionFailed, 'peer has finished all lan parties and gone home' }
-      end
+      builder.adapter :test, stubs
     end
   end
 
@@ -40,29 +39,76 @@ RSpec.describe Epics::ParseEbics do
 
   context 'when the bank answers with a non-2xx status' do
     it 'raises an HTTPError carrying the status and the start of the body' do
-      expect { subject.post('/maintenance') }.to raise_error(Epics::Error::HTTPError, 'HTTP 503 Service Unavailable') do |error|
+      stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 503 Service Unavailable') do |error|
         expect(error.status).to eq(503)
         expect(error.body).to include('maintenance downtime')
       end
     end
 
     it 'raises an HTTPError for an empty body' do
-      expect { subject.post('/bad_gateway') }.to raise_error(Epics::Error::HTTPError, 'HTTP 502 Bad Gateway') do |error|
+      stubs.post('/') { [502, {}, ''] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 502 Bad Gateway') do |error|
         expect(error.status).to eq(502)
         expect(error.body).to eq('')
       end
     end
 
+    it 'raises an HTTPError for a 500 that carries an EBICS response, keeping its return code only in the excerpt' do
+      ebics_technical_nok = File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'ebics_technical_nok.xml'))
+      stubs.post('/') { [500, {}, ebics_technical_nok] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 500 Internal Server Error') do |error|
+        expect(error.code).to be_nil
+        expect(error.body).to include('<ReturnCode>061001</ReturnCode>')
+      end
+    end
+
     it 'can be rescued as an Epics::Error but not as a TechnicalError' do
-      expect { subject.post('/maintenance') }.to raise_error(Epics::Error) do |error|
+      stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error) do |error|
         expect(error).not_to be_a(Epics::Error::TechnicalError)
       end
     end
   end
 
+  context 'at the edges of the 2xx range' do
+    it 'raises an HTTPError for 199' do
+      stubs.post('/') { [199, {}, ''] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 199')
+    end
+
+    it 'raises an InvalidResponseError for a 204 without a body' do
+      stubs.post('/') { [204, {}, ''] }
+
+      expect { subject.post('/') }
+        .to raise_error(Epics::InvalidResponseError, "Could not read ReturnCode from the bank's response")
+    end
+
+    it 'parses a 299 as an EBICS response' do
+      hpb_response = File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'xml', 'hpb_response_ebics_ns.xml'))
+      stubs.post('/') { [299, {}, hpb_response] }
+
+      expect(subject.post('/').body).to be_a(Epics::Response)
+    end
+
+    it 'raises an HTTPError for 300' do
+      stubs.post('/') { [300, {}, ''] }
+
+      expect { subject.post('/') }.to raise_error(Epics::Error::HTTPError, 'HTTP 300')
+    end
+  end
+
   context 'when a 2xx body carries no EBICS ReturnCode' do
     it 'raises an InvalidResponseError carrying the start of the body' do
-      expect { subject.post('/not_ebics') }.to raise_error(Epics::InvalidResponseError, "Could not read ReturnCode from the bank's response") do |error|
+      stubs.post('/') { [200, { 'Content-Type' => 'text/plain' }, 'Welcome to the bank portal'] }
+
+      expect { subject.post('/') }
+        .to raise_error(Epics::InvalidResponseError, "Could not read ReturnCode from the bank's response") do |error|
         expect(error.field).to eq('ReturnCode')
         expect(error.body).to eq('Welcome to the bank portal')
         expect(error).not_to respond_to(:status)
@@ -70,14 +116,18 @@ RSpec.describe Epics::ParseEbics do
     end
 
     it 'raises an InvalidResponseError for an empty body' do
-      expect { subject.post('/empty') }.to raise_error(Epics::InvalidResponseError) do |error|
+      stubs.post('/') { [200, {}, ''] }
+
+      expect { subject.post('/') }.to raise_error(Epics::InvalidResponseError) do |error|
         expect(error.body).to eq('')
         expect(error).not_to be_a(Epics::Error::TechnicalError)
       end
     end
 
     it 'raises an InvalidResponseError for an EBICS document cut off before its ReturnCode' do
-      expect { subject.post('/truncated') }.to raise_error(Epics::InvalidResponseError) do |error|
+      stubs.post('/') { [200, {}, '<ebicsResponse xmlns="urn:org:ebics:H004"><header authenticate="true"><static>'] }
+
+      expect { subject.post('/') }.to raise_error(Epics::InvalidResponseError) do |error|
         expect(error.body).to start_with('<ebicsResponse')
       end
     end
