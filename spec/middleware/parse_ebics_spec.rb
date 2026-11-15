@@ -81,6 +81,17 @@ RSpec.describe Epics::ParseEbics do
       end
     end
 
+    it 'reads the order data of a request in another EBICS namespace than the client uses' do
+      stubs.post('/') { [504, {}, ''] }
+      transfer = '<ebicsRequest xmlns="urn:org:ebics:H005"><header><mutable><TransactionPhase>Transfer</TransactionPhase>' \
+                 '</mutable></header><body><DataTransfer><OrderData>data</OrderData></DataTransfer></body></ebicsRequest>'
+
+      expect { subject.post('/', transfer) }.to raise_error(Epics::Error::HTTPError) do |error|
+        expect(error.phase).to eq('Transfer')
+        expect(error).not_to be_retryable
+      end
+    end
+
     it 'can be rescued as an Epics::Error but not as a TechnicalError' do
       stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] }
 
@@ -95,6 +106,30 @@ RSpec.describe Epics::ParseEbics do
       let(:upload) { Epics::CCT.new(client, 'pain.001 document').tap { |order| order.transaction_id = 'B5F1A3D2C4E6F8091A2B3C4D5E6F7A8B' } }
 
       before { stubs.post('/') { [503, { 'Content-Type' => 'text/html' }, maintenance_page] } }
+
+      describe 'H003' do
+        let(:version) { Epics::Keyring::VERSION_24 }
+        let(:download) do
+          Epics::STA.new(client, from: Date.new(2014, 9, 1), to: Date.new(2014, 9, 30))
+               .tap { |order| order.transaction_id = 'B5F1A3D2C4E6F8091A2B3C4D5E6F7A8B' }
+        end
+
+        { 'the initialisation of a download' => [-> { Epics::HTD.new(client).to_xml }, 'Initialisation', 'HTD', true],
+          'the initialisation of an upload'  => [-> { upload.to_xml }, 'Initialisation', 'CCT', true],
+          'the order data of an upload'      => [-> { upload.to_transfer_xml }, 'Transfer', nil, false],
+          'a further segment of a download'  => [-> { download.to_transfer_download_xml(2, true) }, 'Transfer', nil, true],
+          'the receipt of a download'        => [-> { download.to_receipt_xml }, 'Receipt', nil, true] }
+          .each do |request, (request_xml, phase, order_type, retryable)|
+          it "#{retryable ? 'is' : 'is not'} retryable after #{request}" do
+            expect { subject.post('/', instance_exec(&request_xml)) }
+              .to raise_error(Epics::Error::HTTPError) do |error|
+              expect(error.phase).to eq(phase)
+              expect(error.order_type).to eq(order_type)
+              expect(error.retryable?).to eq(retryable)
+            end
+          end
+        end
+      end
 
       describe 'H004' do
         let(:version) { Epics::Keyring::VERSION_25 }
@@ -130,10 +165,15 @@ RSpec.describe Epics::ParseEbics do
           Epics::HVE.new(client, order_id: 'N02A', digest: Digest::SHA256.digest('pain.001 in the EDS'),
                                  service: { service_name: 'SCT', service_option: 'VOI', msg_name: 'pain.001' })
         end
+        let(:hvs) do
+          Epics::HVS.new(client, order_id: 'N02A', digest: Digest::SHA256.digest('pain.001 in the EDS'),
+                                 service: { service_name: 'SCT', service_option: 'VOI', msg_name: 'pain.001' })
+        end
 
         { 'the initialisation of an upload' => [-> { upload.to_xml }, 'Initialisation', 'BTU', true],
           'the order data of an upload'     => [-> { upload.to_transfer_xml }, 'Transfer', nil, false],
-          'the initialisation of an HVE'    => [-> { hve.to_xml }, 'Initialisation', 'HVE', false] }
+          'the initialisation of an HVE'    => [-> { hve.to_xml }, 'Initialisation', 'HVE', false],
+          'the initialisation of an HVS'    => [-> { hvs.to_xml }, 'Initialisation', 'HVS', false] }
           .each do |request, (request_xml, phase, order_type, retryable)|
           it "#{retryable ? 'is' : 'is not'} retryable after #{request}" do
             expect { subject.post('/', instance_exec(&request_xml)) }
