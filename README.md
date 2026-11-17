@@ -557,7 +557,9 @@ end
 A gateway in front of the bank can answer with an error after the bank has already
 accepted the request. A new attempt is a new transaction with a new signature, so the bank
 does not recognise it as a duplicate. `retryable?` tells you whether sending the order again
-is safe. It is `false` when the failed request may have made the bank act:
+is safe. It does not tell you whether a new attempt can succeed: a `404` after a change of
+the bank's URL stays a `404`, so check `status` as well. `retryable?` is `false` when the
+failed request may have made the bank act:
 
 | `phase`            | Request that failed                                                                 | `retryable?`                                                                             |
 |--------------------|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
@@ -609,7 +611,11 @@ rescue Epics::Error::BusinessError => e
 
   statements = [] # nothing new at the bank yet
 rescue Epics::Error::HTTPError => e
-  e.retryable? ? retry_later(e) : alert(e) # alert: an upload or signature may have reached the bank
+  if e.retryable? && [408, 429, 502, 503, 504].include?(e.status)
+    retry_later(e)
+  else
+    alert(e) # an upload or signature may have reached the bank, or a new attempt will not help
+  end
 rescue Faraday::Error => e
   retry_later(e) # a download only; for an upload, check the order before you send it again
 rescue Epics::Error, Epics::InvalidOrderDataError => e

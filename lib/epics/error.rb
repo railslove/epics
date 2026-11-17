@@ -391,7 +391,8 @@ class Epics::Error < StandardError
     # answer with an error after the bank has accepted the request, so this is false when
     # the failed request carried the order data of an upload or the signature of an HVE
     # or HVS. Order data makes it false whatever the phase, and so does a request that no
-    # Epics::Client method sent, as Epics cannot tell what it was.
+    # Epics::Client method sent, as Epics cannot tell what it was. It does not say whether a
+    # new attempt can succeed; check #status for that.
     def retryable?
       return false unless @request_known
       return false if @order_data_sent
